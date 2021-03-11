@@ -1,8 +1,9 @@
 import inquirer from "inquirer"
 import chalk from "chalk"
 import boxen from "boxen"
-import { resourceData, validateAssetsDirAndGenerateData } from "./minecraft";
+import { validateAssetsDirAndGenerateData } from "./minecraft";
 import { readBlockstates, readModels, readTextures } from "./minecraft/readData";
+import { resourceData } from "./contentGenerator";
 
 export const log = console.log;
 

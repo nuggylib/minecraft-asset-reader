@@ -1,13 +1,6 @@
 import fs, { lstatSync } from "fs"
 import { join } from "path"
-import { readBlockstates } from "./readData"
-
-type KeyValuePair = {
-    key: string
-    value: {}
-}
-
-export const resourceData = {} as any
+import { resourceData } from "../contentGenerator"
 
 /**
  * The bare minimum directories expected in order to generate the starter's
@@ -54,7 +47,17 @@ export function validateAssetsDirAndGenerateData({ path }: { path: string }): bo
             const directoryContents = fs.readdirSync(dir)
             if (directoryContents.length > 0 && isValidTexturePackDirectory(directoryContents)) {
                 var dirName = dir.split("/").pop() || ""
-                resourceData[dirName] = {}
+                resourceData[dirName] = {
+                    blockstates: {},
+                    model: {
+                        block: {},
+                        item: {},
+                    },
+                    texture: {
+                        block: {},
+                        item: {},
+                    }
+                }
             }
         })
         

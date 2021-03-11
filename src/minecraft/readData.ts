@@ -1,5 +1,5 @@
 import fs from "fs"
-import { resourceData } from "./validateAssetsDirAndGenerateData";
+import { resourceData } from "../contentGenerator";
 
 /**
  * Reads in all blockstates files for the given namespace
@@ -12,7 +12,6 @@ import { resourceData } from "./validateAssetsDirAndGenerateData";
 export function readBlockstates({ namespace, path }: { namespace: string, path: string }) {
     const blockstatesPath = path  + "/" + namespace + "/blockstates/"
     const files = fs.readdirSync(blockstatesPath) 
-    resourceData[namespace].blockstates = {}
     files.forEach( (filename) => {
       const content = fs.readFileSync(blockstatesPath + filename, 'utf-8') 
       const fileNameCleaned = filename.split(".")[0]
@@ -31,13 +30,10 @@ export function readModels({ namespace, path }: { namespace: string, path: strin
   const itemModelsPath = path  + "/" + namespace + "/models/item/"
   const blockModelFiles = fs.readdirSync(blockModelsPath) 
   const itemModelFiles = fs.readdirSync(itemModelsPath)
-  resourceData[namespace].model = {}
-  resourceData[namespace].model.block = {}
-  resourceData[namespace].model.item = {}
   blockModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockModelsPath + filename, 'utf-8') 
     const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].model.block[fileNameCleaned] = JSON.parse(content);
+    resourceData[namespace].model.block.fileNameCleaned = JSON.parse(content);
   });
   itemModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(itemModelsPath + filename, 'utf-8') 
@@ -57,9 +53,6 @@ export function readTextures({ namespace, path }: { namespace: string, path: str
   const itemTexturesPath = path  + "/" + namespace + "/textures/items/"
   const blockTextureFiles = fs.readdirSync(blockTexturesPath) 
   const itemTextureFiles = fs.readdirSync(itemTexturesPath)
-  resourceData[namespace].texture = {}
-  resourceData[namespace].texture.block = {}
-  resourceData[namespace].texture.item = {}
   blockTextureFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockTexturesPath + filename) 
     const fileNameCleaned = filename.split(".")[0]
