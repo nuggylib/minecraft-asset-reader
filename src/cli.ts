@@ -2,7 +2,7 @@ import inquirer from "inquirer"
 import chalk from "chalk"
 import boxen from "boxen"
 import { resourceData, validateAssetsDirAndGenerateData } from "./minecraft";
-import { readBlockstates } from "./minecraft/blockstateEval";
+import { readBlockstates, readModels, readTextures } from "./minecraft/readData";
 
 export const log = console.log;
 
@@ -37,10 +37,18 @@ inquirer.prompt([
 .then(( { assetsPath } ) => {
   const keys = Object.keys(resourceData)
   keys.forEach(key => readBlockstates({ 
-        key,
+        namespace: key,
         path: assetsPath
   }))
-  log(`Blockstate data: `, resourceData)
+  keys.forEach(key => readModels({ 
+    namespace: key,
+    path: assetsPath
+  }))
+  keys.forEach(key => readTextures({ 
+    namespace: key,
+    path: assetsPath
+  }))
+  log(`Loaded asset data: `, resourceData)
 })
 .catch(error => {
   if(error.isTtyError) {

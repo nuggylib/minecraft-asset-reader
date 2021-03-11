@@ -1,6 +1,6 @@
 import fs, { lstatSync } from "fs"
 import { join } from "path"
-import { readBlockstates } from "./blockstateEval"
+import { readBlockstates } from "./readData"
 
 type KeyValuePair = {
     key: string
