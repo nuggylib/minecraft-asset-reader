@@ -1,4 +1,6 @@
 import fs from "fs"
+import { filter, findIndex, isArray } from "lodash";
+import { log } from "../cli";
 import { resourceData } from "../contentGenerator";
 
 /**
@@ -15,7 +17,21 @@ export function readBlockstates({ namespace, path }: { namespace: string, path: 
     files.forEach( (filename) => {
       const content = fs.readFileSync(blockstatesPath + filename, 'utf-8') 
       const fileNameCleaned = filename.split(".")[0]
-      resourceData[namespace].blockstates[fileNameCleaned] = JSON.parse(content);
+      const contentJson = JSON.parse(content)
+      if (contentJson.variants) {
+        Object.keys(contentJson.variants!).forEach(variantKey => {
+          if (isArray(contentJson.variants[variantKey])) {
+            const nestedVariantsArray = contentJson.variants[variantKey] as any[]
+            nestedVariantsArray.forEach(variantObj => {
+              contentJson.variants[`${variantKey}.${variantObj.model}`] = variantObj
+            })
+            // Remove the array from the object after we mapped the textures from it
+            delete contentJson.variants[variantKey]
+            log(`Found blockstate with complex variant value (array of elements) - ${fileNameCleaned} - ${variantKey}`)
+          }
+        })
+      }
+      resourceData[namespace].blockstates[fileNameCleaned] = contentJson;
     });
 }
 
@@ -32,13 +48,13 @@ export function readModels({ namespace, path }: { namespace: string, path: strin
   const itemModelFiles = fs.readdirSync(itemModelsPath)
   blockModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockModelsPath + filename, 'utf-8') 
-    const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].model.block.fileNameCleaned = JSON.parse(content);
+    const blockModelName = filename.split(".")[0]
+    resourceData[namespace].model.block[blockModelName] = JSON.parse(content);
   });
   itemModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(itemModelsPath + filename, 'utf-8') 
-    const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].model.item[fileNameCleaned] = JSON.parse(content);
+    const itemModelName = filename.split(".")[0]
+    resourceData[namespace].model.item[itemModelName] = JSON.parse(content);
   });
 }
 
@@ -56,11 +72,11 @@ export function readTextures({ namespace, path }: { namespace: string, path: str
   blockTextureFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockTexturesPath + filename) 
     const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].texture.block[fileNameCleaned] = content;
+    resourceData[namespace].texture.blocks[fileNameCleaned] = content;
   });
   itemTextureFiles.forEach( (filename) => {
     const content = fs.readFileSync(itemTexturesPath + filename) 
     const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].texture.item[fileNameCleaned] = content;
+    resourceData[namespace].texture.items[fileNameCleaned] = content;
   });
 }

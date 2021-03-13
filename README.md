@@ -4,6 +4,13 @@ A simple tool to read in assets from any valid texture pack directory (should be
 
 > It seems you **must** use NPM in order to link the packages.
 
+## Get started
+1. Clone the project. 
+2. Run `npm install` (not `yarn install`)
+3. Run `npm run reset`
+4. Run `node out/cli.js`
+5. Paste the assests directory path (it must be a complete path!)
+
 ## Resources
 1. https://www.twilio.com/blog/how-to-build-a-cli-with-node-js
    * Says to use `npm` - _do it_, especially for the `link` command

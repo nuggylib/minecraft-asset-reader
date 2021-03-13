@@ -1,25 +1,18 @@
-export type BlockData = {
-    [blockName: string]: {
-        variants?: any,
-        
-    }
-}
-
 type DisplayData = {
     /**
      * Specifies the rotation of the model according to the scheme [x, y, z]
      */
-    rotation: number[]
+    rotation?: number[]
     /**
      * Specifies the position of the model according to the scheme [x, y, z]. If the value 
      * is greater than 80, it is displayed as 80. If the value is less than -80, it is displayed as -80.
      */
-    translation: number[]
+    translation?: number[]
     /**
      * Specifies the scale of the model according to the scheme [x, y, z]. If the value is greater than 
      * 4, it is displayed as 4.
      */
-    scale: number[]
+    scale?: number[]
 }
 
 enum CULLFACE_DIRECTION {
@@ -50,14 +43,14 @@ type ModelFace = {
      * determines the side of the block to use the light level from for lighting the face, and 
      * if unset, defaults to the side.
      */
-    cullface: CULLFACE_DIRECTION
+    cullface?: CULLFACE_DIRECTION
     /**
      * Rotates the texture by the specified number of degrees. Can be 0, 90, 180, or 270. 
      * Defaults to 0. Rotation does not affect which part of the texture is used. Instead, 
      * it amounts to permutation of the selected texture vertexes (selected implicitly, 
      * or explicitly though uv).
      */
-    rotation: number
+    rotation?: number
     /**
      * Determines whether to tint the texture using a hardcoded tint index. The default 
      * is not using the tint, and any number causes it to use tint. Note that only 
@@ -76,46 +69,41 @@ type ModelElement = {
     /**
      * Start point of a cube according to the scheme [x, y, z]. Values must be between -16 and 32.
      */
-    from: number[]
+    from?: number[]
     /**
      * Stop point of a cube according to the scheme [x, y, z]. Values must be between -16 and 32.
      */
-    to: number[]
+    to?: number[]
     /**
      * Defines the rotation of an element.
      */
-    rotation: {
+    rotation?: {
         /**
          * Sets the center of the rotation according to the scheme [x, y, z].
          */
-        origin: number[]
+        origin?: number[]
         /**
          * Specifies the direction of rotation, can be "x", "y" or "z".
          */
-        axis: string
+        axis?: string
         /**
          * Specifies the angle of rotation. Can be 45 through -45 degrees in 22.5 degree increments.
          */
-        angle: number
+        angle?: number
         /**
          * Specifies whether or not to scale the faces across the whole block. Can be true or false. Defaults to false.
          */
-        rescale: boolean
+        rescale?: boolean
     }
     /**
      * Defines if shadows are rendered (true - default), or not (false)
      */
-    shade: boolean
+    shade?: boolean
     /**
      * Holds all the faces of the cube. **IMPORTANT: If a face is left out, it does not render.**
      */
     faces: {
-        down: ModelFace
-        up: ModelFace
-        north: ModelFace
-        south: ModelFace
-        west: ModelFace
-        east: ModelFace
+        [key: string]: ModelFace
     }
 }
 
@@ -178,18 +166,18 @@ type BlockstateVariantData = {
     /**
      * Rotation of the model on the x-axis in increments of 90 degrees.
      */
-    x: number
+    x?: number
     /**
      * Rotation of the model on the y-axis in increments of 90 degrees.
      */
-    y: number
+    y?: number
     /**
      * Locks the rotation of the texture of a block, if set to true. This way the texture does not rotate 
      * with the block when using the x and y-tags above.
      * 
      * Defaults to false
      */
-    uvlock: boolean
+    uvlock?: boolean
     /**
      * Sets the probability of the model for being used in the game, defaults to 1 (=100%). If more than 
      * one model is used for the same variant, the probability is calculated by dividing the individual 
@@ -198,43 +186,43 @@ type BlockstateVariantData = {
      * being used would then be determined by dividing each weight by 4: 1/4, 1/4 and 2/4, or 25%, 25% 
      * and 50%, respectively.)
      */
-    weight: number
+    weight?: number
 }
 
 /**
  * Determines a case and the model that should apply in that case.
  */
-type BlockstateMultipartCase = {
+export type BlockstateMultipartCase = {
     /**
      * Determines the model(s) to apply and its properties. There can be one model or an array of models. 
      * If set to an array, the model is chosen randomly from the options given, with each option being 
      * specified in separate subsidiary tags.
      */
-    apply: {
+    apply?: {
         /**
          * Specifies the path to the model file of the block, in form of namespaced ID.
          */
-        model: string
+        model?: string
         /**
          * Rotation of the model on the x-axis in increments of 90 degrees.
          */
-        x: number
+        x?: number
         /**
          * Rotation of the model on the y-axis in increments of 90 degrees.
          */
-        y: number
+        y?: number
         /**
          * Locks the rotation of the texture of a block, if set to true. This way the texture does not 
          * rotate with the block when using the x and y-tags above.
          * 
          * Defaults to false
          */
-        uvlock: boolean
+        uvlock?: boolean
     }
     /**
      * A list of cases that have to be met for the model to be applied. If unset, the model always applies.
      */
-    when: {
+    when?: {
         /**
          * Matches if any of the contained cases return true. Cannot be set alongside other cases.
          */
@@ -252,10 +240,11 @@ type BlockstateMultipartCase = {
  */
 export type BlockBlockstateData = {
     /**
-     * Holds the names of all the variants of the block.
+     * Holds the names of all the variants of the block. Each element in this object can either correspond
+     * to a single variant data object, or an array of variant data objects
      */
     variants?: {
-        [key: string]: BlockstateVariantData[]
+        [key: string]: BlockstateVariantData
     }
     /**
      * Used instead of variants to combine models based on block state attributes.
@@ -264,13 +253,7 @@ export type BlockBlockstateData = {
 }
 
 
-export type BlockTextureData = {
-    /**
-     * Key for each unique block; corresponds to an array of textures that apply to the block
-     */
-    [key: string]: File[]
-}
-
+// TODO: Test this type out - there may be issues
 /**
  * Item model data
  * 
@@ -305,7 +288,7 @@ export type ItemModelData = {
         ground?: DisplayData
         fixed?: DisplayData
     }
-    textures: {
+    textures?: {
         /**
          * Arbitrary set of texture variables; the key names are arbitrary
          * 
@@ -323,17 +306,17 @@ export type ItemModelData = {
      * Can be "front" or "side". If set to "side", the model is rendered like a block. If set to 
      * "front", model is shaded like a flat item.
      */
-    gui_light: string
+    gui_light?: string
     /**
      * Contains all the elements of the model. They can have only cubic forms. If both "parent" and 
      * "elements" are set, the "elements" tag overrides the "elements" tag from the previous model.
      */
-    elements: ModelElement[]
-    overrides: {
+    elements?: ModelElement[]
+    overrides?: {
         /**
          * Holds the cases.
          */
-        predicate: {
+        predicate?: {
             /**
              * A single case tag. See item predicates for a full list of available tags.
              * 
@@ -346,6 +329,6 @@ export type ItemModelData = {
         /**
          * The path to the model to use if the case is met, in form of namespaced ID.
          */
-        model: string
+        model?: string
     }[]
 }

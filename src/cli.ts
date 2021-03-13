@@ -2,16 +2,21 @@ import inquirer from "inquirer"
 import chalk from "chalk"
 import boxen from "boxen"
 import { validateAssetsDirAndGenerateData } from "./minecraft";
-import { readBlockstates, readModels, readTextures } from "./minecraft/readData";
-import { resourceData } from "./contentGenerator";
+import { readBlockstates, readModels, readTextures } from "./minecraft/readBlockData";
+import { resourceData, generateBlockPageData } from "./contentGenerator";
+import { BLOCK_PAGES } from "./types";
 
-export const log = console.log;
+export const log = (message: string) => console.log(chalk.blueBright("[LOG]: ", message));
+
+export const error = (message: string) => console.error(chalk.red("[ERROR]: ", message))
+
+export const warn = (message: string) => console.warn(chalk.yellow("[WARN]: ", message))
 
 // See https://www.npmjs.com/package/boxen
 // See https://www.npmjs.com/package/chalk
-log(boxen(chalk.white.bgBlue.bold('** Minecraft asset reader **'), {padding: 1, margin: 1, borderStyle: 'double'}));
+console.log(boxen(chalk.white.bgBlue.bold('** Minecraft asset reader **'), {padding: 1, margin: 1, borderStyle: 'double'}));
 
-log(boxen(chalk.white('Minecraft asset reader'), {padding: 1, margin: 1}));
+console.log(boxen(chalk.white('Minecraft asset reader'), {padding: 1, margin: 1}));
 
 // See https://github.com/SBoudrias/Inquirer.js/tree/master/packages/inquirer/examples
 inquirer.prompt([
@@ -49,14 +54,17 @@ inquirer.prompt([
     namespace: key,
     path: assetsPath
   }))
-  log(`Loaded asset data: `, resourceData)
+  generateBlockPageData({
+    assetsPath
+  })
+  console.log(`BLOCK PAGES: `, BLOCK_PAGES)
 })
 .catch(error => {
   if(error.isTtyError) {
     // Prompt couldn't be rendered in the current environment
-    log(error.message)
+    error(error.message)
   } else {
     // Something else went wrong
-    log(error.message)
+    error(error.message)
   }
 })

@@ -54,8 +54,8 @@ export function validateAssetsDirAndGenerateData({ path }: { path: string }): bo
                         item: {},
                     },
                     texture: {
-                        block: {},
-                        item: {},
+                        blocks: {},
+                        items: {},
                     }
                 }
             }
