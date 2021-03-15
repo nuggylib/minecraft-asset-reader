@@ -1,6 +1,7 @@
 import fs, { lstatSync } from "fs"
 import { join } from "path"
-import { resourceData } from "../contentGenerator"
+import { RAW_DATA } from "../contentGenerator"
+import { RawAssetData } from "../types"
 
 /**
  * The bare minimum directories expected in order to generate the starter's
@@ -47,7 +48,7 @@ export function validateAssetsDirAndGenerateData({ path }: { path: string }): bo
             const directoryContents = fs.readdirSync(dir)
             if (directoryContents.length > 0 && isValidTexturePackDirectory(directoryContents)) {
                 var dirName = dir.split("/").pop() || ""
-                resourceData[dirName] = {
+                RAW_DATA[dirName] = {
                     blockstates: {},
                     model: {
                         block: {},
@@ -67,4 +68,71 @@ export function validateAssetsDirAndGenerateData({ path }: { path: string }): bo
         return false
     }
     
+}
+
+export function validatesAssetsDirectory({ path }: { path: string }): boolean {
+    try {
+        const temp = {} as RawAssetData
+        const assetsDir = fs.readdirSync(path)
+        // Will be things like <mod_id>, minecraft, etc.
+        const assetsNestedDirectories = assetsDir.map(name => join(path, name)).filter(isDirectory)
+        // Directory names within a the detected namespaces (e.g., blockstates, model, etc.)
+        var isValidChecks = [] as boolean[]
+        assetsNestedDirectories.forEach(dir => {
+            const directoryContents = fs.readdirSync(dir)
+            // Add the result of the validity check for the current namespace directory
+            if (directoryContents.length > 0 && isValidTexturePackDirectory(directoryContents)) {
+                var dirName = dir.split("/").pop() || ""
+                temp[dirName] = {
+                    blockstates: {},
+                    model: {
+                        block: {},
+                        item: {},
+                    },
+                    texture: {
+                        blocks: {},
+                        items: {},
+                    }
+                }
+            }
+            isValidChecks.push(directoryContents.length > 0 && isValidTexturePackDirectory(directoryContents))
+        })
+    
+        // Ensure all checks were true
+        return isValidChecks.every(( val ) => val === true)
+
+    } catch (e) {
+        return false
+    }
+}
+
+export function generateRawData({ path, setRawDataHandler }: { path: string, setRawDataHandler: any }) {
+    try {
+        const temp = {} as RawAssetData
+        const assetsDir = fs.readdirSync(path)
+        // Will be things like <mod_id>, minecraft, etc.
+        const assetsNestedDirectories = assetsDir.map(name => join(path, name)).filter(isDirectory)
+        assetsNestedDirectories.forEach(dir => {
+            const directoryContents = fs.readdirSync(dir)
+            // Add the result of the validity check for the current namespace directory
+            if (directoryContents.length > 0 && isValidTexturePackDirectory(directoryContents)) {
+                var dirName = dir.split("/").pop() || ""
+                temp[dirName] = {
+                    blockstates: {},
+                    model: {
+                        block: {},
+                        item: {},
+                    },
+                    texture: {
+                        blocks: {},
+                        items: {},
+                    }
+                }
+                setRawDataHandler({ ...temp })
+            }
+        })
+
+    } catch (e) {
+        return console.log(e)
+    }
 }

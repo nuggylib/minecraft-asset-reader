@@ -1,7 +1,7 @@
 import fs from "fs"
-import { filter, findIndex, isArray } from "lodash";
-import { log } from "../cli";
-import { resourceData } from "../contentGenerator";
+import { isArray } from "lodash";
+import { RAW_DATA } from "../contentGenerator";
+import { BlockBlockstateData, BlockModelData, ItemModelData } from "./types";
 
 /**
  * Reads in all blockstates files for the given namespace
@@ -14,7 +14,11 @@ import { resourceData } from "../contentGenerator";
 export function readBlockstates({ namespace, path }: { namespace: string, path: string }) {
     const blockstatesPath = path  + "/" + namespace + "/blockstates/"
     const files = fs.readdirSync(blockstatesPath) 
+    const blockstates = {} as {
+      [blockstateFileName: string]: BlockBlockstateData
+    }
     files.forEach( (filename) => {
+      // console.log(`Setting blockstate data for file '${filename}'`)
       const content = fs.readFileSync(blockstatesPath + filename, 'utf-8') 
       const fileNameCleaned = filename.split(".")[0]
       const contentJson = JSON.parse(content)
@@ -27,12 +31,12 @@ export function readBlockstates({ namespace, path }: { namespace: string, path: 
             })
             // Remove the array from the object after we mapped the textures from it
             delete contentJson.variants[variantKey]
-            log(`Found blockstate with complex variant value (array of elements) - ${fileNameCleaned} - ${variantKey}`)
           }
         })
       }
-      resourceData[namespace].blockstates[fileNameCleaned] = contentJson;
+      blockstates[fileNameCleaned] = contentJson;
     });
+    return blockstates
 }
 
 /**
@@ -46,16 +50,38 @@ export function readModels({ namespace, path }: { namespace: string, path: strin
   const itemModelsPath = path  + "/" + namespace + "/models/item/"
   const blockModelFiles = fs.readdirSync(blockModelsPath) 
   const itemModelFiles = fs.readdirSync(itemModelsPath)
+  const model = {} as {
+    block: {
+        /**
+         * Key-value pair; file name of texture as the key with the an BlockModelData
+         * object as the value
+         */
+        [blockModelFileName: string]: BlockModelData
+    }
+    item: {
+        /**
+         * Key-value pair; file name of texture as the key with the an ItemModelData
+         * object as the value
+         */
+        [itemModelFileName: string]: ItemModelData
+    }
+  }
+
+  model.block = {}
+  model.item = {}
+
   blockModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockModelsPath + filename, 'utf-8') 
     const blockModelName = filename.split(".")[0]
-    resourceData[namespace].model.block[blockModelName] = JSON.parse(content);
+    model.block[blockModelName] = JSON.parse(content);
   });
   itemModelFiles.forEach( (filename) => {
     const content = fs.readFileSync(itemModelsPath + filename, 'utf-8') 
     const itemModelName = filename.split(".")[0]
-    resourceData[namespace].model.item[itemModelName] = JSON.parse(content);
+    model.item[itemModelName] = JSON.parse(content);
   });
+  
+  return model
 }
 
 /**
@@ -69,14 +95,41 @@ export function readTextures({ namespace, path }: { namespace: string, path: str
   const itemTexturesPath = path  + "/" + namespace + "/textures/items/"
   const blockTextureFiles = fs.readdirSync(blockTexturesPath) 
   const itemTextureFiles = fs.readdirSync(itemTexturesPath)
+  const texture = {} as {
+    /**
+     * Object containing all block model file buffers
+     */
+    blocks: {
+        /**
+         * Key-value pair; file name of texture as the key with the file buffer as
+         * the value
+         */
+        [blockTextureFileName: string]: Buffer
+    }
+    /**
+     * Object containing all item model file buffers
+     */
+    items: {
+        /**
+         * Key-value pair; file name of texture as the key with the file buffer as
+         * the value
+         */
+        [itemTextureFileName: string]: Buffer
+    }
+}
+
+  texture.blocks = {}
+  texture.items = {}
+
   blockTextureFiles.forEach( (filename) => {
     const content = fs.readFileSync(blockTexturesPath + filename) 
     const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].texture.blocks[fileNameCleaned] = content;
+    texture.blocks[fileNameCleaned] = content;
   });
   itemTextureFiles.forEach( (filename) => {
     const content = fs.readFileSync(itemTexturesPath + filename) 
     const fileNameCleaned = filename.split(".")[0]
-    resourceData[namespace].texture.items[fileNameCleaned] = content;
+    texture.items[fileNameCleaned] = content;
   });
+  return texture
 }
