@@ -4,13 +4,17 @@ import { Box, render } from 'ink';
 import { MainMenu } from "./components/MainMenu";
 import { Text } from 'ink';
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm";
-import { CACHE_CLIENT } from "./cache/cacheClient";
+import { CACHE, CACHE_CLIENT } from "./cache/cacheClient";
+import { generateRawData } from "./minecraft";
 
 const enum OPTION_VALUE {
     SET_ASSETS_DIRECTORY = "set_assets_directory",
     IMPORT_DATA = "import_data",
     INSPECT_DATA = "inspect_data",
-    BOOTSTRAP_DATA = "bootstrap_data"
+    BOOTSTRAP_DATA = "bootstrap_data",
+    VIEW_RAW_DATA = "view_raw_data",
+    VIEW_PARSED_DATA = "view_parsed_data",
+    EXPORT_PARSED_DATA_JSON = "export_parsed_to_json"
 }
 
 const enum SUPPORTED_SAVE_LOCATIONS {
@@ -18,21 +22,39 @@ const enum SUPPORTED_SAVE_LOCATIONS {
     CONTENTFUL,
 }
 
+type MenuOption = {
+    label: string
+    value: string
+}
+
 export class CLIApp extends React.Component<
 {},
 {
-    options: {
-        label: string
-        value: string
-    }[]
+    options: MenuOption[]
     selectedOption?: string
     contentfulConfig?: {
         clientId: string
         organizationId: string
     }
-    rootAssetsPath?: string
+    rootAssetsPath: string | null
+    rawAssetsImported: boolean
+    parsedDataGenerated: boolean
 }
 > {
+
+    async generateCacheLinkedStateValues() {
+        const rootAssetsPath = await CACHE.getRootAssetsPath()
+        const rawAssetsData = await CACHE.getRawDataFromCache()
+        const parsedData = await CACHE.getParsedDataFromCache()
+
+        const data = {
+            rootAssetsPath,
+            rawAssetsImported: !rawAssetsData,
+            parsedDataGenerated: !parsedData
+        }
+
+        return data
+    }
 
     constructor(props: any) {
         super(props)
@@ -41,14 +63,76 @@ export class CLIApp extends React.Component<
                 {
                     label: `Set assets directory`,
                     value: OPTION_VALUE.SET_ASSETS_DIRECTORY
-                },
-                {
-                    label: `Import data`,
-                    value: OPTION_VALUE.IMPORT_DATA
-                },
+                }
             ],
+            parsedDataGenerated: false,
+            rawAssetsImported: false,
+            rootAssetsPath: ``,
             selectedOption: ``,
         }
+    }
+
+    /**
+     * Contains logic to decide what options to display in the menu depending on the current values in the cache
+     */
+    deriveMenuOptionsFromCacheValues(): MenuOption[] {
+        const {
+            rawAssetsImported,
+            parsedDataGenerated,
+            rootAssetsPath,
+        } = this.state
+
+        const options = [] as MenuOption[]
+
+        if (rootAssetsPath) {
+            options.push({
+                label: `Bootstrap page objects`,
+                value: OPTION_VALUE.BOOTSTRAP_DATA
+            })
+        }
+
+        if (rawAssetsImported) {
+            options.push({
+                value: `View raw data`,
+                label: OPTION_VALUE.VIEW_RAW_DATA
+            })
+        }
+
+        if (parsedDataGenerated) {
+            options.push({
+                label: `View parsed data`,
+                value: OPTION_VALUE.VIEW_PARSED_DATA
+            })
+            options.push({
+                label: `Export parsed data to JSON`,
+                value: OPTION_VALUE.EXPORT_PARSED_DATA_JSON
+            })
+        }
+
+        return options
+    }
+
+    componentDidMount() {
+        this.generateCacheLinkedStateValues().then(({
+            rootAssetsPath,
+            rawAssetsImported,
+            parsedDataGenerated
+        }) => {            
+            this.setState(prevState => ({
+                ...prevState,
+                parsedDataGenerated,
+                rawAssetsImported,
+                rootAssetsPath,
+            }))
+        }).then(() => {
+            // TODO: this seems to work, but see if chaining these state updates in subsequent .then calls is safe
+            this.setState(prevState => ({
+                options: [
+                    ...prevState.options,
+                    ...this.deriveMenuOptionsFromCacheValues()
+                ]
+            }))
+        })
     }
 
     /**
@@ -154,6 +238,7 @@ export class CLIApp extends React.Component<
         switch(this.state.selectedOption) {
             case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
                 return <SetAssetsPathForm 
+                            clearSelectedOptionHandler={this.clearSelectedOptionHandler.bind(this)}
                             setRootAssetsPathHandler={this.setRootAssetsPathHandler.bind(this)}
                         />
             }
