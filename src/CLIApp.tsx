@@ -5,7 +5,7 @@ import { MainMenu } from "./components/MainMenu";
 import { Text } from 'ink';
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm";
 import { CACHE, CACHE_CLIENT } from "./cache/cacheClient";
-import { generateRawData } from "./minecraft";
+import { InspectParsedData } from "./components/InspectParsedData";
 
 const enum OPTION_VALUE {
     SET_ASSETS_DIRECTORY = "set_assets_directory",
@@ -42,33 +42,31 @@ export class CLIApp extends React.Component<
 }
 > {
 
-    async generateCacheLinkedStateValues() {
-        const rootAssetsPath = await CACHE.getRootAssetsPath()
-        const rawAssetsData = await CACHE.getRawDataFromCache()
-        const parsedData = await CACHE.getParsedDataFromCache()
-
-        const data = {
-            rootAssetsPath,
-            rawAssetsImported: !rawAssetsData,
-            parsedDataGenerated: !parsedData
-        }
-
-        return data
-    }
-
     constructor(props: any) {
         super(props)
         this.state = {
-            options: [
-                {
-                    label: `Set assets directory`,
-                    value: OPTION_VALUE.SET_ASSETS_DIRECTORY
-                }
-            ],
+            // No options specified by default - let the cache dictate what options should render
+            options: [],
             parsedDataGenerated: false,
             rawAssetsImported: false,
             rootAssetsPath: ``,
             selectedOption: ``,
+        }
+    }
+
+    /**
+     * Helper method to set cache-linked state values based on the current values in the cache
+     * 
+     * @returns Object containing values for cache-linked state values
+     */
+    async generateCacheLinkedStateValues() {
+        const rootAssetsPath = await CACHE.getRootAssetsPath()
+        const rawAssetsData = await CACHE.getRawDataFromCache()
+        const parsedData = await CACHE.getParsedDataFromCache()
+        return {
+            rootAssetsPath,
+            rawAssetsImported: Object.keys(rawAssetsData).length > 0 ? true : false,
+            parsedDataGenerated: Object.keys(parsedData).length > 0 ? true : false
         }
     }
 
@@ -93,8 +91,8 @@ export class CLIApp extends React.Component<
 
         if (rawAssetsImported) {
             options.push({
-                value: `View raw data`,
-                label: OPTION_VALUE.VIEW_RAW_DATA
+                label: `View raw data`,
+                value: OPTION_VALUE.VIEW_RAW_DATA
             })
         }
 
@@ -109,10 +107,32 @@ export class CLIApp extends React.Component<
             })
         }
 
+        // TODO: Add an option for "re-setting" the assets path (this will also need to clear out the cache)
+        /**
+         * N.B.
+         * 
+         * We always want to show the SET_ASSETS_DIRECTORY option so that the user
+         * can specify a different path if they want to.
+         */
+        options.push({
+            label: `Set assets directory`,
+            value: OPTION_VALUE.SET_ASSETS_DIRECTORY
+        })
+
         return options
     }
 
-    componentDidMount() {
+    /**
+     * Helper method to determine what menu options to display
+     * 
+     * This works by first obtaining the cache-linked state values
+     * and setting the state accordingly. We *must* set the
+     * options array in a separate setState call - without doing
+     * so, the cache-derived values don't show. This is likely
+     * some kind of bug OR a quirk of using `ink`, but it's unclear
+     * at the time of writing this comment.
+     */
+    async obtainMenuOptions() {
         this.generateCacheLinkedStateValues().then(({
             rootAssetsPath,
             rawAssetsImported,
@@ -124,15 +144,22 @@ export class CLIApp extends React.Component<
                 rawAssetsImported,
                 rootAssetsPath,
             }))
-        }).then(() => {
+        })
+        // TODO: See if we can refactor the options generation logic so that we don't need separate setState calls
+        .then(() => {
             // TODO: this seems to work, but see if chaining these state updates in subsequent .then calls is safe
             this.setState(prevState => ({
-                options: [
-                    ...prevState.options,
-                    ...this.deriveMenuOptionsFromCacheValues()
-                ]
+                ...prevState,
+                options: this.stitchOptionsArrays({
+                    optionsArr1: prevState.options,
+                    optionsArr2: this.deriveMenuOptionsFromCacheValues()
+                })
             }))
         })
+    } 
+
+    componentDidMount() {
+        this.obtainMenuOptions()
     }
 
     /**
@@ -159,80 +186,106 @@ export class CLIApp extends React.Component<
             ...this.state,
             rootAssetsPath: assetsPath,
         })
-        this.setState(prevState => ({
-            ...prevState,
-            options: [
-                ...this.state.options,
-                {
-                    label: `Bootstrap page objects`,
-                    value: OPTION_VALUE.BOOTSTRAP_DATA
-                }
-            ]
-        }))
         this.clearSelectedOptionHandler()
     }
 
     /**
-     * Handler to clear the currently-selected "main menu" option
+     * Clears the selected option from the CLIApp state
      * 
-     * This is used to control the visibility of the child components. When nothing
-     * is selected, the main menu is rendered. When an option is selected, the selected
-     * option's specific component is rendered instead of the menu
+     * This method is used to "return" to the main menu from a sub-component. When no
+     * option is selected, the main menu displays by default
      */
-    clearSelectedOptionHandler = () => this.setState({
+    clearSelectedOptionHandler = () => this.setState(prevState => ({
         ...this.state,
+        options: this.stitchOptionsArrays({
+            optionsArr1: prevState.options,
+            optionsArr2: this.deriveMenuOptionsFromCacheValues()
+        }),
         selectedOption: undefined
-    })
+    }))
 
-    // TODO: Add an actual context
     /**
-     * Sets the selected option in the state of the CLIApp (effectively a "context"-level value)
+     * Helper method to decide if the given option already exists in the given options
+     * array
      * 
-     * @param param0 
+     * @returns     `true`, if the given `option` already exists in the given `options` array, otherwise `false`
      */
-    async menuSelectHandler(item: { label: string, value: OPTION_VALUE }) {
-        switch (item.value) {
-            case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
-                this.setState({
-                    ...this.state,
-                    selectedOption: item.value
-                })
-                break
+    isDuplicateOption(args: { option: MenuOption, options: MenuOption[] }) {
+        for(var i = 0; i < args.options.length; i++) {
+            if (args.options[i].value === args.option.value) {
+                return true
             }
-            case OPTION_VALUE.INSPECT_DATA: {
-                this.setState({
-                    ...this.state,
-                    selectedOption: item.value
-                })
-                break
+        }
+        return false
+    }
+
+    /**
+     * Stiches together two options array into a single array without any duplicate options
+     * 
+     * @param args 
+     * @returns 
+     */
+    stitchOptionsArrays = (args: {optionsArr1: MenuOption[], optionsArr2: MenuOption[]}) => {
+        const rawOptionsArray = [
+            ...args.optionsArr1,
+            ...args.optionsArr2
+        ]
+
+        // Array with duplicates removed
+        const prunedOptionsArray = [] as MenuOption[]
+
+        rawOptionsArray.forEach((option) => {
+            if (!this.isDuplicateOption({
+                option,
+                options: prunedOptionsArray
+            })) {
+                prunedOptionsArray.push(option)
             }
-            case OPTION_VALUE.IMPORT_DATA: {
-                // Don't change menu layout for this; we should already have the assets directory set AND the raw data
-                break
-            }
+        })
+
+        return prunedOptionsArray
+    }
+
+    /**
+     * Menu item select handler
+     * 
+     * Decides what to do based on the user's collection.
+     * 
+     * @param option  The option that the user selected
+     */
+    async menuSelectHandler(option: { label: string, value: OPTION_VALUE }) {
+        switch (option.value) {
+            /**
+             * The bootstrap operation has no associated menu - it's simply an operation that runs
+             * on the imported raw assets data
+             */
             case OPTION_VALUE.BOOTSTRAP_DATA: {
                 await CACHE_CLIENT.parseImportedData()
                 break
             }
+            default: {
+                this.setState({
+                    ...this.state,
+                    selectedOption: option.value
+                })
+            }
         }
+        this.obtainMenuOptions()
     }
-
-    // Only used whenever we need to remove an option from the menu
-    overrideMenuOptions = (options: { label: string, value: string }[]) => this.setState({
-        ...this.state,
-        options
-    })
 
     /**
      * Returns true if the user has a currently-selected Main Menu option
      * 
      * We should use this to control the visibility of the MainMenu component. When an option
-     * is selected, we should render that option-specific component
+     * is selected, we render that option-specific component
      */
     hasSelectedOption = () => (this.state.selectedOption && this.state.selectedOption.length > 0)
 
     /**
      * Renders a sub-menu/form/page depending on the current selection
+     * 
+     * This method is responsible for deciding which sub-component to render based
+     * on the currently-selected option
      */
     renderSelectedOptionMenu = () => {
         switch(this.state.selectedOption) {
@@ -242,14 +295,14 @@ export class CLIApp extends React.Component<
                             setRootAssetsPathHandler={this.setRootAssetsPathHandler.bind(this)}
                         />
             }
-            case OPTION_VALUE.IMPORT_DATA: {
-
-            }
             case OPTION_VALUE.INSPECT_DATA: {
                 return (
                     <>
                     </>
                 )
+            }
+            case OPTION_VALUE.VIEW_PARSED_DATA: {
+                return <InspectParsedData clearSelectedOptionHandler={this.clearSelectedOptionHandler.bind(this)}/>
             }
             default: {
                 return (
@@ -274,13 +327,6 @@ export class CLIApp extends React.Component<
                     <Box marginLeft={1}>
                         <Text>Assets path: {this.state.rootAssetsPath ? this.state.rootAssetsPath : `-`}</Text>
                     </Box>
-                    {/* TODO: Make these checks listen to booleans in the state - state can't be tied to the data as we can't reliably set-and-get (it's weirdly async - can't be awaited) */}
-                    {/* <Box marginLeft={1}>
-                        <Text>Data imported: {this.state.rawData ? <Text> ✔️</Text> : <Text> ✖️</Text>}</Text>
-                    </Box>
-                    <Box marginLeft={1}>
-                        <Text>Data parsed: {this.state.parsedData ? <Text> ✔️</Text> : <Text> ✖️</Text>}</Text>
-                    </Box> */}
                 </Layout>
             </>
         )
