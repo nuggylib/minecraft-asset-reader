@@ -2,6 +2,8 @@
 
 A simple tool to read in assets from any valid texture pack directory (should be named `assets`)
 
+![image](https://user-images.githubusercontent.com/29762984/112695623-71a47d80-8e52-11eb-999a-78c856b3fadb.png)
+
 > It seems you **must** use NPM in order to link the packages.
 
 ## Get started
