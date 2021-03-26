@@ -2,6 +2,7 @@ import { CACHE } from "../cache/cacheClient";
 import mkdirp from "mkdirp"
 import { ParsedData } from "../types";
 import { writeFileSync } from "fs";
+import { forEach } from "lodash";
 
 const DEFAULT_WRITE_PATH = `./generated/`
 
@@ -60,6 +61,21 @@ export class Exporter {
         baseWritePath: string,
     }) {
         // TODO: Larah - complete this method :)
+        const namespaces = Object.keys(args.parsedData)
+        namespaces.forEach((namespace => {
+            const {
+                blockPages,
+                itemPages
+            } = args.parsedData[namespace]
+
+            blockPages?.forEach(blockPage => {
+                writeFileSync(`${args.baseWritePath}/${blockPage.title}.json`, JSON.stringify(blockPage))
+            })
+
+            itemPages?.forEach(itemPage => {
+                writeFileSync(`${args.baseWritePath}/${itemPage.title}.json`, JSON.stringify(itemPage))
+            })
+        }))
     }
 
 }

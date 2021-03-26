@@ -65,6 +65,10 @@ class CacheClient {
         const rootAssetsPath = await CACHE.getRootAssetsPath()
         // The namespaces detected in the raw data passed-in to this method (NOT the data from the cache)
         const namespaces = Object.keys(rawAssetsData)
+        // If you're using this tool with a vanilla Minecraft installation,
+        // there will be only one namespace: minecraft. There may be more
+        // namespaces in circumstances, such as mod packs. In which case,
+        // there will be a namespace for each mod. 
         namespaces.forEach(namespace => {
             rawData = {
                 [namespace]: {
@@ -237,7 +241,7 @@ class CacheClient {
                     texturesForBlockModel = loadTexturesFromElements({ namespace: namespace, blockModelFileName })
                 }
             } catch (e) {
-                console.warn(`Encountered model file with unddefined textures field - this is not necessarily a problem - skipping loading textures for model file '${blockModelFileName}'`)
+                console.warn(`Encountered model file with undefined textures field - this is not necessarily a problem - skipping loading textures for model file '${blockModelFileName}'`)
             }
             /**
              * The list of maching blocks for the current blockModelName
