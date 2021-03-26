@@ -6,6 +6,7 @@ import { Text } from 'ink';
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm";
 import { CACHE, CACHE_CLIENT } from "./cache/cacheClient";
 import { InspectParsedData } from "./components/InspectParsedData";
+import { Exporter } from "./export/exporter";
 
 const enum OPTION_VALUE {
     SET_ASSETS_DIRECTORY = "set_assets_directory",
@@ -261,6 +262,11 @@ export class CLIApp extends React.Component<
              */
             case OPTION_VALUE.BOOTSTRAP_DATA: {
                 await CACHE_CLIENT.parseImportedData()
+                break
+            }
+            case OPTION_VALUE.EXPORT_PARSED_DATA_JSON: {
+                const success = await new Exporter().exportParsedDataToLocalFilesystem({})
+                console.log(`Export succeeded: `, success)
                 break
             }
             default: {
