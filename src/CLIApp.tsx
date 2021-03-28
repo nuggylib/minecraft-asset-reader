@@ -7,6 +7,7 @@ import { SetAssetsPathForm } from "./components/SetAssetsPathForm";
 import { CACHE, CACHE_CLIENT } from "./cache/cacheClient";
 import { InspectParsedData } from "./components/InspectParsedData";
 import { Exporter } from "./export/exporter";
+import { ExportParsedData } from "./components/ExportParsedData";
 
 const enum OPTION_VALUE {
     SET_ASSETS_DIRECTORY = "set_assets_directory",
@@ -15,7 +16,7 @@ const enum OPTION_VALUE {
     BOOTSTRAP_DATA = "bootstrap_data",
     VIEW_RAW_DATA = "view_raw_data",
     VIEW_PARSED_DATA = "view_parsed_data",
-    EXPORT_PARSED_DATA_JSON = "export_parsed_to_json"
+    EXPORT_PARSED_DATA = "export_parsed_data"
 }
 
 const enum SUPPORTED_SAVE_LOCATIONS {
@@ -103,8 +104,8 @@ export class CLIApp extends React.Component<
                 value: OPTION_VALUE.VIEW_PARSED_DATA
             })
             options.push({
-                label: `Export parsed data to JSON`,
-                value: OPTION_VALUE.EXPORT_PARSED_DATA_JSON
+                label: `Export parsed data`,
+                value: OPTION_VALUE.EXPORT_PARSED_DATA
             })
         }
 
@@ -264,11 +265,7 @@ export class CLIApp extends React.Component<
                 await CACHE_CLIENT.parseImportedData()
                 break
             }
-            case OPTION_VALUE.EXPORT_PARSED_DATA_JSON: {
-                const success = await new Exporter().exportParsedDataToLocalFilesystem({})
-                console.log(`Export succeeded: `, success)
-                break
-            }
+            
             default: {
                 this.setState({
                     ...this.state,
@@ -309,6 +306,11 @@ export class CLIApp extends React.Component<
             }
             case OPTION_VALUE.VIEW_PARSED_DATA: {
                 return <InspectParsedData clearSelectedOptionHandler={this.clearSelectedOptionHandler.bind(this)}/>
+            }
+            case OPTION_VALUE.EXPORT_PARSED_DATA: {
+                // Return a componet that allows the user to specify whether
+                // they want separate block page files or a single JSON file
+                return <ExportParsedData clearSelectedOptionHandler={this.clearSelectedOptionHandler.bind(this)} />
             }
             default: {
                 return (

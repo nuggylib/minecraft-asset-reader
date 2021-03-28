@@ -5,7 +5,10 @@ import { ArrayTextBlock } from "./shared/ArrayTextBlock"
 import { Tab } from "./shared/Tab"
 
 
-
+/**
+ * This component renders each BlockPage when the
+ * user displays the parsed data. 
+ */
 export class NamespaceParsedBlockData extends React.Component<
 {
     // props
