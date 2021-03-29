@@ -4,31 +4,33 @@ import { BlockPage } from "../types"
 import { ArrayTextBlock } from "./shared/ArrayTextBlock"
 import { Tab } from "./shared/Tab"
 
-
 /**
  * This component renders each BlockPage when the
- * user displays the parsed data. 
+ * user displays the parsed data.
  */
 export class NamespaceParsedBlockData extends React.Component<
-{
+  {
     // props
     blockPage: BlockPage
-}, 
-{
+  },
+  {
     // state
-}> {
-    render() {
+  }
+> {
+  render() {
+    const {
+      title,
+      // textureNames
+    } = this.props.blockPage
 
-        const {
-            title,
-            textureNames
-        } = this.props.blockPage
-
-        return (
-            <>
-                <Text bold><Tab count={2}/>{title}</Text>
-                <ArrayTextBlock label={"Texture file names"} nestingDepth={2} array={textureNames}/>
-            </>
-        )
-    }
+    return (
+      <>
+        <Text bold>
+          <Tab count={2} />
+          {title}
+        </Text>
+        {/* <ArrayTextBlock label={"Texture file names"} nestingDepth={2} array={textureNames}/> */}
+      </>
+    )
+  }
 }
