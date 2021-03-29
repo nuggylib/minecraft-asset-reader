@@ -47,10 +47,6 @@ export default class AppCache {
     }
 
     // Add the base-64 strings for the JSON objects
-    // const res = this.diskCache.set(
-    //   KEYS.PARSED_DATA,
-    //   this.convertJsonToBase64({ json: parsedData }),
-    // )
     const res = this.cache.set(
       KEYS.PARSED_DATA,
       this.convertJsonToBase64({ json: parsedData })

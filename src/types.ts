@@ -90,22 +90,9 @@ export type BlockPage = {
    */
   description?: string
   /**
-   * The image to upload as the block pages main image
+   * The image to upload as the block pages main image (base64 string)
    */
-  icon?: Buffer
-  /**
-   * A list of the texture names associated with this Block.
-   *
-   * If this array is empty, then we know that this Block doesn't have textures made specifically for it,
-   * but rather reuses textures made for other models.
-   */
-  textureNames: string[]
-  /**
-   * An object containing texture files that this block uses
-   */
-  textures: {
-    [fileName: string]: string
-  }
+  icon?: string
 }
 
 /**
@@ -133,6 +120,40 @@ export type ItemPage = {
    * A list of texture files that this item uses
    */
   textures: Buffer[]
+}
+
+export type BlockIconData = {
+  top: string
+  sideL: string
+  sideR: string
+}
+
+export type ConfiguredBlock = {
+  /**
+   * The "production-ready" name for the block, e.g., `Acacia Log`
+   */
+  title: string
+  iconData: BlockIconData
+}
+
+/**
+ * Controls what content actually gets parsed for your site (so you don't have to sift through tons of potential junk data -
+ * e.g., blocks with complex shapes often have multiple "block" definitions that are actually just part of a larger model.
+ * You most likely don't want these in your final site).
+ */
+export type ContentMap = {
+  /**
+   * You should have a namespace for each one you have in your assets directory
+   */
+  [namespace: string]: {
+    blocks: {
+      /**
+       * Key-value pair; block name (e.g., `acacia_log`) as the key,
+       * relevant block data as the value
+       */
+      [block: string]: ConfiguredBlock
+    }
+  }
 }
 
 export type ParsedNamespaceData = {

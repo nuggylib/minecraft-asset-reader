@@ -1,6 +1,10 @@
 import { readFileSync } from "fs"
 import { CACHE } from "../main"
-import { ParsedData } from "../types"
+import { ContentMap, ParsedData } from "../types"
+import {
+  LIGHT_DIRECTION,
+  MinecraftBlockRenderer,
+} from "./minecraftBlockRenderer"
 import { BlockModelData } from "./types"
 
 /**
@@ -11,13 +15,24 @@ import { BlockModelData } from "./types"
  * and readBlockData files.
  */
 export class MinecraftAssetReader {
-  // TODO: Find way to group related blocks (e.g., planks, bark, logs)
+  contentMap: ContentMap
+  blockRenderer: MinecraftBlockRenderer
+
+  constructor() {
+    const buf = readFileSync(
+      `/home/mcnuggies/Repos/GitHub/nuggy-lib/minecraft-asset-reader/sample_map.json`,
+      `utf-8`
+    )
+    this.contentMap = JSON.parse(buf)
+    console.log(`CONTENT MAP: `, this.contentMap)
+    this.blockRenderer = new MinecraftBlockRenderer()
+  }
+
   /**
    * Controlling method to handle the entire "parse data" operation
    */
   async parseRawData() {
     await this.parseModelData()
-    await this.parseTextures()
   }
 
   /**
@@ -55,9 +70,8 @@ export class MinecraftAssetReader {
 
   private async parseModelData() {
     const newParsedData = {} as ParsedData
-    const rawData = await CACHE.getRawDataFromCache()
-    const namespaces = Object.keys(rawData)
-    namespaces.forEach((namespace) => {
+    const mappedNamespaces = Object.keys(this.contentMap)
+    mappedNamespaces.forEach((namespace) => {
       // Init the namespace fields
       if (!newParsedData[namespace]) {
         newParsedData[namespace] = {
@@ -66,18 +80,23 @@ export class MinecraftAssetReader {
         }
       }
 
-      const { block, item } = rawData[namespace].model
-
-      const blockModelNames = Object.keys(block)
+      const blockModelNames = Object.keys(this.contentMap[namespace].blocks)
       blockModelNames.forEach((name) => {
-        newParsedData[namespace].blockPages?.push({
-          title: name,
-          description: ``,
-          textureNames: this.getTextureNamesFromRawBlockData({
-            blockData: block[name],
-          }),
-          textures: {},
-        })
+        this.blockRenderer
+          .drawBlockPageIcon({
+            namespace,
+            blockKey: name,
+            blockIconData: this.contentMap[namespace].blocks[name].iconData,
+            lightDirection: LIGHT_DIRECTION.LEFT, // Unused right now
+          })
+          .then((iconBase64) => {
+            newParsedData[namespace].blockPages?.push({
+              title: name,
+              description: ``,
+              icon: iconBase64,
+            })
+            return CACHE.setCachedParsedData(newParsedData)
+          })
       })
     })
     await CACHE.setCachedParsedData(newParsedData)
@@ -93,13 +112,13 @@ export class MinecraftAssetReader {
     namespaces.forEach((namespace) => {
       // Load block page textures
       parsedData[namespace].blockPages?.forEach((blockPage) => {
-        blockPage.textureNames.forEach((textureName) => {
-          if (!textureName.includes(`#`)) {
-            const path = `${assetsPath}/${namespace}/textures/${textureName}.png`
-            const buffer = readFileSync(path)
-            blockPage.textures[textureName] = buffer.toString(`base64`)
-          }
-        })
+        // blockPage.textureNames.forEach((textureName) => {
+        //   if (!textureName.includes(`#`)) {
+        //     const path = `${assetsPath}/${namespace}/textures/${textureName}.png`
+        //     const buffer = readFileSync(path)
+        //     blockPage.textures[textureName] = buffer.toString(`base64`)
+        //   }
+        // })
       })
     })
     await CACHE.setCachedParsedData(parsedData)
