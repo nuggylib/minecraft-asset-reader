@@ -1,6 +1,6 @@
 {
   "name": "minecraft-asset-reader",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "Read in textures from a minecraft texture pack",
   "main": "out/CLIApp.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "reset": "rm -rf out/ && npm run build",
+    "reset": "rm -rf out/ generated/ && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
