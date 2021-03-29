@@ -116,17 +116,18 @@ export class AppCache {
         // console.log(`SET CACHED RAW DATA RESPONSE: `, response)
     }
 
-    // TODO: Figure out why the logging here only displays on the second run (something with the async stuff, I'm sure)
+    /**
+     * Update the cached parsed data with the given parsed data object
+     * 
+     * This method handles merging the data from the "old" parsed data
+     * with the updated one, so that data is not overwritten and kept
+     * up-to-date.
+     * 
+     * @param updatedParsedDataObject 
+     * @returns 
+     */
     async setCachedParsedData(updatedParsedDataObject: ParsedData) {
         const cachedParsedData = await this.getParsedDataFromCache()
-
-        Object.keys(cachedParsedData).forEach(namespace => {
-            const blockPageCount = cachedParsedData[namespace].blockPages!.length
-            const itemPageCount = cachedParsedData[namespace].itemPages!.length
-
-            console.log(`BLOCK PAGE COUNT: `, blockPageCount)
-            console.log(`ITEM PAGE COUNT: `, itemPageCount)
-        })
 
         const updatedParsedData = {
             ...cachedParsedData,
@@ -137,7 +138,6 @@ export class AppCache {
             KEYS.PARSED_DATA,
             updatedParsedDataBase64
         )
-        // console.log(`SET CACHED PARSED DATA RESPONSE: `, response)
         return response
     }
 

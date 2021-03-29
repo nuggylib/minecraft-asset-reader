@@ -21,16 +21,12 @@ export class NamespaceParsedBlockData extends React.Component<
 
         const {
             title,
-            models,
-            variantModelNames,
             textureNames
         } = this.props.blockPage
 
         return (
             <>
                 <Text bold><Tab count={2}/>{title}</Text>
-                <ArrayTextBlock label={"Model file names"} nestingDepth={2} array={models}/>
-                <ArrayTextBlock label={"Variant model file names"} nestingDepth={2} array={variantModelNames ? variantModelNames : []}/>
                 <ArrayTextBlock label={"Texture file names"} nestingDepth={2} array={textureNames}/>
             </>
         )

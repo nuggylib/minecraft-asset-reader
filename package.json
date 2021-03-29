@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "reset": "rm -rf out/ && npm run build",
+    "reset": "rm -rf out/ generated/ && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

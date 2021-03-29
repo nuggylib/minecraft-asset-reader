@@ -1,6 +1,6 @@
 // This file only contains types that are used when uploading data to a CMS
 
-import { BlockBlockstateData, BlockModelData, BlockstateMultipartCase, ItemModelData } from "./minecraft/types"
+import { BlockBlockstateData, BlockModelData, ItemModelData } from "./minecraft/types"
 
 // Defines the Int type
 export type Int = number & { __int__: void };
@@ -82,25 +82,13 @@ export type BlockPage = {
      */
     title: string
     /**
-     * The image to upload as the block pages main image
-     */
-    icon?: Buffer
-    /**
-     * A list of model file names that this block uses
-     */
-    models: string[]
-    /**
      * Description of this block (set by the user in a CMS, ideally)
      */
     description?: string
     /**
-     * The list of texture names referenced in the blockstates file.
-     * 
-     * Will be empty when:
-     * 1. This block doesn't use a blockstates file (the only place 'varaints' is defined)
-     * 2. This block's blockstate file uses 'multipart'
+     * The image to upload as the block pages main image
      */
-    variantModelNames?: string[]
+    icon?: Buffer
     /**
      * A list of the texture names associated with this Block.
      * 
@@ -114,14 +102,6 @@ export type BlockPage = {
     textures: {
         [fileName: string]: string
     }
-    /**
-     * A list of multipart JSON objects that this block uses
-     * 
-     * Will be empty when:
-     * 1. This block doesn't use a blockstates file (the only place 'multipart' is defined)
-     * 2. This block's blockstate file uses 'variants'
-     */
-    multipartCases: BlockstateMultipartCase[]
 }
 
 /**
@@ -151,9 +131,11 @@ export type ItemPage = {
     textures: Buffer[]
 }
 
+export type ParsedNamespaceData = {
+    blockPages?: BlockPage[],
+    itemPages?: ItemPage[]
+}
+
 export type ParsedData = {
-    [namespace: string]: {
-        blockPages?: BlockPage[],
-        itemPages?: ItemPage[]
-    }
+    [namespace: string]: ParsedNamespaceData
 }
