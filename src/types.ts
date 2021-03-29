@@ -140,6 +140,11 @@ export type ParsedNamespaceData = {
   itemPages?: ItemPage[]
 }
 
+export type ParsedNamespaceData = {
+    blockPages?: BlockPage[],
+    itemPages?: ItemPage[]
+}
+
 export type ParsedData = {
   [namespace: string]: ParsedNamespaceData
 }
