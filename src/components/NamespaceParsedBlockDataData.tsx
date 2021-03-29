@@ -5,7 +5,7 @@ import { Tab } from "./shared/Tab"
 import { ArrayTextBlock } from "./shared/ArrayTextBlock"
 
 export const NamespaceParsedBlockData = (props: { blockPage: BlockPage }) => {
-  const { title, textureNames } = props.blockPage
+  const { title } = props.blockPage
 
   return (
     <>
@@ -16,7 +16,7 @@ export const NamespaceParsedBlockData = (props: { blockPage: BlockPage }) => {
       <ArrayTextBlock
         label={`Texture file names`}
         nestingDepth={2}
-        array={textureNames}
+        array={[]} // TODO - remove this since we do things differently now
       />
     </>
   )
