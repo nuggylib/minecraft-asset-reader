@@ -1,80 +1,52 @@
-import { Box, Text } from "ink"
 import React from "react"
+import { useState, useEffect } from "react"
 import { CACHE } from "../cache/cacheClient"
-import { BlockPage, ParsedData } from "../types"
-import { NamespaceParsedBlockData } from "./NamespaceParsedData"
-import TextInput from 'ink-text-input';
-export class InspectParsedData extends React.Component<
-{
-    // props
-    clearSelectedOptionHandler: () => void
-},
-{
-    // state
-    parsedData: ParsedData
-    input: string
-}> {
+import { ParsedData, BlockPage } from "../types"
+import { Box, Text } from "ink"
+import TextInput from "ink-text-input"
+import { useParsedData } from "../hooks"
+import { NamespaceParsedBlockData } from "./NamespaceParsedBlockDataData"
 
-    constructor(props: any) {
-        super(props)
-        this.state = {
-            input: ``,
-            parsedData: {}
-        }
+export const InspectParsedData = (props: {
+  clearSelectedOptionHandler: () => void
+}) => {
+  const [input, setInput] = useState(``)
+  const parsedData = useParsedData({})
+
+  const submitHandler = (value: string) => {
+    if (value === `q`) {
+      props.clearSelectedOptionHandler()
     }
+  }
 
-    /**
-     * Decides what to do after the user has submitted their input
-     * 
-     * @param value 
-     */
-    submitHandler(value: string) {
-        if(value === `q`) {
-            this.props.clearSelectedOptionHandler()
-        }
-    }
-
-    setInputHandler = (input: any) => {
-        this.setState({
-            ...this.state,
-            input
-        })
-    }
-
-    componentDidMount() {
-        CACHE.getParsedDataFromCache().then(parsedData => this.setState( prevState => ({
-            ...prevState,
-            parsedData,
-        })))
-    }
-
-    render() {
-        
-        const {
-            parsedData
-        } = this.state
-
-        // Array of namespaces in the parsed data
-        const parsedDataNamespaces = Object.keys(parsedData)
-
-        return (
-            <>
-            {(parsedDataNamespaces.length > 0) ?  
-                parsedDataNamespaces.map(namespace => (
-                    <Box key={namespace} flexDirection="column">
-                        <Text color="magentaBright" bold>{namespace}</Text>
-                        {parsedData[namespace].blockPages ? 
-                            parsedData[namespace].blockPages!.map((blockPage: BlockPage) => <NamespaceParsedBlockData blockPage={blockPage} />)
-                        : null }
-                    </Box>
+  const parsedDataNamespaces = Object.keys(parsedData) || []
+  return (
+    <>
+      {parsedDataNamespaces.length > 0 ? (
+        parsedDataNamespaces.map((namespace) => (
+          <Box key={namespace} flexDirection="column">
+            <Text color="magentaBright" bold>
+              {namespace}
+            </Text>
+            {parsedData[namespace].blockPages
+              ? parsedData[namespace].blockPages!.map((page: BlockPage) => (
+                  <NamespaceParsedBlockData blockPage={page} />
                 ))
-            : <Text>NO DATA</Text> }
-            <Box>
-                <Text>What would you like to do: </Text>
-                <TextInput value={this.state.input} onChange={this.setInputHandler} onSubmit={(value: string) => this.submitHandler(value)} placeholder={`enter command`} />
-            </Box>
-            
-        </>
-        )
-    }
+              : null}
+          </Box>
+        ))
+      ) : (
+        <Text>NO DATA</Text>
+      )}
+      <Box>
+        <Text>What would you like to do: </Text>
+        <TextInput
+          value={input}
+          onChange={setInput}
+          onSubmit={(value: string) => submitHandler(value)}
+          placeholder={`enter command`}
+        />
+      </Box>
+    </>
+  )
 }
