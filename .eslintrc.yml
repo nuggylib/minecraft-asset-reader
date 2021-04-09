@@ -1,0 +1,86 @@
+env:
+  browser: true
+  es6: true
+  jest: true
+  node: true
+extends:
+  # - eslint:recommended
+  # - plugin:@typescript-eslint/recommended
+  # - plugin:react/recommended
+  - prettier
+globals:
+  graphql: true
+parser: "@typescript-eslint/parser"
+parserOptions:
+  ecmaFeatures:
+    experimentalObjectRestSpread: true
+    jsx: true
+  ecmaVersion: 2016
+  sourceType: module
+plugins:
+  - "@typescript-eslint"
+  - jsx-a11y
+  - react
+rules:
+  arrow-body-style:
+    - error
+    - as-needed
+    - requireReturnForObjectLiteral: true
+  comma-dangle:
+    - error
+    - arrays: always-multiline
+      exports: always-multiline
+      functions: ignore
+      imports: always-multiline
+      objects: always-multiline
+  jsx-a11y/label-has-for:
+    - 2
+    - required:
+        some:
+          - nesting
+          - id
+  jsx-quotes:
+    - error
+    - prefer-double
+  no-console: "off"
+  new-cap: "off"
+  object-curly-spacing:
+    - error
+    - always
+  prefer-destructuring:
+    - off
+    - array: false
+      object: true
+  quotes:
+    - error
+    - backtick
+    - allowTemplateLiterals: true
+  react/display-name: 0
+  no-invalid-this: 0
+  require-jsdoc: "off"
+  semi:
+    - error
+    - never
+  valid-jsdoc: "off"
+  "@typescript-eslint/no-empty-interface": off
+  "@typescript-eslint/no-unused-vars":
+    - error
+    - { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }
+
+  consistent-return: off
+  react/prop-types:
+    - off
+    - ignore:
+        - children
+  require-yield: off
+
+  # TODO remove these rule overrides (enable error)
+  "@typescript-eslint/camelcase": off
+  "@typescript-eslint/explicit-function-return-type": off
+  "@typescript-eslint/explicit-member-accessibility": off
+  "@typescript-eslint/interface-name-prefix": off
+  "@typescript-eslint/no-explicit-any": off
+  "@typescript-eslint/no-namespace": off
+  "@typescript-eslint/no-use-before-define": off
+  "@typescript-eslint/no-var-requires": off
+  // "no-restricted-globals": off

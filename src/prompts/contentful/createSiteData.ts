@@ -1,17 +1,30 @@
 import inquirer from "inquirer"
-import { createContentType, createContentTypeEntry, createSpace, FIELD_TYPE, getBlockModelId, getEnvironments, LINK_TYPE, publishContentType, setBlockModelId, setSpaceId } from "../../cms-client/contentful/contentful"
+import {
+  createContentType,
+  createContentTypeEntry,
+  createSpace,
+  FIELD_TYPE,
+  getBlockModelId,
+  getEnvironments,
+  LINK_TYPE,
+  publishContentType,
+  setBlockModelId,
+  setSpaceId,
+} from "../../cms-client/contentful/contentful"
 import { BLOCK_PAGES } from "../../types"
 
 function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 async function avoidRateLimit() {
-    console.log(`Sleeping for .25 sec to cirvumvent rate limit (7 requests per second)`)
-    await sleep(250)
+  console.log(
+    `Sleeping for .25 sec to cirvumvent rate limit (7 requests per second)`
+  )
+  await sleep(250)
 }
 
-// export const createSiteDataPrompt = ({ organizationId } : { organizationId: string } ) => 
+// export const createSiteDataPrompt = ({ organizationId } : { organizationId: string } ) =>
 // inquirer.prompt([
 //     {
 //         type: 'input',

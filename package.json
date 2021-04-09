@@ -9,7 +9,9 @@
   "scripts": {
     "build": "tsc",
     "reset": "rm -rf out/ generated/ && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint:commit": "prettier-eslint \"src/**/*.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
   },
   "homepage": "https://github.com/nuggylib/minecraft-asset-reader#readme",
   "devDependencies": {
+    "@emotion/eslint-plugin": "^11.2.0",
     "@types/ink-big-text": "^1.2.0",
     "@types/ink-divider": "^2.0.1",
     "@types/ink-gradient": "^2.0.1",
@@ -33,6 +36,20 @@
     "@types/node-fetch": "^2.5.8",
     "@types/react": "^17.0.3",
     "@types/redis": "^2.8.28",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^6.0.0",
+    "prettier": "^2.2.1",
+    "prettier-eslint-cli": "^5.0.1",
     "ts-node": "^9.1.1",
     "typedoc": "^0.20.30",
     "typescript": "^4.2.3"
