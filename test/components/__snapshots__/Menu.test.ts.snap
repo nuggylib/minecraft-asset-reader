@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+Array [
+  <ink-box
+    style={
+      Object {
+        "flexDirection": "row",
+        "flexGrow": 0,
+        "flexShrink": 1,
+        "marginBottom": 0,
+        "marginLeft": 1,
+        "marginRight": 0,
+        "marginTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+      }
+    }
+  >
+    <ink-text
+      internal_transform={[Function]}
+      style={
+        Object {
+          "flexDirection": "row",
+          "flexGrow": 0,
+          "flexShrink": 1,
+          "textWrap": "wrap",
+        }
+      }
+    >
+      TEST
+    </ink-text>
+  </ink-box>,
+  <ink-box
+    style={
+      Object {
+        "flexDirection": "column",
+        "flexGrow": 0,
+        "flexShrink": 1,
+        "marginBottom": 0,
+        "marginLeft": 0,
+        "marginRight": 0,
+        "marginTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "paddingTop": 0,
+      }
+    }
+  >
+    <ink-box
+      style={
+        Object {
+          "flexDirection": "row",
+          "flexGrow": 0,
+          "flexShrink": 1,
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "paddingTop": 0,
+        }
+      }
+    >
+      <ink-box
+        style={
+          Object {
+            "flexDirection": "row",
+            "flexGrow": 0,
+            "flexShrink": 1,
+            "marginBottom": 0,
+            "marginLeft": 0,
+            "marginRight": 1,
+            "marginTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 0,
+          }
+        }
+      >
+        <ink-text
+          internal_transform={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "flexGrow": 0,
+              "flexShrink": 1,
+              "textWrap": "wrap",
+            }
+          }
+        >
+          ❯
+        </ink-text>
+      </ink-box>
+      <ink-text
+        internal_transform={[Function]}
+        style={
+          Object {
+            "flexDirection": "row",
+            "flexGrow": 0,
+            "flexShrink": 1,
+            "textWrap": "wrap",
+          }
+        }
+      >
+        Test label
+      </ink-text>
+    </ink-box>
+  </ink-box>,
+]
+`;

@@ -1,7 +1,6 @@
 import React from "react"
 import SelectInput from "ink-select-input"
 import { Box, Text } from "ink"
-import { OPTION_VALUE } from "../../CLIApp"
 
 export const Menu = (props: {
   title: string
