@@ -11,12 +11,12 @@ export const Menu = (props: {
   }[]
   onSelectHandler: (option: { label: string; value: string }) => void
 }) => (
-    <>
-      <Box marginLeft={1}>
-        <Text bold color="blue">
-          {props.title}
-        </Text>
-      </Box>
-      <SelectInput items={props.options} onSelect={props.onSelectHandler} />
-    </>
-  )
+  <>
+    <Box marginLeft={1}>
+      <Text bold color="blue">
+        {props.title}
+      </Text>
+    </Box>
+    <SelectInput items={props.options} onSelect={props.onSelectHandler} />
+  </>
+)
