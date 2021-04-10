@@ -3,7 +3,7 @@ import { CACHE } from "../cache/cacheClient"
 import { ParsedData } from "../types"
 
 export const useParsedData = (props: { watch?: any }) => {
-  const [parsedData, setParsedData] = useState({} as ParsedData)
+  const [parsedData, setParsedData] = useState((null as unknown) as ParsedData)
 
   useEffect(() => {
     CACHE.getParsedDataFromCache().then((parsedData) => {
