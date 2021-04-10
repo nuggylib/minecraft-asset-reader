@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react"
 import { ParsedData, RawAssetData } from "../types"
 
-const enum OPTION_VALUE {
+export const enum OPTION_VALUE {
   SET_ASSETS_DIRECTORY = `set_assets_directory`,
-  IMPORT_DATA = `import_data`,
-  INSPECT_DATA = `inspect_data`,
   BOOTSTRAP_DATA = `bootstrap_data`,
   VIEW_RAW_DATA = `view_raw_data`,
   VIEW_PARSED_DATA = `view_parsed_data`,
@@ -12,12 +10,13 @@ const enum OPTION_VALUE {
 }
 
 export const useMenuOptions = (props: {
-  parsedData: ParsedData
-  rawData: RawAssetData
+  parsedData?: ParsedData
+  rawData?: RawAssetData
+  // Will never be null, just empty when unset
   rawAssetsPath: string
 }) => {
   const [options, setOptions] = useState(
-    [] as { label: string; value: string }[]
+    [] as { label: string; value: OPTION_VALUE }[]
   )
 
   useEffect(() => {
@@ -60,7 +59,12 @@ export const useMenuOptions = (props: {
     }
 
     setOptions(array)
-  }, [props.parsedData, props.rawAssetsPath, props.rawData])
+  }, [
+    // We don't want to re-render any time the underlying object changes; just when this goes from falsy to truthy
+    !!props.parsedData,
+    !!props.rawData,
+    props.rawAssetsPath,
+  ])
 
   return options
 }
