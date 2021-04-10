@@ -1,5 +1,5 @@
 import React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   useMenuOptions,
   useParsedData,
@@ -87,14 +87,14 @@ export const CLIApp = () => {
        * on the imported raw assets data
        */
       case OPTION_VALUE.BOOTSTRAP_DATA: {
-        // TODO: (BUG) Fix this so that it triggers the menu to update and all options render when they should
         CACHE_CLIENT.parseImportedData()
+          // De-select the selected option once the parse is complete
+          .then(() => setSelectedOption((null as unknown) as string))
         break
       }
-      default: {
-        setSelectedOption(option.value)
-      }
     }
+    // Always set the selected option, even if there is no GUI to render for the option
+    setSelectedOption(option.value)
   }
 
   return (
