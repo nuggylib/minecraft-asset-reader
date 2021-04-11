@@ -1,9 +1,10 @@
 import React from "react"
 import { useState } from "react"
-import { CACHE, CACHE_CLIENT } from "../cache/cacheClient"
+import { CACHE_CLIENT } from "../cache/cacheClient"
 import { generateRawData, validatesAssetsDirectory } from "../minecraft"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
+import { CACHE } from "../main"
 
 export const SetAssetsPathForm = (props: {
   clearSelectedOptionHandler: () => void
@@ -13,7 +14,7 @@ export const SetAssetsPathForm = (props: {
 
   const submitHandler = (value: string) => {
     if (value !== `q`) {
-      CACHE.setRootAssetsPath(input).then(() => {
+      CACHE.setRootAssetsPath(input).then((res) => {
         generateRawData({
           path: input,
           setRawDataHandler: CACHE_CLIENT.setRawData,

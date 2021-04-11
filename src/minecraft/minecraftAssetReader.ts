@@ -1,5 +1,5 @@
 import { readFileSync } from "fs"
-import { CACHE } from "../cache/cacheClient"
+import { CACHE } from "../main"
 import { ParsedData } from "../types"
 import { BlockModelData } from "./types"
 

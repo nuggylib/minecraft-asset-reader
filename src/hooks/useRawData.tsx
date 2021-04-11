@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { CACHE } from "../cache/cacheClient"
+import { CACHE } from "../main"
 import { RawAssetData } from "../types"
 
 export const useRawData = (props: { watch?: any }) => {
