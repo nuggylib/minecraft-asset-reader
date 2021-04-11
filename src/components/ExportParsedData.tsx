@@ -54,7 +54,7 @@ export const ExportParsedData = (props: {
     }
   }
 
-  const parsedDataNamespaces = Object.keys(parsedData)
+  const parsedDataNamespaces = parsedData ? Object.keys(parsedData) : []
 
   return (
     <>
