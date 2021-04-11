@@ -38,12 +38,14 @@ export const useMenuOptions = (props: {
       })
     }
 
-    if (!!props.rawData) {
-      array.push({
-        label: `View raw data`,
-        value: OPTION_VALUE.VIEW_RAW_DATA,
-      })
-    }
+    // TODO: Enable this when we have a raw data component
+    // if (!!props.rawData) {
+    //   console.log(`RAW DATA WAS DEFINED: `, props.rawData)
+    //   array.push({
+    //     label: `View raw data`,
+    //     value: OPTION_VALUE.VIEW_RAW_DATA,
+    //   })
+    // }
 
     if (!!props.parsedData) {
       array.push(

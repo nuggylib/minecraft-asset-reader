@@ -1,3 +1,4 @@
+import { CACHE } from "../main"
 import { MinecraftAssetReader } from "../minecraft/minecraftAssetReader"
 import {
   readBlockstates,
@@ -5,9 +6,6 @@ import {
   readTextures,
 } from "../minecraft/readBlockData"
 import { RawAssetData } from "../types"
-import { AppCache } from "./appCache"
-
-export const CACHE = new AppCache()
 
 /**
  * Client class to help with more complicated cache operations
@@ -17,10 +15,6 @@ class CacheClient {
 
   constructor() {
     this.minecraftAssetReader = new MinecraftAssetReader()
-  }
-
-  async setRootAssetsPath(rootAssetsPath: string) {
-    return await CACHE.setRootAssetsPath(rootAssetsPath)
   }
 
   /**

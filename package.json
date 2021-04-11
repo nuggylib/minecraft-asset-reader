@@ -84,6 +84,7 @@
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "ngrok": "^3.4.1",
+    "node-cache": "^5.1.2",
     "node-emoji": "^1.10.0",
     "node-fetch": "^2.6.1",
     "open": "^8.0.2",

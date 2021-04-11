@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { AuthServer } from "../server/authServer"
 
+// TODO: This seems fishy - investigate this later (specifically the auth server stuff)
 /**
  * Custom hook to get the ngrok tunnel
  *

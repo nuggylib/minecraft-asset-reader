@@ -1,7 +1,7 @@
-import { CACHE } from "../cache/cacheClient"
 import mkdirp from "mkdirp"
 import { ParsedData } from "../types"
 import { writeFileSync } from "fs"
+import { CACHE } from "../main"
 
 const DEFAULT_WRITE_PATH = `./generated/`
 

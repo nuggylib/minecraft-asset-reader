@@ -1,6 +1,5 @@
-import { readBlockstates } from "../minecraft/readBlockData"
 import { ParsedData, RawAssetData } from "../types"
-import { CacheClient } from "./redisClient"
+import NodeCache from "node-cache"
 
 const enum KEYS {
   RAW_DATA = `raw_data`,
@@ -8,12 +7,16 @@ const enum KEYS {
   ASSETS_PATH = `assets_path`,
 }
 
-export class AppCache {
+export default class AppCache {
   // The client to facilitate interactions with the underlying redis store
-  redisClient = new CacheClient()
+  // redisClient = new CacheClient()
+  // diskCache
+  cache
 
   constructor() {
-    this.redisClient = new CacheClient()
+    this.cache = new NodeCache()
+
+    // this.redisClient = new CacheClient()
 
     let parsedData: ParsedData
     let rawData: RawAssetData
@@ -44,17 +47,16 @@ export class AppCache {
     }
 
     // Add the base-64 strings for the JSON objects
-    const setBaseParsedDataForNamespaceResponse = await this.redisClient.setAsync(
+    // const res = this.diskCache.set(
+    //   KEYS.PARSED_DATA,
+    //   this.convertJsonToBase64({ json: parsedData }),
+    // )
+    const res = this.cache.set(
       KEYS.PARSED_DATA,
       this.convertJsonToBase64({ json: parsedData })
     )
 
-    // console.log(`SET PARSED DATA RESPOSE: `, setBaseParsedDataForNamespaceResponse)
-
-    const rawDataAfterModification = await this.getRawDataFromCache()
-    // console.log(`UPDATED RAW DATA: `, rawDataAfterModification)
-
-    return setBaseParsedDataForNamespaceResponse
+    return res
   }
 
   /**
@@ -78,8 +80,7 @@ export class AppCache {
   }
 
   async getRawDataFromCache(): Promise<RawAssetData> {
-    const rawDataBase64 = await this.redisClient.getAsync(KEYS.RAW_DATA)
-    // console.log(`GET RAW DATA BASE 64 RESULT: ${rawDataBase64?.substring(0, 11)}...`)
+    const rawDataBase64 = (await this.cache.get(KEYS.RAW_DATA)) as string
     if (rawDataBase64) {
       return this.convertBase64StringToJson({
         jsonBase64: rawDataBase64,
@@ -89,7 +90,7 @@ export class AppCache {
   }
 
   async getParsedDataFromCache(): Promise<ParsedData> {
-    const parsedDataBase64 = await this.redisClient.getAsync(KEYS.PARSED_DATA)
+    const parsedDataBase64 = (await this.cache.get(KEYS.PARSED_DATA)) as string
     if (parsedDataBase64) {
       return this.convertBase64StringToJson({
         jsonBase64: parsedDataBase64,
@@ -107,13 +108,8 @@ export class AppCache {
     const updatedRawDataBase64 = this.convertJsonToBase64({
       json: updatedRawData,
     })
-    // console.log(`SETTING BASE 64 FOR JSON: ${updatedRawDataBase64.substring(0, 11)}...`)
 
-    const response = await this.redisClient.setAsync(
-      KEYS.RAW_DATA,
-      updatedRawDataBase64
-    )
-    // console.log(`SET CACHED RAW DATA RESPONSE: `, response)
+    const response = await this.cache.set(KEYS.RAW_DATA, updatedRawDataBase64)
   }
 
   /**
@@ -136,7 +132,7 @@ export class AppCache {
     const updatedParsedDataBase64 = this.convertJsonToBase64({
       json: updatedParsedData,
     })
-    const response = await this.redisClient.setAsync(
+    const response = await this.cache.set(
       KEYS.PARSED_DATA,
       updatedParsedDataBase64
     )
@@ -144,18 +140,10 @@ export class AppCache {
   }
 
   async setRootAssetsPath(rootAssetsPath: string) {
-    return await this.redisClient.setAsync(KEYS.ASSETS_PATH, rootAssetsPath)
+    return await this.cache.set(KEYS.ASSETS_PATH, rootAssetsPath)
   }
 
   async getRootAssetsPath() {
-    return await this.redisClient.getAsync(KEYS.ASSETS_PATH)
-  }
-
-  async deleteStaleRawData() {
-    return await this.redisClient.delAsync([KEYS.RAW_DATA])
-  }
-
-  async deleteStaleParsedData() {
-    return await this.redisClient.delAsync([KEYS.RAW_DATA])
+    return (await this.cache.get(KEYS.ASSETS_PATH)) as string
   }
 }

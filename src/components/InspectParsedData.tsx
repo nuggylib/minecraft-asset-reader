@@ -18,7 +18,7 @@ export const InspectParsedData = (props: {
     }
   }
 
-  const parsedDataNamespaces = Object.keys(parsedData) || []
+  const parsedDataNamespaces = parsedData ? Object.keys(parsedData) : []
   return (
     <>
       {parsedDataNamespaces.length > 0 ? (

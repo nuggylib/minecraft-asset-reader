@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { CACHE } from "../cache/cacheClient"
+import { CACHE } from "../main"
 
 export const useRawAssetsPath = (props: { watch?: any }) => {
   const [rawAssetsPath, setRawAssetsPath] = useState(
