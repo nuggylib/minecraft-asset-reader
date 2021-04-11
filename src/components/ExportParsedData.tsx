@@ -2,24 +2,42 @@ import React from "react"
 import { useParsedData } from "../hooks"
 import { useState, useEffect } from "react"
 import { Exporter } from "../export/exporter"
-import { Box, Text } from "ink"
-import TextInput from "ink-text-input"
+import { Text } from "ink"
+import { Menu } from "./shared/Menu"
 
 const enum EXPORT_OPTION_VALUE {
-  SAVE_AS_JSON = `save_as_json`,
-  SAVE_AS_FILES = `save_as_files`,
+  SAVE_AS_BULK_FILES = `save_as_bulk_files`,
+  SAVE_AS_SEPARATE_FILES = `save_as_separate_files`,
+  EXIT = `exit`,
 }
+
+const MENU_OPTIONS = [
+  {
+    label: `Save as bulk content files`,
+    value: EXPORT_OPTION_VALUE.SAVE_AS_BULK_FILES,
+  },
+  {
+    label: `Save as separate content files`,
+    value: EXPORT_OPTION_VALUE.SAVE_AS_SEPARATE_FILES,
+  },
+  {
+    label: `Exit`,
+    value: EXPORT_OPTION_VALUE.EXIT,
+  },
+]
 
 export const ExportParsedData = (props: {
   clearSelectedOptionHandler: () => void
 }) => {
   const parsedData = useParsedData({})
-  const [input, setInput] = useState(``)
   const [exportSuccess, setExportSuccess] = useState(false)
 
-  const selectExportDataHandler = (option: string) => {
-    switch (option) {
-      case EXPORT_OPTION_VALUE.SAVE_AS_FILES: {
+  const selectExportDataHandler = (option: {
+    label: string
+    value: string
+  }) => {
+    switch (option.value) {
+      case EXPORT_OPTION_VALUE.SAVE_AS_SEPARATE_FILES: {
         new Exporter()
           .exportParsedDataToLocalFilesystem({
             createSeparatePageFiles: true,
@@ -29,10 +47,14 @@ export const ExportParsedData = (props: {
           })
         break
       }
-      case EXPORT_OPTION_VALUE.SAVE_AS_JSON: {
+      case EXPORT_OPTION_VALUE.SAVE_AS_BULK_FILES: {
         new Exporter().exportParsedDataToLocalFilesystem({}).then((res) => {
           setExportSuccess(res)
         })
+        break
+      }
+      case EXPORT_OPTION_VALUE.EXIT: {
+        props.clearSelectedOptionHandler()
         break
       }
       default: {
@@ -43,34 +65,16 @@ export const ExportParsedData = (props: {
 
   useEffect(() => {}, [exportSuccess])
 
-  // TODO: Refactor so that we use an input menu instead of text input (for more "guard rails" for the user)
-  const submitHandler = (value: string) => {
-    if (value === `q`) {
-      props.clearSelectedOptionHandler()
-    } else if (value === `1`) {
-      selectExportDataHandler(EXPORT_OPTION_VALUE.SAVE_AS_JSON)
-    } else if (value === `2`) {
-      selectExportDataHandler(EXPORT_OPTION_VALUE.SAVE_AS_FILES)
-    }
-  }
-
   const parsedDataNamespaces = parsedData ? Object.keys(parsedData) : []
 
   return (
     <>
       {parsedDataNamespaces.length > 0 ? (
-        <Box flexDirection="column">
-          <Text>How would you like to export? Enter 1 or 2: </Text>
-          <Text>1. Save data as JSON</Text>
-          <Text>2. Save data as separate files</Text>
-
-          <TextInput
-            value={input}
-            onChange={setInput}
-            onSubmit={(value: string) => submitHandler(value)}
-            placeholder={`Enter option: `}
-          />
-        </Box>
+        <Menu
+          title={`How would you like to export?`}
+          options={MENU_OPTIONS}
+          onSelectHandler={selectExportDataHandler}
+        />
       ) : (
         <Text>NO DATA</Text>
       )}
