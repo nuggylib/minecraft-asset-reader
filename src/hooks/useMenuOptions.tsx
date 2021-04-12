@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { CACHE } from "../main"
 import { ParsedData, RawAssetData } from "../types"
 
 export const enum OPTION_VALUE {

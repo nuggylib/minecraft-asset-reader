@@ -1,4 +1,4 @@
-import { setContentfulCMAToken } from "../../../cms-client/contentful/contentful"
+import { setContentfulCMAToken } from "../../../../cms-client/contentful/contentful"
 
 /**
  * This endpoint only exists so that it can accept the POST from the front end
