@@ -1,7 +1,7 @@
 import express from "express"
 import bodyParser from "body-parser"
-import { contentfulOauthRedirect } from "./authRoutes/contentful/redirect"
-import { contentfulOauthCallback } from "./authRoutes/contentful/callback"
+import { contentfulOauthRedirect } from "./routes/auth/contentful/redirect"
+import { contentfulOauthCallback } from "./routes/auth/contentful/callback"
 import { Tunnel } from "./tunnel"
 
 export class AuthServer {
