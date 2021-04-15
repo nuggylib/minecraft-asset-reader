@@ -31,9 +31,14 @@ export function getBlocksForNamespace(
       const pageCount = Math.ceil(
         blockNames.length / ((limit as unknown) as number)
       )
+      let pageNum = 1
+      if (!!page) {
+        pageNum = parseInt((page as unknown) as string)
+      }
+      const limitNum = parseInt((limit as unknown) as string)
       const paginatedBlockNames = blockNames.slice(
-        startIndex as number,
-        (limit as unknown) as number
+        pageNum * limitNum - limitNum,
+        pageNum * limitNum
       )
       paginatedBlockNames.forEach((blockName) => {
         records.push({
