@@ -8,12 +8,11 @@ import { CACHE } from "../../../main"
  * @param req
  * @param res
  */
-export function setContentMapNamespaceBlocks(req: express.Request, res: express.Response) {
-
-  const {
-    namespace,
-    blocks,
-  } = req.body
+export function setContentMapNamespaceBlocks(
+  req: express.Request,
+  res: express.Response
+) {
+  const { namespace, blocks } = req.body
 
   return CACHE.updateContentMapBlocksForNamespace({
     namespace,

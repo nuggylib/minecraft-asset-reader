@@ -15,9 +15,7 @@ export default class AppCache {
     this.cache = new NodeCache()
   }
 
-  async initContentMap() {
-
-  }
+  async initContentMap() {}
 
   /**
    * Initilizes the base object in the cache for the given namespace.
@@ -100,9 +98,9 @@ export default class AppCache {
       [args.namespace]: {
         blocks: {
           ...cachedContentMap[args.namespace].blocks,
-          ...args.blocks
-        }
-      }
+          ...args.blocks,
+        },
+      },
     } as ContentMap
 
     const updatedContentMapBase64 = this.convertJsonToBase64({
