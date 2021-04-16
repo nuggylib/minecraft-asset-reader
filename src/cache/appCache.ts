@@ -1,7 +1,10 @@
 import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
 import sharp from "sharp"
-import { CONTEXT_PATTERN_QUALITY, MinecraftBlockRenderer } from "../minecraft/minecraftBlockRenderer"
+import {
+  CONTEXT_PATTERN_QUALITY,
+  MinecraftBlockRenderer,
+} from "../minecraft/minecraftBlockRenderer"
 import fs from "fs"
 import mkdirp from "mkdirp"
 import { createCanvas, Image, loadImage } from "canvas"
@@ -110,7 +113,7 @@ export default class AppCache {
           const canvas = await this.blockRenderer.scale({
             sourceImage: baseImage,
             scale: args.scaleAmount,
-            patternQuality: CONTEXT_PATTERN_QUALITY.FAST
+            patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
           })
           scaledTextures[
             textureKey
