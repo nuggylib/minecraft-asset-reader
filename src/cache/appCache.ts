@@ -1,5 +1,6 @@
 import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
+import sharp from "sharp"
 
 const enum KEYS {
   CONTENT_MAP = `content_map`,
@@ -74,6 +75,42 @@ export default class AppCache {
       }) as RawAssetData
     }
     return (null as unknown) as RawAssetData
+  }
+
+  async getScaledBlockTextures(args: {
+    namespace: string
+    block: string
+    scaleAmount: number
+  }) {
+    const rawData = await this.getRawDataFromCache()
+    const rawBlockData = rawData[args.namespace].model.block[args.block]
+    const scaledTextures = {} as {
+      [key: string]: string
+    }
+
+    await Promise.all(
+      Object.keys(rawBlockData.textures!).map(async (textureKey) => {
+        if (!rawBlockData.textures![textureKey]?.includes(`#`)) {
+          const origImgBase64 = rawBlockData.textures![textureKey]
+          const prunedBase64 = origImgBase64?.replace(
+            `data:image/png;base64,`,
+            ``
+          )
+          const imgBuff = Buffer.from(prunedBase64!, `base64`)
+          const metadata = await sharp(imgBuff).metadata()
+          const newWidth = metadata.width! * args.scaleAmount
+          const newHeight = metadata.height! * args.scaleAmount
+          const scaledImgBase64 = await (
+            await sharp(imgBuff).resize(newWidth, newHeight).toBuffer()
+          ).toString(`base64`)
+          scaledTextures[
+            textureKey
+          ] = `data:image/png;base64,${scaledImgBase64}`
+        }
+      })
+    )
+
+    return scaledTextures
   }
 
   async getContentMapFromCache(): Promise<ContentMap> {

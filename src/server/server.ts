@@ -6,6 +6,7 @@ import paginate from "express-paginate"
 import cors from "cors"
 import { getNamespaces } from "./routes/core/getNamespaces"
 import { getContenMap } from "./routes/core/getContentMap"
+import { getScaledAssetsForBlock } from "./routes/core/getScaledTexturesForBlock"
 
 // import {
 //   getContentfulCMAToken,
@@ -26,6 +27,7 @@ app.use(paginate.middleware(10, 50))
 app.get(`/raw-data/namespaces`, getNamespaces)
 // app.get(`/raw-data/advancements`, null)
 app.get(`/raw-data/blocks`, getBlocksForNamespace)
+app.get(`/raw-data/blocks/scaled-images`, getScaledAssetsForBlock)
 app.get(`/content-map`, getContenMap)
 // app.get(`/raw-data/items`, null)
 // app.get(`/raw-data/recipes`, null)
