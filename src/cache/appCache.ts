@@ -1,6 +1,10 @@
 import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
 import sharp from "sharp"
+import { CONTEXT_PATTERN_QUALITY, MinecraftBlockRenderer } from "../minecraft/minecraftBlockRenderer"
+import fs from "fs"
+import mkdirp from "mkdirp"
+import { createCanvas, Image, loadImage } from "canvas"
 
 const enum KEYS {
   CONTENT_MAP = `content_map`,
@@ -10,10 +14,12 @@ const enum KEYS {
 }
 
 export default class AppCache {
+  blockRenderer
   cache
 
   constructor() {
     this.cache = new NodeCache()
+    this.blockRenderer = new MinecraftBlockRenderer()
   }
 
   async initContentMap() {}
@@ -88,6 +94,8 @@ export default class AppCache {
       [key: string]: string
     }
 
+    await mkdirp(`./generated/scaled_images`)
+
     await Promise.all(
       Object.keys(rawBlockData.textures!).map(async (textureKey) => {
         if (!rawBlockData.textures![textureKey]?.includes(`#`)) {
@@ -97,15 +105,16 @@ export default class AppCache {
             ``
           )
           const imgBuff = Buffer.from(prunedBase64!, `base64`)
-          const metadata = await sharp(imgBuff).metadata()
-          const newWidth = metadata.width! * args.scaleAmount
-          const newHeight = metadata.height! * args.scaleAmount
-          const scaledImgBase64 = await (
-            await sharp(imgBuff).resize(newWidth, newHeight).toBuffer()
-          ).toString(`base64`)
+          const baseImage = await loadImage(imgBuff)
+
+          const canvas = await this.blockRenderer.scale({
+            sourceImage: baseImage,
+            scale: args.scaleAmount,
+            patternQuality: CONTEXT_PATTERN_QUALITY.FAST
+          })
           scaledTextures[
             textureKey
-          ] = `data:image/png;base64,${scaledImgBase64}`
+          ] = `data:image/png;base64,${canvas.toBuffer().toString(`base64`)}`
         }
       })
     )

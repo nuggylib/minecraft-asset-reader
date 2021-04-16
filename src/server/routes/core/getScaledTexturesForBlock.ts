@@ -1,5 +1,6 @@
 import express from "express"
 import { CACHE } from "../../../main"
+import { MinecraftBlockRenderer } from "../../../minecraft/minecraftBlockRenderer"
 
 export function getScaledAssetsForBlock(
   req: express.Request,
