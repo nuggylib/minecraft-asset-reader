@@ -20,7 +20,7 @@ export class MinecraftAssetReader {
 
   constructor() {
     const buf = readFileSync(
-      `/home/mcnuggies/Repos/GitHub/nuggy-lib/minecraft-asset-reader/sample_map.json`,
+      `/home/mcnuggies/Repositories/GitHub/nuggylib/minecraft-asset-reader/sample_map.json`,
       `utf-8`
     )
     this.contentMap = JSON.parse(buf)

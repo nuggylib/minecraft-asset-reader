@@ -1,5 +1,13 @@
 import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
+import sharp from "sharp"
+import {
+  CONTEXT_PATTERN_QUALITY,
+  MinecraftBlockRenderer,
+} from "../minecraft/minecraftBlockRenderer"
+import fs from "fs"
+import mkdirp from "mkdirp"
+import { createCanvas, Image, loadImage } from "canvas"
 
 const enum KEYS {
   CONTENT_MAP = `content_map`,
@@ -9,10 +17,12 @@ const enum KEYS {
 }
 
 export default class AppCache {
+  blockRenderer
   cache
 
   constructor() {
     this.cache = new NodeCache()
+    this.blockRenderer = new MinecraftBlockRenderer()
   }
 
   async initContentMap() {}
@@ -74,6 +84,45 @@ export default class AppCache {
       }) as RawAssetData
     }
     return (null as unknown) as RawAssetData
+  }
+
+  async getScaledBlockTextures(args: {
+    namespace: string
+    block: string
+    scaleAmount: number
+  }) {
+    const rawData = await this.getRawDataFromCache()
+    const rawBlockData = rawData[args.namespace].model.block[args.block]
+    const scaledTextures = {} as {
+      [key: string]: string
+    }
+
+    await mkdirp(`./generated/scaled_images`)
+
+    await Promise.all(
+      Object.keys(rawBlockData.textures!).map(async (textureKey) => {
+        if (!rawBlockData.textures![textureKey]?.includes(`#`)) {
+          const origImgBase64 = rawBlockData.textures![textureKey]
+          const prunedBase64 = origImgBase64?.replace(
+            `data:image/png;base64,`,
+            ``
+          )
+          const imgBuff = Buffer.from(prunedBase64!, `base64`)
+          const baseImage = await loadImage(imgBuff)
+
+          const canvas = await this.blockRenderer.scale({
+            sourceImage: baseImage,
+            scale: args.scaleAmount,
+            patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
+          })
+          scaledTextures[
+            textureKey
+          ] = `data:image/png;base64,${canvas.toBuffer().toString(`base64`)}`
+        }
+      })
+    )
+
+    return scaledTextures
   }
 
   async getContentMapFromCache(): Promise<ContentMap> {
