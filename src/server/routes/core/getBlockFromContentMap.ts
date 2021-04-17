@@ -8,14 +8,12 @@ export function getBlockFromContentMap(
   const { block, namespace } = req.query
 
   return CACHE.getContentMapFromCache().then((contentMap) => {
-    console.log(`CONTENT MAP FROM CACHE: `, contentMap)
-
-    if (!contentMap) {
+    try {
+      const configuredBlock =
+        contentMap[namespace as string].blocks[block as string]
+      res.send(configuredBlock)
+    } catch (e) {
       res.send({})
     }
-
-    const configuredBlock =
-      contentMap[namespace as string].blocks[block as string]
-    res.send(configuredBlock)
   })
 }
