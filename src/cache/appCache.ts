@@ -1,31 +1,22 @@
-import { ParsedData, RawAssetData } from "../types"
+import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
 
 const enum KEYS {
+  CONTENT_MAP = `content_map`,
   RAW_DATA = `raw_data`,
   PARSED_DATA = `parsed_data`,
   ASSETS_PATH = `assets_path`,
 }
 
 export default class AppCache {
-  // The client to facilitate interactions with the underlying redis store
-  // redisClient = new CacheClient()
-  // diskCache
   cache
 
   constructor() {
     this.cache = new NodeCache()
-
-    // this.redisClient = new CacheClient()
-
-    let parsedData: ParsedData
-    let rawData: RawAssetData
-
-    parsedData = {}
-    rawData = {}
   }
 
-  // TODO: Test this later to see if we can remove this - Redis may be more flexible than the react state
+  async initContentMap() {}
+
   /**
    * Initilizes the base object in the cache for the given namespace.
    */
@@ -71,7 +62,7 @@ export default class AppCache {
    *
    * @param args
    */
-  convertJsonToBase64(args: { json: RawAssetData | ParsedData }) {
+  convertJsonToBase64(args: { json: RawAssetData | ParsedData | ContentMap }) {
     return Buffer.from(JSON.stringify(args.json)).toString(`base64`)
   }
 
@@ -80,9 +71,43 @@ export default class AppCache {
     if (rawDataBase64) {
       return this.convertBase64StringToJson({
         jsonBase64: rawDataBase64,
-      })
+      }) as RawAssetData
     }
     return (null as unknown) as RawAssetData
+  }
+
+  async getContentMapFromCache(): Promise<ContentMap> {
+    const rawDataBase64 = (await this.cache.get(KEYS.CONTENT_MAP)) as string
+    if (rawDataBase64) {
+      return this.convertBase64StringToJson({
+        jsonBase64: rawDataBase64,
+      }) as ContentMap
+    }
+    return (null as unknown) as ContentMap
+  }
+
+  async updateContentMapBlocksForNamespace(args: {
+    namespace: string
+    blocks: {
+      [block: string]: ConfiguredBlock
+    }
+  }) {
+    const cachedContentMap = await this.getContentMapFromCache()
+    const newCachedContentMap = {
+      ...cachedContentMap,
+      [args.namespace]: {
+        blocks: {
+          ...cachedContentMap[args.namespace].blocks,
+          ...args.blocks,
+        },
+      },
+    } as ContentMap
+
+    const updatedContentMapBase64 = this.convertJsonToBase64({
+      json: newCachedContentMap,
+    })
+
+    await this.cache.set(KEYS.CONTENT_MAP, updatedContentMapBase64)
   }
 
   async getParsedDataFromCache(): Promise<ParsedData> {
@@ -105,7 +130,7 @@ export default class AppCache {
       json: updatedRawData,
     })
 
-    const response = await this.cache.set(KEYS.RAW_DATA, updatedRawDataBase64)
+    await this.cache.set(KEYS.RAW_DATA, updatedRawDataBase64)
   }
 
   /**
