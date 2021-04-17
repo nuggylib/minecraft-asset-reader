@@ -7,7 +7,6 @@ import cors from "cors"
 import { getNamespaces } from "./routes/core/getNamespaces"
 import { getContenMap } from "./routes/core/getContentMap"
 
-
 // import {
 //   getContentfulCMAToken,
 //   setContentfulCMAToken,
@@ -22,7 +21,6 @@ app.use(express.json())
 app.use(cors())
 
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
-
 
 app.use(paginate.middleware(10, 50))
 app.get(`/raw-data/namespaces`, getNamespaces)
