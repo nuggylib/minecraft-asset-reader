@@ -144,11 +144,11 @@ export default class AppCache {
     const cachedContentMap = await this.getContentMapFromCache()
     if (!cachedContentMap[args.namespace]) {
       cachedContentMap[args.namespace] = {
-        blocks: {}
+        blocks: {},
       }
     }
     let newBlocks = cachedContentMap[args.namespace].blocks
-    Object.keys(args.blocks).forEach(blockKey => {
+    Object.keys(args.blocks).forEach((blockKey) => {
       newBlocks[blockKey] = args.blocks[blockKey]
     })
     const newCachedContentMap = {
