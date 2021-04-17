@@ -132,7 +132,7 @@ export default class AppCache {
         jsonBase64: rawDataBase64,
       }) as ContentMap
     }
-    return (null as unknown) as ContentMap
+    return {} as ContentMap
   }
 
   async updateContentMapBlocksForNamespace(args: {
@@ -142,13 +142,19 @@ export default class AppCache {
     }
   }) {
     const cachedContentMap = await this.getContentMapFromCache()
+    if (!cachedContentMap[args.namespace]) {
+      cachedContentMap[args.namespace] = {
+        blocks: {}
+      }
+    }
+    let newBlocks = cachedContentMap[args.namespace].blocks
+    Object.keys(args.blocks).forEach(blockKey => {
+      newBlocks[blockKey] = args.blocks[blockKey]
+    })
     const newCachedContentMap = {
       ...cachedContentMap,
       [args.namespace]: {
-        blocks: {
-          ...cachedContentMap[args.namespace].blocks,
-          ...args.blocks,
-        },
+        blocks: newBlocks,
       },
     } as ContentMap
 

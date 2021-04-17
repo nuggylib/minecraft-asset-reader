@@ -14,6 +14,10 @@ export function setContentMapNamespaceBlocks(
 ) {
   const { namespace, blocks } = req.body
 
+  if (!namespace || !blocks) {
+    res.send({})
+  }
+
   return CACHE.updateContentMapBlocksForNamespace({
     namespace,
     blocks,
