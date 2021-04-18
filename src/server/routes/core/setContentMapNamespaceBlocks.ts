@@ -22,8 +22,6 @@ export function setContentMapNamespaceBlocks(
     namespace,
     blocks,
   }).then((contentMap) => {
-    res.send({
-      contentMap,
-    })
+    res.send(contentMap)
   })
 }
