@@ -1,5 +1,3 @@
-// This file only contains types that are used when uploading data to a CMS
-
 import {
   BlockBlockstateData,
   BlockModelData,
@@ -128,6 +126,14 @@ export type BlockIconData = {
   sideR: string
 }
 
+export type ConfiguredBlock = {
+  /**
+   * The "production-ready" name for the block, e.g., `Acacia Log`
+   */
+  title: string
+  iconData: BlockIconData
+}
+
 /**
  * Controls what content actually gets parsed for your site (so you don't have to sift through tons of potential junk data -
  * e.g., blocks with complex shapes often have multiple "block" definitions that are actually just part of a larger model.
@@ -143,13 +149,7 @@ export type ContentMap = {
        * Key-value pair; block name (e.g., `acacia_log`) as the key,
        * relevant block data as the value
        */
-      [block: string]: {
-        /**
-         * The "production-ready" name for the block, e.g., `Acacia Log`
-         */
-        title: string
-        iconData: BlockIconData
-      }
+      [block: string]: ConfiguredBlock
     }
   }
 }

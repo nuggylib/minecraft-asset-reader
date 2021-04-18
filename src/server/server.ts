@@ -1,17 +1,40 @@
 import express from "express"
-import bodyParser from "body-parser"
-import ngrok from "ngrok"
-import {
-  getContentfulCMAToken,
-  setContentfulCMAToken,
-} from "../cms-client/contentful/contentful"
-import { contentfulOauthRedirect } from "./authRoutes/contentful/redirect"
-import { contentfulOauthCallback } from "./authRoutes/contentful/callback"
+// import ngrok from "ngrok"
+import { getBlocksForNamespace } from "./routes/core/getBlocksForNamespace"
+import { setContentMapNamespaceBlocks } from "./routes/core/setContentMapNamespaceBlocks"
+import paginate from "express-paginate"
+import cors from "cors"
+import { getNamespaces } from "./routes/core/getNamespaces"
+import { getContentMap } from "./routes/core/getContentMap"
+import { getScaledAssetsForBlock } from "./routes/core/getScaledTexturesForBlock"
+import { getBlockFromContentMap } from "./routes/core/getBlockFromContentMap"
+import { writeContentMapToDisk } from "./routes/core/writeContentMapToDisk"
 
-// var app = express()
+// import {
+//   getContentfulCMAToken,
+//   setContentfulCMAToken,
+// } from "../cms-client/contentful/contentful"
+// import { contentfulOauthRedirect } from "./routes/contentful/redirect"
+// import { contentfulOauthCallback } from "./routes/auth/contentful/callback"
 
-// app.use(bodyParser.urlencoded());
-// app.use(bodyParser.json())
+var app = express()
+
+app.use(express.urlencoded())
+app.use(express.json())
+app.use(cors())
+
+app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
+app.post(`/content-map/export`, writeContentMapToDisk)
+
+app.use(paginate.middleware(10, 50))
+app.get(`/raw-data/namespaces`, getNamespaces)
+// app.get(`/raw-data/advancements`, null)
+app.get(`/raw-data/blocks`, getBlocksForNamespace)
+app.get(`/raw-data/blocks/scaled-images`, getScaledAssetsForBlock)
+app.get(`/content-map`, getContentMap)
+app.get(`/content-map/block`, getBlockFromContentMap)
+// app.get(`/raw-data/items`, null)
+// app.get(`/raw-data/recipes`, null)
 
 // app.get('/oauth/contentful', function(req, res) { contentfulOauthRedirect(req, res) });
 // app.post('/oauth/contentful', function(req, res) { contentfulOauthCallback(req, res) });
@@ -24,7 +47,7 @@ import { contentfulOauthCallback } from "./authRoutes/contentful/callback"
  * use this method either way for simplicity.
  */
 export async function initServer() {
-  // app.listen(3000)
+  app.listen(3000)
   // return ngrok.connect(3000)
   return ``
 }
