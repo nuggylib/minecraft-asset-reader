@@ -8,6 +8,7 @@ import { getNamespaces } from "./routes/core/getNamespaces"
 import { getContentMap } from "./routes/core/getContentMap"
 import { getScaledAssetsForBlock } from "./routes/core/getScaledTexturesForBlock"
 import { getBlockFromContentMap } from "./routes/core/getBlockFromContentMap"
+import { writeContentMapToDisk } from "./routes/core/writeContentMapToDisk"
 
 // import {
 //   getContentfulCMAToken,
@@ -23,6 +24,7 @@ app.use(express.json())
 app.use(cors())
 
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
+app.post(`/content-map/export`, writeContentMapToDisk)
 
 app.use(paginate.middleware(10, 50))
 app.get(`/raw-data/namespaces`, getNamespaces)

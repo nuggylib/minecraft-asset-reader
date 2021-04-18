@@ -1,19 +1,24 @@
 import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
 import NodeCache from "node-cache"
-import sharp from "sharp"
 import {
   CONTEXT_PATTERN_QUALITY,
   MinecraftBlockRenderer,
 } from "../minecraft/minecraftBlockRenderer"
 import fs from "fs"
 import mkdirp from "mkdirp"
-import { createCanvas, Image, loadImage } from "canvas"
+import { loadImage } from "canvas"
 
 const enum KEYS {
   CONTENT_MAP = `content_map`,
   RAW_DATA = `raw_data`,
   PARSED_DATA = `parsed_data`,
   ASSETS_PATH = `assets_path`,
+}
+
+// TODO: Implement this patter for all internal APIs; need to do a lot of cleanup and standardization
+type MutationResult = {
+  success: boolean
+  message?: string
 }
 
 export default class AppCache {
@@ -133,6 +138,29 @@ export default class AppCache {
       }) as ContentMap
     }
     return {} as ContentMap
+  }
+
+  async writeContentMapToDisk(args: {
+    path?: string
+  }): Promise<MutationResult> {
+    try {
+      let baseWritePath = `./generated/export`
+      if (args.path) {
+        baseWritePath = args.path
+      }
+      const cachedContentMap = await this.getContentMapFromCache()
+      await mkdirp(baseWritePath) // creates the path if it doesn't exist already
+      fs.writeFileSync(`${baseWritePath}/content_map.json`, JSON.stringify(cachedContentMap))
+      return {
+        success: true,
+        message: `Content map saved successfully`,
+      }
+    } catch (e) {
+      return {
+        success: false,
+        message: e.message,
+      }
+    }
   }
 
   async updateContentMapBlocksForNamespace(args: {

@@ -15,16 +15,9 @@ import { BlockModelData } from "./types"
  * and readBlockData files.
  */
 export class MinecraftAssetReader {
-  contentMap: ContentMap
   blockRenderer: MinecraftBlockRenderer
 
   constructor() {
-    const buf = readFileSync(
-      `/home/mcnuggies/Repos/GitHub/nuggy-lib/minecraft-asset-reader/sample_map.json`,
-      `utf-8`
-    )
-    this.contentMap = JSON.parse(buf)
-    console.log(`CONTENT MAP: `, this.contentMap)
     this.blockRenderer = new MinecraftBlockRenderer()
   }
 
@@ -70,7 +63,8 @@ export class MinecraftAssetReader {
 
   private async parseModelData() {
     const newParsedData = {} as ParsedData
-    const mappedNamespaces = Object.keys(this.contentMap)
+    const rawData = await CACHE.getRawDataFromCache()
+    const mappedNamespaces = Object.keys(rawData)
     mappedNamespaces.forEach((namespace) => {
       // Init the namespace fields
       if (!newParsedData[namespace]) {
@@ -80,24 +74,25 @@ export class MinecraftAssetReader {
         }
       }
 
-      const blockModelNames = Object.keys(this.contentMap[namespace].blocks)
-      blockModelNames.forEach((name) => {
-        this.blockRenderer
-          .drawBlockPageIcon({
-            namespace,
-            blockKey: name,
-            blockIconData: this.contentMap[namespace].blocks[name].iconData,
-            lightDirection: LIGHT_DIRECTION.LEFT, // Unused right now
-          })
-          .then((iconBase64) => {
-            newParsedData[namespace].blockPages?.push({
-              title: name,
-              description: ``,
-              icon: iconBase64,
-            })
-            return CACHE.setCachedParsedData(newParsedData)
-          })
-      })
+      // TODO: Revise this and reuse this logic; don't just arbitrarily-load 
+      // const blockModelNames = Object.keys(this.contentMap[namespace].blocks)
+      // blockModelNames.forEach((name) => {
+      //   this.blockRenderer
+      //     .drawBlockPageIcon({
+      //       namespace,
+      //       blockKey: name,
+      //       blockIconData: this.contentMap[namespace].blocks[name].iconData,
+      //       lightDirection: LIGHT_DIRECTION.LEFT, // Unused right now
+      //     })
+      //     .then((iconBase64) => {
+      //       newParsedData[namespace].blockPages?.push({
+      //         title: name,
+      //         description: ``,
+      //         icon: iconBase64,
+      //       })
+      //       return CACHE.setCachedParsedData(newParsedData)
+      //     })
+      // })
     })
     await CACHE.setCachedParsedData(newParsedData)
   }
