@@ -9,7 +9,7 @@ import mkdirp from "mkdirp"
  * Supported context pattern qualities when drawing the image
  * from the context.
  */
-enum CONTEXT_PATTERN_QUALITY {
+export enum CONTEXT_PATTERN_QUALITY {
   BEST = `best`,
   BILINEAR = `bilinear`,
   FAST = `fast`,
@@ -129,10 +129,10 @@ export class MinecraftBlockRenderer {
    * @param disableSmoothing  Optional argument to disable smoothing on client-side canvas
    * @return
    */
-  private scale({
+  scale({
     sourceImage,
     scale,
-    patternQuality,
+    patternQuality = CONTEXT_PATTERN_QUALITY.FAST,
     disableSmoothing = false,
   }: {
     sourceImage: Image

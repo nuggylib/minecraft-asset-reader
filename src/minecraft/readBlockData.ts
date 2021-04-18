@@ -62,6 +62,7 @@ export function readModels({
 }) {
   const blockModelsPath = path + `/` + namespace + `/models/block/`
   const itemModelsPath = path + `/` + namespace + `/models/item/`
+  const texturesPathRoot = path + `/` + namespace + `/textures`
   const blockModelFiles = fs.readdirSync(blockModelsPath)
   const itemModelFiles = fs.readdirSync(itemModelsPath)
   const model = {} as {
@@ -87,7 +88,20 @@ export function readModels({
   blockModelFiles.forEach((filename) => {
     const content = fs.readFileSync(blockModelsPath + filename, `utf-8`)
     const blockModelName = filename.split(`.`)[0]
-    model.block[blockModelName] = JSON.parse(content)
+    let block = JSON.parse(content) as BlockModelData
+    if (!!block.textures) {
+      Object.keys(block.textures).forEach((textureKey) => {
+        if (!block.textures![textureKey]!.includes(`#`)) {
+          const base64 = fs
+            .readFileSync(
+              `${texturesPathRoot}/${block.textures![textureKey]}.png`
+            )
+            .toString(`base64`)
+          block.textures![textureKey] = `data:image/png;base64,${base64}`
+        }
+      })
+    }
+    model.block[blockModelName] = block
   })
   itemModelFiles.forEach((filename) => {
     const content = fs.readFileSync(itemModelsPath + filename, `utf-8`)
