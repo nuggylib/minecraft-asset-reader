@@ -74,7 +74,7 @@ export class MinecraftAssetReader {
         }
       }
 
-      // TODO: Revise this and reuse this logic; don't just arbitrarily-load 
+      // TODO: Revise this and reuse this logic; don't just arbitrarily-load
       // const blockModelNames = Object.keys(this.contentMap[namespace].blocks)
       // blockModelNames.forEach((name) => {
       //   this.blockRenderer

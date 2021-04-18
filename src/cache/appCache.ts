@@ -150,7 +150,10 @@ export default class AppCache {
       }
       const cachedContentMap = await this.getContentMapFromCache()
       await mkdirp(baseWritePath) // creates the path if it doesn't exist already
-      fs.writeFileSync(`${baseWritePath}/content_map.json`, JSON.stringify(cachedContentMap))
+      fs.writeFileSync(
+        `${baseWritePath}/content_map.json`,
+        JSON.stringify(cachedContentMap)
+      )
       return {
         success: true,
         message: `Content map saved successfully`,
