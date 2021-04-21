@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { ParsedData, RawAssetData } from "../types"
+import { ContentMap, SiteData, RawAssetData } from "../../types"
 
 export const enum OPTION_VALUE {
   SET_ASSETS_DIRECTORY = `set_assets_directory`,
@@ -7,12 +7,13 @@ export const enum OPTION_VALUE {
   VIEW_RAW_DATA = `view_raw_data`,
   VIEW_PARSED_DATA = `view_parsed_data`,
   EXPORT_PARSED_DATA = `export_parsed_data`,
+  GENERATE_SITE_DATA = `generate_site_data`,
 }
 
 export const useMenuOptions = (props: {
-  parsedData?: ParsedData
+  parsedData?: SiteData
   rawData?: RawAssetData
-  // Will never be null, just empty when unset
+  contentMap?: ContentMap
   rawAssetsPath: string
 }) => {
   const [options, setOptions] = useState(
@@ -31,6 +32,8 @@ export const useMenuOptions = (props: {
       label: `Set assets directory`,
       value: OPTION_VALUE.SET_ASSETS_DIRECTORY,
     })
+
+    // TODO: revise the workflow so that this step isn't necessary; all it does is prepare
     if (!!props.rawAssetsPath) {
       array.push({
         label: `Bootstrap page objects`,
@@ -38,26 +41,14 @@ export const useMenuOptions = (props: {
       })
     }
 
-    // TODO: Enable this when we have a raw data component
-    // if (!!props.rawData) {
-    //   console.log(`RAW DATA WAS DEFINED: `, props.rawData)
-    //   array.push({
-    //     label: `View raw data`,
-    //     value: OPTION_VALUE.VIEW_RAW_DATA,
-    //   })
-    // }
-
-    if (!!props.parsedData) {
-      array.push(
-        {
-          label: `View parsed data`,
-          value: OPTION_VALUE.VIEW_PARSED_DATA,
-        },
-        {
-          label: `Export parsed data`,
-          value: OPTION_VALUE.EXPORT_PARSED_DATA,
-        }
-      )
+    // TODO: Reuse the old "parse data" logic - that's now the "Site Data" logic and will be used to store the site data
+    // The idea is that the content map is _used_ to create the site data; the site data can then be either uploaded to
+    // Sanity, or used directly in an SSG (with configurations).
+    if (!!props.contentMap) {
+      array.push({
+        label: `Generate site content`,
+        value: OPTION_VALUE.GENERATE_SITE_DATA,
+      })
     }
 
     setOptions(array)
@@ -65,6 +56,7 @@ export const useMenuOptions = (props: {
     // We don't want to re-render any time the underlying object changes; just when this goes from falsy to truthy
     !!props.parsedData,
     !!props.rawData,
+    !!props.contentMap,
     props.rawAssetsPath,
   ])
 

@@ -1,4 +1,4 @@
-import { ConfiguredBlock, ContentMap, ParsedData, RawAssetData } from "../types"
+import { ConfiguredBlock, ContentMap, RawAssetData, SiteData } from "../types"
 import NodeCache from "node-cache"
 import {
   CONTEXT_PATTERN_QUALITY,
@@ -30,63 +30,10 @@ export default class AppCache {
     this.blockRenderer = new MinecraftBlockRenderer()
   }
 
-  async initContentMap() {}
-
-  /**
-   * Initilizes the base object in the cache for the given namespace.
-   */
-  async initNamespaceParsedDataObject(args: { namespace: string }) {
-    console.log(
-      `Initializing namespace data structure for namespace: '${args.namespace}'`
-    )
-
-    let parsedData = await this.getParsedDataFromCache()
-
-    parsedData = {
-      [args.namespace]: {},
-    }
-    parsedData = {
-      [args.namespace]: {
-        blockPages: [],
-        itemPages: [],
-      },
-    }
-
-    // Add the base-64 strings for the JSON objects
-    const res = this.cache.set(
-      KEYS.PARSED_DATA,
-      this.convertJsonToBase64({ json: parsedData })
-    )
-
-    return res
-  }
-
-  /**
-   * Converts a Base64 string to a JSON object
-   *
-   * @param args
-   */
-  convertBase64StringToJson(args: { jsonBase64: string }) {
-    const buffer = Buffer.from(args.jsonBase64, `base64`)
-    const jsonString = buffer.toString(`utf-8`)
-    return JSON.parse(jsonString)
-  }
-
-  /**
-   * Converts a JSON object to a Base64 string
-   *
-   * @param args
-   */
-  convertJsonToBase64(args: { json: RawAssetData | ParsedData | ContentMap }) {
-    return Buffer.from(JSON.stringify(args.json)).toString(`base64`)
-  }
-
-  async getRawDataFromCache(): Promise<RawAssetData> {
-    const rawDataBase64 = (await this.cache.get(KEYS.RAW_DATA)) as string
-    if (rawDataBase64) {
-      return this.convertBase64StringToJson({
-        jsonBase64: rawDataBase64,
-      }) as RawAssetData
+  getRawData(): RawAssetData {
+    const rawData = this.cache.get(KEYS.RAW_DATA)
+    if (rawData) {
+      return rawData as RawAssetData
     }
     return (null as unknown) as RawAssetData
   }
@@ -96,7 +43,7 @@ export default class AppCache {
     block: string
     scaleAmount: number
   }) {
-    const rawData = await this.getRawDataFromCache()
+    const rawData = await this.getRawData()
     const rawBlockData = rawData[args.namespace].model.block[args.block]
     const scaledTextures = {} as {
       [key: string]: string
@@ -130,14 +77,12 @@ export default class AppCache {
     return scaledTextures
   }
 
-  async getContentMapFromCache(): Promise<ContentMap> {
-    const rawDataBase64 = (await this.cache.get(KEYS.CONTENT_MAP)) as string
-    if (rawDataBase64) {
-      return this.convertBase64StringToJson({
-        jsonBase64: rawDataBase64,
-      }) as ContentMap
+  getContentMap(): ContentMap {
+    const contentMap = this.cache.get(KEYS.CONTENT_MAP)
+    if (contentMap) {
+      return contentMap as ContentMap
     }
-    return {} as ContentMap
+    return (null as unknown) as ContentMap
   }
 
   async writeContentMapToDisk(args: {
@@ -148,7 +93,7 @@ export default class AppCache {
       if (args.path) {
         baseWritePath = args.path
       }
-      const cachedContentMap = await this.getContentMapFromCache()
+      const cachedContentMap = this.getContentMap()
       await mkdirp(baseWritePath) // creates the path if it doesn't exist already
       fs.writeFileSync(
         `${baseWritePath}/content_map.json`,
@@ -166,13 +111,16 @@ export default class AppCache {
     }
   }
 
-  async updateContentMapBlocksForNamespace(args: {
+  updateContentMapBlocksForNamespace(args: {
     namespace: string
     blocks: {
       [block: string]: ConfiguredBlock
     }
   }) {
-    const cachedContentMap = await this.getContentMapFromCache()
+    let cachedContentMap = this.getContentMap()
+    if (!cachedContentMap) {
+      cachedContentMap = {}
+    }
     if (!cachedContentMap[args.namespace]) {
       cachedContentMap[args.namespace] = {
         blocks: {},
@@ -189,34 +137,25 @@ export default class AppCache {
       },
     } as ContentMap
 
-    const updatedContentMapBase64 = this.convertJsonToBase64({
-      json: newCachedContentMap,
-    })
-
-    await this.cache.set(KEYS.CONTENT_MAP, updatedContentMapBase64)
+    this.cache.set(KEYS.CONTENT_MAP, newCachedContentMap)
   }
 
-  async getParsedDataFromCache(): Promise<ParsedData> {
-    const parsedDataBase64 = (await this.cache.get(KEYS.PARSED_DATA)) as string
-    if (parsedDataBase64) {
-      return this.convertBase64StringToJson({
-        jsonBase64: parsedDataBase64,
-      })
+  getSiteData(): SiteData {
+    const parsedData = this.cache.get(KEYS.PARSED_DATA)
+    if (parsedData) {
+      return parsedData as SiteData
     }
-    return (null as unknown) as ParsedData
+    return (null as unknown) as SiteData
   }
 
-  async setCachedRawData(updatedRawDataObject: RawAssetData) {
-    const cachedRawData = await this.getRawDataFromCache()
+  setCachedRawData(updatedRawDataObject: RawAssetData) {
+    const cachedRawData = this.getRawData()
     const updatedRawData = {
       ...cachedRawData,
       ...updatedRawDataObject,
     } as RawAssetData
-    const updatedRawDataBase64 = this.convertJsonToBase64({
-      json: updatedRawData,
-    })
 
-    await this.cache.set(KEYS.RAW_DATA, updatedRawDataBase64)
+    this.cache.set(KEYS.RAW_DATA, updatedRawData)
   }
 
   /**
@@ -229,28 +168,22 @@ export default class AppCache {
    * @param updatedParsedDataObject
    * @returns
    */
-  async setCachedParsedData(updatedParsedDataObject: ParsedData) {
-    const cachedParsedData = await this.getParsedDataFromCache()
+  setCachedSiteData(updatedParsedDataObject: SiteData) {
+    const cachedParsedData = this.getSiteData()
 
     const updatedParsedData = {
       ...cachedParsedData,
       ...updatedParsedDataObject,
-    } as ParsedData
-    const updatedParsedDataBase64 = this.convertJsonToBase64({
-      json: updatedParsedData,
-    })
-    const response = await this.cache.set(
-      KEYS.PARSED_DATA,
-      updatedParsedDataBase64
-    )
+    } as SiteData
+    const response = this.cache.set(KEYS.PARSED_DATA, updatedParsedData)
     return response
   }
 
-  async setRootAssetsPath(rootAssetsPath: string) {
-    return await this.cache.set(KEYS.ASSETS_PATH, rootAssetsPath)
+  setRootAssetsPath(rootAssetsPath: string) {
+    return this.cache.set(KEYS.ASSETS_PATH, rootAssetsPath)
   }
 
-  async getRootAssetsPath() {
-    return (await this.cache.get(KEYS.ASSETS_PATH)) as string
+  getRootAssetsPath() {
+    return this.cache.get(KEYS.ASSETS_PATH)
   }
 }

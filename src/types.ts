@@ -18,16 +18,6 @@ export type RawAssetData = {
    */
   [namespace: string]: {
     /**
-     * Object containing all blockstate data within the given namespace
-     */
-    blockstates: {
-      /**
-       * Key-value pair; file name of the blockstate as the key and BlockBlockstateData
-       * as the value
-       */
-      [blockstateFileName: string]: BlockBlockstateData
-    }
-    /**
      * Object containing all block and item model data within the given namespace
      */
     model: {
@@ -44,31 +34,6 @@ export type RawAssetData = {
          * object as the value
          */
         [itemModelFileName: string]: ItemModelData
-      }
-    }
-    /**
-     * Object containing all block and item texture data within the given namespace
-     */
-    texture: {
-      /**
-       * Object containing all block model file buffers
-       */
-      blocks: {
-        /**
-         * Key-value pair; file name of texture as the key with the file buffer as
-         * the value
-         */
-        [blockTextureFileName: string]: Buffer
-      }
-      /**
-       * Object containing all item model file buffers
-       */
-      items: {
-        /**
-         * Key-value pair; file name of texture as the key with the file buffer as
-         * the value
-         */
-        [itemTextureFileName: string]: Buffer
       }
     }
   }
@@ -132,6 +97,7 @@ export type ConfiguredBlock = {
    */
   title: string
   iconData: BlockIconData
+  blockIconBase64?: string
 }
 
 /**
@@ -159,6 +125,10 @@ export type ParsedNamespaceData = {
   itemPages?: ItemPage[]
 }
 
-export type ParsedData = {
+/**
+ * Type definition for how the end data will look (in-memory) for the imported
+ * data after it's been formatted to be used as site data.
+ */
+export type SiteData = {
   [namespace: string]: ParsedNamespaceData
 }

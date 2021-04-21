@@ -1,5 +1,5 @@
 import express from "express"
-import { CACHE } from "../../../main"
+import { CACHE } from "../../main"
 
 /**
  * After the user configures their content map and click "Submit", this endpoint is intended to handle
@@ -18,10 +18,9 @@ export function setContentMapNamespaceBlocks(
     res.send({})
   }
 
-  return CACHE.updateContentMapBlocksForNamespace({
+  CACHE.updateContentMapBlocksForNamespace({
     namespace,
     blocks,
-  }).then((contentMap) => {
-    res.send(contentMap)
   })
+  res.send(200)
 }

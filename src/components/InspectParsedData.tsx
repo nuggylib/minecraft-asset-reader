@@ -3,14 +3,14 @@ import { useState } from "react"
 import { BlockPage } from "../types"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
-import { useParsedData } from "../hooks"
+import { useSiteData } from "./hooks"
 import { NamespaceParsedBlockData } from "./NamespaceParsedBlockDataData"
 
 export const InspectParsedData = (props: {
   clearSelectedOptionHandler: () => void
 }) => {
   const [input, setInput] = useState(``)
-  const parsedData = useParsedData({})
+  const parsedData = useSiteData({})
 
   const submitHandler = (value: string) => {
     if (value === `q`) {

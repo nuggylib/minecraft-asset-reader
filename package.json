@@ -8,11 +8,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "reset": "rm -rf out/ generated/ && npm run build",
+    "clean": "rm -rf out/ generated/ dist/",
+    "reset": "yarn clean && npm run build",
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
     "test": "jest --verbose",
     "coverage": "jest --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "LOCAL=true ts-node ./src/main.tsx"
   },
   "repository": {
     "type": "git",

@@ -1,27 +1,34 @@
 import React from "react"
 import { useState } from "react"
-import { CACHE_CLIENT } from "../cache/cacheClient"
-import { generateRawData, validatesAssetsDirectory } from "../minecraft"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
-import { CACHE } from "../main"
+import { MinecraftUtility } from "../minecraft/minecraftUtility"
 
+/**
+ * A simple input form to get the base assets path
+ *
+ * Once the user provides a valid assets path, we call readInRawData, which
+ * sets the the raw data in the cache.
+ *
+ * @param props
+ * @returns
+ */
 export const SetAssetsPathForm = (props: {
   clearSelectedOptionHandler: () => void
 }) => {
   const [input, setInput] = useState(``)
   const [isValid, setIsValid] = useState(false)
+  const minecraftAssetReader = new MinecraftUtility()
 
   const submitHandler = (value: string) => {
-    if (value !== `q`) {
-      CACHE.setRootAssetsPath(input).then((res) => {
-        generateRawData({
-          path: input,
-          setRawDataHandler: CACHE_CLIENT.setRawData,
-        })
+    if (value !== `q` && isValid) {
+      minecraftAssetReader.readInRawData({
+        path: value,
       })
+      props.clearSelectedOptionHandler()
+    } else if (value === `q`) {
+      props.clearSelectedOptionHandler()
     }
-    props.clearSelectedOptionHandler()
   }
 
   /**
@@ -38,7 +45,8 @@ export const SetAssetsPathForm = (props: {
     setInput(input)
     var lastPart = input.split(`/`).pop()
     if (
-      (lastPart === `assets` && validatesAssetsDirectory({ path: input })) ||
+      (lastPart === `assets` &&
+        minecraftAssetReader.validatePathAsAssetsDirectory({ path: input })) ||
       input === `q`
     ) {
       setIsValid(true)

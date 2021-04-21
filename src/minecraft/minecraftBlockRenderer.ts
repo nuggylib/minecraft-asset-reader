@@ -1,7 +1,7 @@
 import { createCanvas, Image, loadImage } from "canvas"
 import { readFileSync, createWriteStream } from "fs"
 import { CACHE } from "../main"
-import { BlockIconData, BlockPage } from "../types"
+import { BlockIconData } from "../types"
 import mkdirp from "mkdirp"
 
 // TODO: Test the impact of the different values
@@ -115,9 +115,9 @@ export class MinecraftBlockRenderer {
     const stream = canvas.createPNGStream()
     stream.pipe(out)
     out.on(`finish`, () => {
-      console.log(`Saved icon for block ${args.blockKey}`)
+      // console.log(`Saved icon for block ${args.blockKey}`)
+      // TODO: Consider implementing some form of loading indicators
     })
-
     return canvas.toBuffer().toString(`base64`)
   }
 

@@ -65,7 +65,10 @@ export function loadTexturesFromTextureField(args: {
     args.rawData[args.namespace].model.block[args.blockModelFileName].textures
   Object.keys(blockTextures!).forEach((texture) => {
     // console.log(`Loading texture '${texture}' for namespace '${args.namespace}'`)
-    const textureName = blockTextures![texture]!.replace(`blocks/`, ``)
+    const textureName = blockTextures![texture]!.textureName.replace(
+      `blocks/`,
+      ``
+    )
     if (
       !texturesForBlockModelFile.includes(textureName) &&
       !textureName.includes(`#`)
