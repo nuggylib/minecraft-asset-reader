@@ -22,5 +22,5 @@ export function setContentMapNamespaceBlocks(
     namespace,
     blocks,
   })
-  res.send(200)
+  res.sendStatus(200)
 }
