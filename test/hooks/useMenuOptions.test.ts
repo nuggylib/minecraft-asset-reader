@@ -1,5 +1,8 @@
 import { renderHook } from "@testing-library/react-hooks"
-import { useMenuOptions, OPTION_VALUE } from "../../src/components/hooks/useMenuOptions"
+import {
+  useMenuOptions,
+  OPTION_VALUE,
+} from "../../src/components/hooks/useMenuOptions"
 import { RawAssetData, SiteData } from "../../src/types"
 
 describe(`useMenuOptions Hook tests`, () => {
