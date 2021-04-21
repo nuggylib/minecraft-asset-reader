@@ -1,8 +1,13 @@
 # minecraft-asset-reader
 
-A simple tool to read in assets from any valid texture pack directory (should be named `assets`)
+A deveveloper tool intended to help mod and modpack maintainers create demo or documentation sites for their mod/modpack content. 
 
-![image](https://user-images.githubusercontent.com/29762984/112695623-71a47d80-8e52-11eb-999a-78c856b3fadb.png)
+> This is under active development; as it stands, this repository contains code for a CLI tool that effectively takes a given assets path and creates a locally-hosted API out of your mod/modpack's data. From there, a webapp uses the API to display the data in an easy-to-read format, where the dev/maintainer can go through and curate the content they want to use for their site. Eventually, the webapp will be self-hosted in this CLI, but for now, the two projects are being developed separately.
+
+**Key features**
+1. Easy bulk-generation of isometric-view block icons
+2. Blur-free image scaling
+3. Sanity.io integration (_not implemented, yet_)
 
 ## Get started
 
