@@ -1,31 +1,25 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useState } from "react"
 import {
+  OPTION_VALUE,
   useMenuOptions,
-  useParsedData,
+  useSiteData,
   useRawAssetsPath,
   useRawData,
-} from "./hooks"
+} from "./components/hooks"
 import { Layout } from "./components/Layout"
 import { Box } from "ink"
 import { Text } from "ink"
-import { CACHE_CLIENT } from "./cache/cacheClient"
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
 import { InspectParsedData } from "./components/InspectParsedData"
 import { ExportParsedData } from "./components/ExportParsedData"
 import { Menu } from "./components/shared/Menu"
-
-export const enum OPTION_VALUE {
-  SET_ASSETS_DIRECTORY = `set_assets_directory`,
-  IMPORT_DATA = `import_data`,
-  INSPECT_DATA = `inspect_data`,
-  BOOTSTRAP_DATA = `bootstrap_data`,
-  VIEW_RAW_DATA = `view_raw_data`,
-  VIEW_PARSED_DATA = `view_parsed_data`,
-  EXPORT_PARSED_DATA = `export_parsed_data`,
-}
+import { useContentMap } from "./components/hooks/useContentMap"
+// import { CACHE } from "./main"
+import { MinecraftUtility } from "./minecraft/minecraftUtility"
 
 export const CLIApp = () => {
+  const minecraftUtil = new MinecraftUtility()
   const [selectedOption, setSelectedOption] = useState(
     (null as unknown) as string
   )
@@ -35,13 +29,17 @@ export const CLIApp = () => {
   let rawData = useRawData({
     watch: selectedOption,
   })
-  let parsedData = useParsedData({
+  let parsedData = useSiteData({
+    watch: selectedOption,
+  })
+  let contentMap = useContentMap({
     watch: selectedOption,
   })
   // "watch" convention isn't used here since the parameters are also used in business logic, and not *just* for updating (as the others are)
   let options = useMenuOptions({
     rawAssetsPath,
     rawData,
+    contentMap,
     parsedData,
   })
 
@@ -55,9 +53,6 @@ export const CLIApp = () => {
             clearSelectedOptionHandler={clearSelectedOptionHandler}
           />
         )
-      }
-      case OPTION_VALUE.INSPECT_DATA: {
-        return <></>
       }
       case OPTION_VALUE.VIEW_PARSED_DATA: {
         return (
@@ -87,11 +82,17 @@ export const CLIApp = () => {
        * on the imported raw assets data
        */
       case OPTION_VALUE.BOOTSTRAP_DATA: {
-        CACHE_CLIENT.parseImportedData()
+        minecraftUtil
+          .bootstrapSiteData()
           // De-select the selected option once the parse is complete
           .then(() => setSelectedOption((null as unknown) as string))
         break
       }
+      // case OPTION_VALUE.GENERATE_SITE_DATA: {
+      //   CACHE.generateSiteContent().then(() =>
+      //     setSelectedOption((null as unknown) as string)
+      //   )
+      // }
     }
     // Always set the selected option, even if there is no GUI to render for the option
     setSelectedOption(option.value)

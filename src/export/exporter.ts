@@ -1,5 +1,5 @@
 import mkdirp from "mkdirp"
-import { ParsedData } from "../types"
+import { SiteData } from "../types"
 import { writeFileSync } from "fs"
 import { CACHE } from "../main"
 
@@ -15,7 +15,7 @@ export class Exporter {
     path?: string
     createSeparatePageFiles?: boolean
   }) {
-    const parsedData = await CACHE.getParsedDataFromCache()
+    const siteData = await CACHE.getSiteData()
     let baseWritePath = `${DEFAULT_WRITE_PATH}/${new Date().toISOString()}`
     // If the user provided a write path, use that instead of the default write path
     if (args.path) {
@@ -26,12 +26,12 @@ export class Exporter {
 
     if (!!args.createSeparatePageFiles) {
       this.writePageContentAsSeparateJSONFiles({
-        parsedData,
+        parsedData: siteData,
         baseWritePath,
       })
     } else {
       this.writePageContentAsJSONArrayFiles({
-        parsedData,
+        parsedData: siteData,
         baseWritePath,
       })
     }
@@ -39,7 +39,7 @@ export class Exporter {
   }
 
   private writePageContentAsJSONArrayFiles(args: {
-    parsedData: ParsedData
+    parsedData: SiteData
     baseWritePath: string
   }) {
     const namespaces = Object.keys(args.parsedData)
@@ -58,7 +58,7 @@ export class Exporter {
   }
 
   private writePageContentAsSeparateJSONFiles(args: {
-    parsedData: ParsedData
+    parsedData: SiteData
     baseWritePath: string
   }) {
     const namespaces = Object.keys(args.parsedData)

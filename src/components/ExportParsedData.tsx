@@ -1,5 +1,5 @@
 import React from "react"
-import { useParsedData } from "../hooks"
+import { useSiteData } from "./hooks"
 import { useState, useEffect } from "react"
 import { Exporter } from "../export/exporter"
 import { Text } from "ink"
@@ -29,7 +29,7 @@ const MENU_OPTIONS = [
 export const ExportParsedData = (props: {
   clearSelectedOptionHandler: () => void
 }) => {
-  const parsedData = useParsedData({})
+  const siteData = useSiteData({})
   const [exportSuccess, setExportSuccess] = useState(false)
 
   const selectExportDataHandler = (option: {
@@ -65,7 +65,7 @@ export const ExportParsedData = (props: {
 
   useEffect(() => {}, [exportSuccess])
 
-  const parsedDataNamespaces = parsedData ? Object.keys(parsedData) : []
+  const parsedDataNamespaces = siteData ? Object.keys(siteData) : []
 
   return (
     <>

@@ -1,5 +1,5 @@
 import express from "express"
-import { CACHE } from "../../../main"
+import { CACHE } from "../../main"
 
 export function writeContentMapToDisk(
   req: express.Request,

@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react"
-import { CACHE } from "../main"
-import { RawAssetData } from "../types"
+import { CACHE } from "../../main"
+import { RawAssetData } from "../../types"
 
 export const useRawData = (props: { watch?: any }) => {
   const [rawData, setRawData] = useState((null as unknown) as RawAssetData)
 
   useEffect(() => {
-    CACHE.getRawDataFromCache().then((rawData) => {
-      setRawData(rawData!)
-    })
+    setRawData(CACHE.getRawData())
   }, [props.watch])
 
   return rawData

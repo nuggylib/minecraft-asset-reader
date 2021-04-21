@@ -1,14 +1,16 @@
 import express from "express"
 // import ngrok from "ngrok"
-import { getBlocksForNamespace } from "./routes/core/getBlocksForNamespace"
-import { setContentMapNamespaceBlocks } from "./routes/core/setContentMapNamespaceBlocks"
 import paginate from "express-paginate"
 import cors from "cors"
-import { getNamespaces } from "./routes/core/getNamespaces"
-import { getContentMap } from "./routes/core/getContentMap"
-import { getScaledAssetsForBlock } from "./routes/core/getScaledTexturesForBlock"
-import { getBlockFromContentMap } from "./routes/core/getBlockFromContentMap"
-import { writeContentMapToDisk } from "./routes/core/writeContentMapToDisk"
+import {
+  getNamespaces,
+  setContentMapNamespaceBlocks,
+  writeContentMapToDisk,
+  getBlockFromContentMap,
+  getBlocksForNamespace,
+  getScaledAssetsForBlock,
+  getContentMap,
+} from "./routes"
 
 // import {
 //   getContentfulCMAToken,
@@ -19,7 +21,7 @@ import { writeContentMapToDisk } from "./routes/core/writeContentMapToDisk"
 
 var app = express()
 
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
 

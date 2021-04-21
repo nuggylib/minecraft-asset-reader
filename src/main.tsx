@@ -1,7 +1,6 @@
 import { render } from "ink"
 import React from "react"
-import AppCache from "./cache/appCache"
-// import { CLIApp } from "./CLIApp"
+import AppCache from "./cache"
 import { CLIApp } from "./CLIApp"
 import { initServer } from "./server/server"
 
