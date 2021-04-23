@@ -6,17 +6,17 @@ import {
   useSiteData,
   useRawAssetsPath,
   useRawData,
-} from "./components/hooks"
-import { Layout } from "./components/Layout"
+} from "./services/core/components/hooks"
+import { Layout } from "./services/core/components/Layout"
 import { Box } from "ink"
 import { Text } from "ink"
-import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
-import { InspectParsedData } from "./components/InspectParsedData"
-import { ExportParsedData } from "./components/ExportParsedData"
-import { Menu } from "./components/shared/Menu"
-import { useContentMap } from "./components/hooks/useContentMap"
+import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
+import { InspectParsedData } from "./services/core/components/InspectParsedData"
+import { ExportParsedData } from "./services/core/components/ExportParsedData"
+import { Menu } from "./services/core/components/shared/Menu"
+import { useContentMap } from "./services/core/components/hooks/useContentMap"
 // import { CACHE } from "./main"
-import { MinecraftUtility } from "./minecraft/minecraftUtility"
+import { MinecraftUtility } from "./services/minecraft/minecraftUtility"
 
 export const CLIApp = () => {
   const minecraftUtil = new MinecraftUtility()

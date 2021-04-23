@@ -1,5 +1,5 @@
 import renderer from "react-test-renderer"
-import { ArrayTextBlock } from "../../src/components/shared/ArrayTextBlock"
+import { ArrayTextBlock } from "../../src/services/core/components/shared/ArrayTextBlock"
 
 it(`renders correctly`, () => {
   const component = renderer
