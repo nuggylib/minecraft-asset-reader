@@ -4,6 +4,7 @@ import paginate from "express-paginate"
 import cors from "cors"
 import { getBlocksForNamespace, getNamespaces } from "../../../api/raw-data"
 import { getBlockFromContentMap, getContentMap, setContentMapNamespaceBlocks, writeContentMapToDisk } from "../../../api/content-map"
+import { writeSiteDataToDisk } from "../../../api/site-data/writeSiteDataToDisk"
 
 var app = express()
 
@@ -26,6 +27,11 @@ app.get(`/content-map`, getContentMap)
 app.get(`/content-map/block`, getBlockFromContentMap)
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
 app.post(`/content-map/export`, writeContentMapToDisk)
+
+/*******************************************
+ * Site data routes
+ *******************************************/
+app.post(`/site-data/export`, writeSiteDataToDisk)
 
 export async function initServer() {
   app.listen(3000)
