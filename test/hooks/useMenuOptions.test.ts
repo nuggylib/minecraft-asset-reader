@@ -3,7 +3,8 @@ import {
   useMenuOptions,
   OPTION_VALUE,
 } from "../../src/services/core/components/hooks/useMenuOptions"
-import { RawAssetData, SiteData } from "../../src/types"
+import { RawAssetData } from "../../src/types/cache"
+import { SiteData } from "../../src/types/export"
 
 describe(`useMenuOptions Hook tests`, () => {
   it(`returns the expected options when no assets path, raw data, or parsed data is set`, () => {

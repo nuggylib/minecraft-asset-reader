@@ -6,7 +6,7 @@ import {
 import fs from "fs"
 import mkdirp from "mkdirp"
 import { loadImage } from "canvas"
-import { ConfiguredBlock, ContentMap, RawAssetData, RawNamespaceData } from "../../../types/cache"
+import { ConfiguredBlock, ContentMap, RawAssetData } from "../../../types/cache"
 import { SiteData } from "../../../types/export"
 import { Int, MutationResult } from "../../../types/shared"
 import { BlockModelData } from "../../../types/minecraft"
@@ -14,7 +14,7 @@ import { BlockModelData } from "../../../types/minecraft"
 const enum KEYS {
   CONTENT_MAP = `content_map`,
   RAW_DATA = `raw_data`,
-  PARSED_DATA = `parsed_data`,
+  SITE_DATA = `site_data`,
   ASSETS_PATH = `assets_path`,
 }
 
@@ -43,7 +43,7 @@ export default class AppCache {
     const {
       limit,
       namespace,
-      page
+      page,
     } = args
     const rawData = this.rawData()
     const records = [] as {
@@ -125,7 +125,7 @@ export default class AppCache {
     const rawBlockData = rawData[args.namespace].model.block[args.block]
     return {
       data: rawBlockData,
-      scaledTextures: await this.getScaledBlockTextures(args)
+      scaledTextures: await this.getScaledBlockTextures(args),
     }
 
   }
@@ -194,9 +194,9 @@ export default class AppCache {
   }
 
   siteData(): SiteData {
-    const parsedData = this.cache.get(KEYS.PARSED_DATA)
-    if (parsedData) {
-      return parsedData as SiteData
+    const siteData = this.cache.get(KEYS.SITE_DATA)
+    if (siteData) {
+      return siteData as SiteData
     }
     return (null as unknown) as SiteData
   }
@@ -228,7 +228,7 @@ export default class AppCache {
       ...cachedParsedData,
       ...updatedParsedDataObject,
     } as SiteData
-    const response = this.cache.set(KEYS.PARSED_DATA, updatedParsedData)
+    const response = this.cache.set(KEYS.SITE_DATA, updatedParsedData)
     return response
   }
 

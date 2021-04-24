@@ -2,6 +2,8 @@ import mkdirp from "mkdirp"
 import { writeFileSync } from "fs"
 import { CACHE } from "../../main"
 import { SiteData } from "../../types/export"
+import { LIGHT_DIRECTION, MinecraftBlockRenderer } from "../minecraft"
+import { Int } from "../../types/shared"
 
 const DEFAULT_WRITE_PATH = `./generated/`
 
@@ -36,6 +38,35 @@ export class Exporter {
       })
     }
     return true
+  }
+
+  async exportSiteDataToDisk(args: {
+    blockIconScaleSizes: Int[]
+    writePath: string
+  }) {
+    const { writePath, blockIconScaleSizes } = args
+
+    const renderer = new MinecraftBlockRenderer()
+    const contentMap = CACHE.contentMap()
+
+    const drawBlockPromises = [] as Promise<void>[]
+
+    Object.keys(contentMap).forEach(namespace => {
+           Object.keys(contentMap[namespace].blocks).map(blockKey => {
+               drawBlockPromises.push(
+                   renderer.drawBlockPageIconsForDifferentScales({
+                       namespace,
+                       blockKey,
+                       blockIconData: contentMap[namespace].blocks[blockKey].iconData,
+                        lightDirection: LIGHT_DIRECTION.LEFT,
+                        scales: blockIconScaleSizes,
+                        writePath,
+                   })
+               )
+           }) 
+    })
+
+    await Promise.all(drawBlockPromises)
   }
 
   private writePageContentAsJSONArrayFiles(args: {
