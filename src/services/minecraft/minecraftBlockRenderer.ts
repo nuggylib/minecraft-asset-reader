@@ -127,7 +127,7 @@ export class MinecraftBlockRenderer {
     context.setTransform(1, isoWidth, 0, skew, 0, 0)
     context.drawImage(sideLPart, 0, z, sideLPart.width, sideHeight)
 
-    const baseWritePath = `${writePath}/images/${namespace}/blocks`
+    const baseWritePath = `${writePath}/${namespace}/images/${namespace}/blocks`
     await mkdirp(baseWritePath)
     const out = createWriteStream(`${baseWritePath}/${args.blockKey}_${scale}.png`)
     const stream = canvas.createPNGStream()

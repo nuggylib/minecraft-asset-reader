@@ -7,7 +7,6 @@ import fs from "fs"
 import mkdirp from "mkdirp"
 import { loadImage } from "canvas"
 import { ConfiguredBlock, ContentMap, RawAssetData } from "../../../types/cache"
-import { SiteData } from "../../../types/export"
 import { Int, MutationResult } from "../../../types/shared"
 import { BlockModelData } from "../../../types/minecraft"
 
@@ -193,14 +192,6 @@ export default class AppCache {
     this.cache.set(KEYS.CONTENT_MAP, newCachedContentMap)
   }
 
-  siteData(): SiteData {
-    const siteData = this.cache.get(KEYS.SITE_DATA)
-    if (siteData) {
-      return siteData as SiteData
-    }
-    return (null as unknown) as SiteData
-  }
-
   setCachedRawData(updatedRawDataObject: RawAssetData) {
     const cachedRawData = this.rawData()
     const updatedRawData = {
@@ -209,27 +200,6 @@ export default class AppCache {
     } as RawAssetData
 
     this.cache.set(KEYS.RAW_DATA, updatedRawData)
-  }
-
-  /**
-   * Update the cached parsed data with the given parsed data object
-   *
-   * This method handles merging the data from the "old" parsed data
-   * with the updated one, so that data is not overwritten and kept
-   * up-to-date.
-   *
-   * @param updatedParsedDataObject
-   * @returns
-   */
-  setCachedSiteData(updatedParsedDataObject: SiteData) {
-    const cachedParsedData = this.siteData()
-
-    const updatedParsedData = {
-      ...cachedParsedData,
-      ...updatedParsedDataObject,
-    } as SiteData
-    const response = this.cache.set(KEYS.SITE_DATA, updatedParsedData)
-    return response
   }
 
   setRootAssetsPath(rootAssetsPath: string) {
