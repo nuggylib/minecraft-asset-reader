@@ -3,7 +3,6 @@ import { lstatSync } from "fs"
 import { join } from "path"
 import { CACHE } from "../../main"
 import { RawAssetData } from "../../types/cache"
-import { SiteData } from "../../types/export"
 import { BlockModelData, ItemModelData } from "../../types/minecraft"
 
 /**
@@ -81,26 +80,6 @@ export class MinecraftUtility {
     } catch (e) {
       return false
     }
-  }
-
-  /**
-   * Simply prepares the SiteData object in-memory so that pages
-   * can be added to it during normal use of the application later.
-   */
-  async bootstrapSiteData() {
-    const siteData = {} as SiteData
-    const rawData = await CACHE.rawData()
-    const mappedNamespaces = Object.keys(rawData)
-    mappedNamespaces.forEach((namespace) => {
-      // Init the namespace fields
-      if (!siteData[namespace]) {
-        siteData[namespace] = {
-          blockPages: [],
-          itemPages: [],
-        }
-      }
-    })
-    await CACHE.setCachedSiteData(siteData)
   }
 
   private isValidTexturePackDirectory = (
