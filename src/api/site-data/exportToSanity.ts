@@ -5,20 +5,15 @@ export async function writeSiteDataToDisk(
   req: express.Request,
   res: express.Response
 ) {
-  const { writePath, blockIconScaleSizes } = req.body
-
-  if (!writePath) {
-    res.send({
-      error: `Write path must be specified`,
-    })
-  }
+  const { projectName, authToken, blockIconScaleSizes } = req.body
 
   const exporter = new Exporter()
 
   try {
-    await exporter.exportSiteDataToDisk({
+    await exporter.exportSiteDataToSanity({
       blockIconScaleSizes,
-      writePath,
+      projectName,
+      authToken,
     })
     res.send({
       sucess: true,

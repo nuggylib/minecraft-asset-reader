@@ -32,10 +32,7 @@ export const useMenuOptions = (props: {
     })
 
     setOptions(array)
-  }, [
-    !!props.rawData,
-    props.rawAssetsPath,
-  ])
+  }, [!!props.rawData, props.rawAssetsPath])
 
   return options
 }
