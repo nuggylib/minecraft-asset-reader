@@ -3,7 +3,14 @@ import fs from "fs"
 import { CACHE } from "../../main"
 import { LIGHT_DIRECTION, MinecraftBlockRenderer } from "../minecraft"
 import { Int } from "../../types/shared"
+import { SanityClient } from "../cms/sanity"
 
+/**
+ * Internal exporter client
+ * 
+ * Handles exporting data to the various supported locations. At the time of writing this comment,
+ * we only support exporting to the local file system, and to Sanity.
+ */
 export class Exporter {
 
   async exportSiteDataToDisk(args: {
@@ -54,4 +61,12 @@ export class Exporter {
       JSON.stringify(args.data)
     )
   }
+  
+  async exportSiteDataToSanity(args: {
+    projectName: string,
+    authToken: string
+  }) {
+    // const sanitClient = new SanityClient()
+  }
+
 }
