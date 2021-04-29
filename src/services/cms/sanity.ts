@@ -1,4 +1,5 @@
 import { CreateProjectResponse, SanityMutation } from "../../types/sanity"
+import fetch from "node-fetch"
 
 const SANITY_API_VERSION = `v2021-03-25`
 
@@ -7,9 +8,9 @@ const SANITY_API_VERSION = `v2021-03-25`
  * @see https://www.sanity.io/docs/http-urls
  * @see https://www.sanity.io/docs/http-auth
  */
-export class SanityClient {
+export class SanityRESTClient {
   apiUrlBase: string
-  apiToken: string
+  authToken: string
 
   /**
    *
@@ -20,7 +21,7 @@ export class SanityClient {
     this.apiUrlBase = !!projectId
       ? `https://${projectId}.api.sanity.io/${SANITY_API_VERSION}`
       : `https://api.sanity.io/${SANITY_API_VERSION}`
-    this.apiToken = authToken
+    this.authToken = authToken
   }
 
   /**
@@ -30,25 +31,24 @@ export class SanityClient {
    * @returns
    */
   async createProject(args: { displayName: string }) {
+    console.log(`USING DISPLAY NAME: `, args.displayName)
     return fetch(`${this.apiUrlBase}/projects`, {
       method: `POST`,
+      headers: {
+        Authorization: `Bearer ${this.authToken}`,
+        "Content-Type": `application/json`,
+      },
       body: JSON.stringify({
         displayName: args.displayName,
       }),
     })
       .then((res) => res.json())
       .then((resJson: CreateProjectResponse) => {
+        console.log(`RES JSON: `, resJson)
         return {
           success: true,
           id: resJson.id,
           message: resJson.id,
-        }
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          id: null,
-          message: e.message,
         }
       })
   }

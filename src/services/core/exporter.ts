@@ -4,9 +4,8 @@ import fs from "fs"
 import { CACHE } from "../../main"
 import { LIGHT_DIRECTION, MinecraftBlockRenderer } from "../minecraft"
 import { Int } from "../../types/shared"
-import { SanityClient } from "../cms/sanity"
+import { SanityRESTClient } from "../cms/sanity"
 import { BlockIconData } from "../../types/cache"
-import { basename } from "path"
 
 /**
  * Internal exporter client
@@ -72,15 +71,41 @@ export class Exporter {
     projectName: string
     authToken: string
   }) {
-    const sanityAccountClient = new SanityClient(args.authToken)
+    const sanityAccountClient = new SanityRESTClient(args.authToken)
     const createProjectResult = await sanityAccountClient.createProject({
       displayName: args.projectName,
     })
+    console.log(`CREATE PROJECT RESULT: `, createProjectResult)
     if (!createProjectResult.success) {
       return // TODO: Error handling
     }
 
-    const namespaces = Object.keys(CACHE.contentMap())
+    const contentMap = CACHE.contentMap()
+    if (!contentMap) {
+      return // TODO: error stuff
+    }
+    const namespaces = Object.keys(contentMap)
+    const projectId = createProjectResult.id
+
+    const createImagePromises = [] as Promise<any>[]
+
+    namespaces.forEach((namespace) => {
+      Object.keys(contentMap[namespace].blocks).forEach((blockKey) => {
+        createImagePromises.push(
+          this.exportNamespaceImagesToSanity({
+            projectId,
+            authToken: args.authToken,
+            namespace,
+            blockKey,
+            blockIconData: contentMap[namespace].blocks[blockKey].iconData,
+            lightDirection: LIGHT_DIRECTION.LEFT,
+            scales: args.blockIconScaleSizes,
+          })
+        )
+      })
+    })
+
+    await Promise.all(createImagePromises)
   }
 
   private async exportNamespaceImagesToSanity(args: {
@@ -92,10 +117,19 @@ export class Exporter {
     lightDirection: LIGHT_DIRECTION
     scales: Int[]
   }) {
-    const accountClient = new sanity({
+    let projectClient = new sanity({
       projectId: args.projectId,
-      dataset: `production`,
       token: args.authToken,
+      apiVersion: `2021-03-25`,
+    })
+    await projectClient.datasets.create(`production`)
+
+    // Re-init client with the dataset after it's been created
+    projectClient = new sanity({
+      projectId: args.projectId,
+      token: args.authToken,
+      dataset: `production`,
+      apiVersion: `2021-03-25`,
     })
 
     // Generate and upload images
@@ -109,15 +143,11 @@ export class Exporter {
             lightDirection: args.lightDirection,
             scale,
           })
-          .then((imageFilePath) => {
-            accountClient.assets.upload(
-              `image`,
-              fs.readFileSync(imageFilePath),
-              {
-                filename: basename(imageFilePath),
-              }
-            )
-          })
+          .then((imageBuffer) =>
+            projectClient.assets.upload(`image`, imageBuffer, {
+              filename: `${args.blockKey}_${scale}`,
+            })
+          )
           .catch((e) => {
             console.error(
               `Encountered error while uploading image for '${args.blockKey}': `,

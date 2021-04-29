@@ -1,7 +1,7 @@
 import express from "express"
 import { Exporter } from "../../services/core/exporter"
 
-export async function writeSiteDataToDisk(
+export async function exportToSanity(
   req: express.Request,
   res: express.Response
 ) {
@@ -15,11 +15,13 @@ export async function writeSiteDataToDisk(
       projectName,
       authToken,
     })
+    console.log(`Exported data to sanity!`)
     res.send({
       sucess: true,
       message: `Export completed successfully`,
     })
   } catch (e) {
+    console.error(e)
     res.send({
       success: false,
       message: e.message,

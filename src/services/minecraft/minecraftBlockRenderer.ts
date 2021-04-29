@@ -4,6 +4,7 @@ import { CACHE } from "../../main"
 import mkdirp from "mkdirp"
 import { BlockIconData } from "../../types/cache"
 import { Int } from "../../types/shared"
+import { SanityClient } from "@sanity/client"
 
 // TODO: Test the impact of the different values
 /**
@@ -66,7 +67,7 @@ export class MinecraftBlockRenderer {
     lightDirection: LIGHT_DIRECTION
     scale: Int
     writePath?: string
-  }): Promise<string> {
+  }): Promise<Buffer> {
     const canvas = createCanvas(32, 32)
     const context = canvas.getContext(`2d`)
     // The texture names (not the actual textures, yet)
@@ -135,14 +136,14 @@ export class MinecraftBlockRenderer {
     await mkdirp(baseWritePath)
     const filePath = `${baseWritePath}/${args.blockKey}_${scale}.png`
     const out = createWriteStream(filePath)
-    return filePath
+
     // const stream = canvas.createPNGStream()
     // stream.pipe(out)
     // out.on(`finish`, () => {
-    //   // console.log(`Saved icon for block ${args.blockKey}`)
-    //   // TODO: Consider implementing some form of loading indicators
+    // console.log(`Saved icon for block ${args.blockKey}`)
     // })
-    // return canvas.toBuffer().toString(`base64`)
+    // Seems we don't need to return this afterall (need to use the onFinish callback)
+    return canvas.toBuffer()
   }
 
   /**

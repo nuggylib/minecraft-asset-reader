@@ -1,5 +1,5 @@
 import { CACHE } from "../../../main"
-import { SanityClient } from "../../cms/sanity"
+import { SanityRESTClient } from "../../cms/sanity"
 import sanity from "@sanity/client"
 import { BlockIconData } from "../../../types/cache"
 import { LIGHT_DIRECTION, MinecraftBlockRenderer } from "../../minecraft"
@@ -18,7 +18,7 @@ export class SanityExporter {
   }
 
   async createNewSanityProject(args: { projectName: string }) {
-    const sanityAccountClient = new SanityClient(this.authToken)
+    const sanityAccountClient = new SanityRESTClient(this.authToken)
     const createProjectResult = await sanityAccountClient.createProject({
       displayName: args.projectName,
     })
@@ -60,7 +60,7 @@ export class SanityExporter {
       })
     })
 
-    const client = new SanityClient(this.authToken, args.projectId)
+    const client = new SanityRESTClient(this.authToken, args.projectId)
     await client.mutationTransaction({
       mutations,
     })

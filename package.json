@@ -103,8 +103,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,yml,yaml}": [
-      "yarn lint:commit",
-      "git add"
+      "yarn lint:commit"
     ]
   }
 }
