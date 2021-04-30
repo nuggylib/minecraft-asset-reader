@@ -4,6 +4,7 @@ import { CACHE } from "../../main"
 import mkdirp from "mkdirp"
 import { BlockIconData } from "../../types/cache"
 import { Int } from "../../types/shared"
+import { SanityClient } from "@sanity/client"
 
 // TODO: Test the impact of the different values
 /**
@@ -31,7 +32,6 @@ const SIZE = 16
  * @see https://www.npmjs.com/package/canvas
  */
 export class MinecraftBlockRenderer {
-
   async drawBlockPageIconsForDifferentScales(args: {
     namespace: string
     blockKey: string
@@ -41,7 +41,7 @@ export class MinecraftBlockRenderer {
     writePath: string
   }) {
     await Promise.all(
-      args.scales.map(scale => {
+      args.scales.map((scale) => {
         this.drawBlockPageIcon({
           namespace: args.namespace,
           blockKey: args.blockKey,
@@ -66,13 +66,18 @@ export class MinecraftBlockRenderer {
     blockIconData: BlockIconData
     lightDirection: LIGHT_DIRECTION
     scale: Int
-    writePath: string
-  }): Promise<string> {
+    writePath?: string
+  }): Promise<Buffer> {
     const canvas = createCanvas(32, 32)
     const context = canvas.getContext(`2d`)
     // The texture names (not the actual textures, yet)
     const { top, sideL, sideR } = args.blockIconData
-    const { scale, writePath, namespace } = args
+    const { scale, namespace } = args
+    let { writePath } = args
+
+    if (!writePath) {
+      writePath = `./generated/export`
+    }
 
     const rawAssetsPath = await CACHE.getRootAssetsPath()
 
@@ -129,14 +134,16 @@ export class MinecraftBlockRenderer {
 
     const baseWritePath = `${writePath}/${namespace}/images/${namespace}/blocks`
     await mkdirp(baseWritePath)
-    const out = createWriteStream(`${baseWritePath}/${args.blockKey}_${scale}.png`)
-    const stream = canvas.createPNGStream()
-    stream.pipe(out)
-    out.on(`finish`, () => {
-      // console.log(`Saved icon for block ${args.blockKey}`)
-      // TODO: Consider implementing some form of loading indicators
-    })
-    return canvas.toBuffer().toString(`base64`)
+    const filePath = `${baseWritePath}/${args.blockKey}_${scale}.png`
+    const out = createWriteStream(filePath)
+
+    // const stream = canvas.createPNGStream()
+    // stream.pipe(out)
+    // out.on(`finish`, () => {
+    // console.log(`Saved icon for block ${args.blockKey}`)
+    // })
+    // Seems we don't need to return this afterall (need to use the onFinish callback)
+    return canvas.toBuffer()
   }
 
   /**

@@ -1,30 +1,27 @@
 import express from "express"
 import { Exporter } from "../../services/core/exporter"
 
-export async function writeSiteDataToDisk(
+export async function exportToSanity(
   req: express.Request,
   res: express.Response
 ) {
-  const { writePath, blockIconScaleSizes } = req.body
-
-  if (!writePath) {
-    res.send({
-      error: `Write path must be specified`,
-    })
-  }
+  const { projectName, authToken, blockIconScaleSizes } = req.body
 
   const exporter = new Exporter()
 
   try {
-    await exporter.exportSiteDataToDisk({
+    await exporter.exportSiteDataToSanity({
       blockIconScaleSizes,
-      writePath,
+      projectName,
+      authToken,
     })
+    console.log(`Exported data to sanity!`)
     res.send({
       sucess: true,
       message: `Export completed successfully`,
     })
   } catch (e) {
+    console.error(e)
     res.send({
       success: false,
       message: e.message,

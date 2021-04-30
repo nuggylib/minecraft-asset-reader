@@ -39,11 +39,7 @@ export default class AppCache {
     page?: Int
     limit?: Int
   }) => {
-    const {
-      limit,
-      namespace,
-      page,
-    } = args
+    const { limit, namespace, page } = args
     const rawData = this.rawData()
     const records = [] as {
       block: string
@@ -119,14 +115,12 @@ export default class AppCache {
     block: string
     scaleAmount: number
   }) {
-
     const rawData = this.rawData()
     const rawBlockData = rawData[args.namespace].model.block[args.block]
     return {
       data: rawBlockData,
       scaledTextures: await this.getScaledBlockTextures(args),
     }
-
   }
 
   contentMap(): ContentMap {
