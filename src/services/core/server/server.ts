@@ -3,8 +3,13 @@ import express from "express"
 import paginate from "express-paginate"
 import cors from "cors"
 import { getBlocksForNamespace, getNamespaces } from "../../../api/raw-data"
-import { getBlockFromContentMap, getContentMap, setContentMapNamespaceBlocks, writeContentMapToDisk } from "../../../api/content-map"
-import { writeSiteDataToDisk } from "../../../api/site-data/writeSiteDataToDisk"
+import {
+  getBlockFromContentMap,
+  getContentMap,
+  setContentMapNamespaceBlocks,
+  writeContentMapToDisk,
+} from "../../../api/content-map"
+import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
 
 var app = express()
 
@@ -32,6 +37,7 @@ app.post(`/content-map/export`, writeContentMapToDisk)
  * Site data routes
  *******************************************/
 app.post(`/site-data/export`, writeSiteDataToDisk)
+app.post(`/site-data/export/sanity`, exportToSanity)
 
 export async function initServer() {
   app.listen(3000)
