@@ -1,4 +1,4 @@
-import sanity from "@sanity/client"
+import sanity, { SanityClient } from "@sanity/client"
 import mkdirp from "mkdirp"
 import fs from "fs"
 import { CACHE } from "../../main"
@@ -88,17 +88,32 @@ export class Exporter {
 
     const createImagePromises = [] as Promise<any>[]
 
+    let projectClient = new sanity({
+      projectId,
+      token: args.authToken,
+      apiVersion: `2021-03-25`,
+    })
+    await projectClient.datasets.create(`production`)
+
+    // Re-init client with the dataset after it's been created
+    projectClient = new sanity({
+      projectId,
+      token: args.authToken,
+      dataset: `production`,
+      apiVersion: `2021-03-25`,
+    })
+
     namespaces.forEach((namespace) => {
       Object.keys(contentMap[namespace].blocks).forEach((blockKey) => {
         createImagePromises.push(
           this.exportNamespaceImagesToSanity({
-            projectId,
             authToken: args.authToken,
             namespace,
             blockKey,
             blockIconData: contentMap[namespace].blocks[blockKey].iconData,
             lightDirection: LIGHT_DIRECTION.LEFT,
             scales: args.blockIconScaleSizes,
+            projectClient,
           })
         )
       })
@@ -108,29 +123,14 @@ export class Exporter {
   }
 
   private async exportNamespaceImagesToSanity(args: {
-    projectId: string
     authToken: string
     namespace: string
     blockKey: string
     blockIconData: BlockIconData
     lightDirection: LIGHT_DIRECTION
     scales: Int[]
+    projectClient: SanityClient
   }) {
-    let projectClient = new sanity({
-      projectId: args.projectId,
-      token: args.authToken,
-      apiVersion: `2021-03-25`,
-    })
-    await projectClient.datasets.create(`production`)
-
-    // Re-init client with the dataset after it's been created
-    projectClient = new sanity({
-      projectId: args.projectId,
-      token: args.authToken,
-      dataset: `production`,
-      apiVersion: `2021-03-25`,
-    })
-
     // Generate and upload images
     await Promise.all(
       args.scales.map((scale) => {
@@ -143,7 +143,7 @@ export class Exporter {
             scale,
           })
           .then((imageBuffer) =>
-            projectClient.assets.upload(`image`, imageBuffer, {
+            args.projectClient.assets.upload(`image`, imageBuffer, {
               filename: `${args.blockKey}_${scale}`,
             })
           )
