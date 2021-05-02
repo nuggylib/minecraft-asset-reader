@@ -15,7 +15,7 @@ export function getBlocksForNamespace(
   res: express.Response
 ) {
   // If limit is unset, it defaults to 10
-  const { namespace, limit, skip, page, block, scaleImage } = req.query
+  const { namespace, limit, page, block, scaleImage, order } = req.query
   if (!namespace) {
     res.send({
       error: `You must provide a namespace`,
@@ -35,6 +35,7 @@ export function getBlocksForNamespace(
       namespace: namespace as string,
       limit: !!limit ? ((limit as unknown) as Int) : undefined,
       page: !!page ? ((page as unknown) as Int) : undefined,
+      order: !!order ? (order as `ascending` | `descending`) : undefined,
     })
     const response = {
       limit: (limit as unknown) as number,

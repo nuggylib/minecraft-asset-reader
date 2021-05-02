@@ -38,6 +38,7 @@ export default class AppCache {
     namespace: string
     page?: Int
     limit?: Int
+    order?: `ascending` | `descending`
   }) => {
     const { limit, namespace, page } = args
     const rawData = this.rawData()
@@ -47,6 +48,9 @@ export default class AppCache {
     }[]
     const blocksForNamespace = rawData[namespace].model.block
     const blockNames = Object.keys(blocksForNamespace)
+    if (!!args.order && args.order === `descending`) {
+      blockNames.reverse()
+    }
     const pageCount = Math.ceil(
       blockNames.length / ((limit as unknown) as number)
     )
