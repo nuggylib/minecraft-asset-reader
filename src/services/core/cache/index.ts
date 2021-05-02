@@ -39,6 +39,7 @@ export default class AppCache {
     page?: Int
     limit?: Int
     order?: `ascending` | `descending`
+    q?: string
   }) => {
     const { limit, namespace, page } = args
     const rawData = this.rawData()
@@ -47,7 +48,15 @@ export default class AppCache {
       data: BlockModelData
     }[]
     const blocksForNamespace = rawData[namespace].model.block
-    const blockNames = Object.keys(blocksForNamespace)
+    let blockNames = [] as string[]
+    if (!!args.q) {
+      blockNames = Object.keys(blocksForNamespace).filter((val) =>
+        val.includes(args.q!)
+      )
+    } else {
+      blockNames = Object.keys(blocksForNamespace)
+    }
+
     if (!!args.order && args.order === `descending`) {
       blockNames.reverse()
     }
