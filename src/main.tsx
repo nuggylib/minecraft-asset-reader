@@ -6,4 +6,6 @@ import { initServer } from "./services/core/server/server"
 
 export const CACHE = new AppCache()
 
-initServer().then(() => render(<CLIApp />))
+export function cli(_args: any) {
+  initServer().then(() => render(<CLIApp />))
+}
