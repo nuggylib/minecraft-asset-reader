@@ -10,4 +10,6 @@ export function cli(_args: any) {
   initServer().then(() => render(<CLIApp />))
 }
 
-cli({})
+if (process.env.LOCAL) {
+  cli({})
+}
