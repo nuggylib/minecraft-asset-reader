@@ -9,3 +9,5 @@ export const CACHE = new AppCache()
 export function cli(_args: any) {
   initServer().then(() => render(<CLIApp />))
 }
+
+cli({})
