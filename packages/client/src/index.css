@@ -1,0 +1,273 @@
+/* see https://stackoverflow.com/questions/47607602/how-to-add-a-tailwind-css-rule-to-css-checker (the second answer - NOT the first) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  body {
+    @apply bg-stone-pattern;
+  }
+
+  header {
+    @apply flex items-center p-4;
+  }
+  header button {
+    @apply p-1 mr-4;
+  }
+
+  h1 {
+    @apply text-4xl;
+  }
+
+  .pagination-config {
+    @apply flex flex-row;
+    @apply justify-center;
+  }
+
+  .sidebar {
+    @apply fixed;
+    @apply flex;
+    @apply h-full;
+    @apply bg-gray-800;
+    @apply flex-shrink-0;
+    @apply w-64;
+    @apply flex;
+    @apply flex-col;
+    @apply border-r;
+    @apply transition-transform;
+    @apply duration-300;
+    @apply z-10;
+    @apply overflow-x-hidden;
+  }
+  .sidebar h1 {
+    @apply m-8;
+    @apply text-center;
+    @apply text-base;
+    @apply text-white;
+  }
+  .sidebar h3 {
+    @apply m-8;
+    @apply text-center;
+    @apply text-sm;
+    @apply text-white;
+  }
+  .sidebar-namespace-label {
+    @apply ml-4;
+    @apply text-base;
+    @apply text-white;
+  }
+  .sidebar-nested-field-label {
+    @apply ml-8;
+    @apply float-left;
+    @apply text-white;
+  }
+  .sidebar-nested-field-value {
+    @apply ml-2;
+    @apply float-left;
+    @apply text-green-400;
+  }
+  .sidebar .toggle-button {
+    @apply absolute;
+    @apply top-0;
+    @apply right-0;
+    @apply text-white;
+  }
+
+  .modal-overlay {
+    @apply fixed;
+    @apply top-0;
+    @apply left-0;
+    @apply w-full;
+    @apply h-full;
+    @apply z-10;
+    @apply bg-black;
+    @apply bg-opacity-40;
+  }
+
+  .modal {
+    @apply p-4;
+    @apply absolute;
+    @apply z-10;
+    @apply bg-white;
+    @apply w-4/5;
+  }
+  .modal-title {
+    @apply text-center;
+  }
+  .modal-input {
+    @apply p-1;
+    @apply m-2;
+    @apply bg-gray-300;
+    @apply rounded border-2 border-gray-500;
+    @apply focus:outline-none;
+  }
+  .modal-dismiss-button {
+    @apply w-auto;
+    @apply p-2;
+    @apply bg-gray-500;
+    @apply hover:bg-gray-400;
+    @apply text-white;
+    @apply rounded;
+    @apply text-center;
+    @apply focus:outline-none;
+    @apply w-1/4;
+    @apply float-left;
+  }
+  .modal-save-button {
+    @apply w-auto;
+    @apply p-2;
+    @apply bg-blue-600;
+    @apply hover:bg-blue-900;
+    @apply text-white;
+    @apply rounded;
+    @apply text-center;
+    @apply focus:outline-none;
+    @apply w-1/4;
+    @apply float-right;
+  }
+  .modal-save-button-disabled {
+    @apply w-auto;
+    @apply p-2;
+    @apply bg-blue-300;
+    @apply text-white;
+    @apply rounded;
+    @apply text-center;
+    @apply focus:outline-none;
+    @apply w-1/4;
+    @apply float-right;
+  }
+
+  .modal-dropdown-row {
+    @apply space-x-4;
+
+  }
+  .modal-dropdown-row > h3 {
+    @apply inline-block;
+  }
+  .modal-dropdown-row > select {
+    @apply w-24;
+  }
+
+  .ellipses-dot {
+    @apply h-2.5 w-2.5;
+    @apply bg-current;
+    @apply rounded-full;
+  }
+  .animated-ellipses-row {
+    @apply flex absolute;
+    @apply top-1/2 left-1/2;
+  }
+
+  .export-modal-loading-overlay {
+    @apply absolute;
+    @apply bg-gray-500 bg-opacity-60;
+    @apply w-full h-full;
+    @apply rounded;
+  }
+  .export-modal {
+    @apply absolute;
+    @apply z-10;
+    @apply bg-white;
+    @apply w-1/2;
+    @apply transform translate-y-40 translate-x-1/2;
+    @apply rounded;
+  }
+  .export-modal h1, h2, h3, label, p, form {
+    @apply text-center;
+  }
+  .export-modal-section-table {
+    @apply w-1/3;
+    @apply mx-auto;
+    @apply space-x-4;
+  }
+  .scale-table-label {
+    @apply inline-block float-left;
+  }
+  .scale-table-value {
+    @apply inline-block float-right;
+  }
+  .add-scale-size-button {
+    @apply h-6 w-6;
+    @apply hover:text-blue-700;
+    @apply inline-block;
+  }
+  .remove-scale-size-button {
+    @apply h-6 w-6;
+    @apply inline-block float-right;
+    @apply hover:text-red-600;
+  }
+
+  .export-modal-input {
+    @apply px-2;
+    @apply m-2;
+    @apply rounded;
+    @apply bg-gray-200;
+  }
+  .export-modal-cancel-button {
+    @apply inline-block float-left;
+    @apply rounded;
+    @apply bg-gray-300 hover:bg-gray-400;
+    @apply px-2;
+  }
+  .export-modal-save-button {
+    @apply inline-block float-right;
+    @apply bg-blue-600 hover:bg-blue-700;
+    @apply text-white;
+    @apply rounded;
+    @apply px-2;
+  }
+
+  .open-export-modal-button {
+    @apply absolute bottom-0 m-4 p-4;
+    @apply transform translate-x-20;
+    @apply bg-green-500 hover:bg-green-600 rounded;
+    @apply focus:outline-none;
+    @apply text-white;
+  }
+
+  .block-grid {
+    @apply m-4;
+    @apply grid;
+    @apply grid-cols-4;
+    @apply gap-6;
+  }
+
+  .block-record {
+    @apply bg-white;
+    @apply rounded;
+    @apply text-center;
+    @apply transform hover:-translate-y-1 hover:scale-110 ease-in-out duration-100;
+  }
+
+  .namespace-button-grid {
+    @apply m-4;
+    @apply p-2;
+    @apply grid;
+    @apply grid-cols-3;
+    @apply gap-4;
+  }
+
+  .namespace-button {
+    @apply w-auto;
+    @apply p-2;
+    @apply bg-blue-600;
+    @apply text-white;
+    @apply text-center;
+    @apply rounded-lg;
+    @apply hover:bg-blue-900;
+    @apply focus:outline-none;
+  }
+
+  .pagination-button {
+    @apply p-2;
+    @apply bg-blue-600;
+    @apply text-white;
+    @apply rounded;
+    @apply text-center;
+    @apply rounded-lg;
+    @apply hover:bg-blue-900;
+    @apply focus:outline-none;
+  }
+
+}

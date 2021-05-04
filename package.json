@@ -11,7 +11,9 @@
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*,packages/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
     "prepare": "husky install",
     "start:cli": "lerna exec --scope 'minecraft-asset-reader' yarn start",
-    "build:cli": "lerna exec --scope 'minecraft-asset-reader' yarn build"
+    "build:cli": "lerna exec --scope 'minecraft-asset-reader' yarn build",
+    "start:client": "lerna exec --scope 'minecraft-asset-reader-webapp' yarn start",
+    "build:client": "lerna exec --scope 'minecraft-asset-reader-webapp' yarn build"
   },
   "repository": {
     "type": "git",
@@ -46,7 +48,6 @@
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.3",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-react-app": "^6.0.0",
@@ -56,7 +57,7 @@
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^6.0.0",
-    "jest": "^26.6.3",
+    "lerna": "^4.0.0",
     "lint-staged": ">=10",
     "prettier": "^2.2.1",
     "prettier-eslint-cli": "^5.0.1",
@@ -67,7 +68,8 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "minecraft-asset-reader": "file:packages/cli"
+    "minecraft-asset-reader": "file:packages/cli",
+    "minecraft-asset-reader-webapp": "file:packages/client"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,yml,yaml}": [
