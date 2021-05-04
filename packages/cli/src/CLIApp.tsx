@@ -11,9 +11,6 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
 import { Menu } from "./services/core/components/shared/Menu"
-import { useContentMap } from "./services/core/components/hooks/useContentMap"
-// import { CACHE } from "./main"
-import { MinecraftUtility } from "./services/minecraft/minecraftUtility"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(

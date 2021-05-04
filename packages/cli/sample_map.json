@@ -1,0 +1,30 @@
+{
+  "minecraft": {
+    "blocks": {
+      "acacia_log": {
+        "title": "Acacia Log",
+        "iconData": {
+          "top": "blocks/log_acacia_top",
+          "sideL": "blocks/log_acacia",
+          "sideR": "blocks/log_acacia"
+        }
+      },
+      "cobblestone": {
+        "title": "Cobblestone",
+        "iconData": {
+          "top": "blocks/cobblestone",
+          "sideL": "blocks/cobblestone",
+          "sideR": "blocks/cobblestone"
+        }
+      },
+      "grass": {
+        "title": "Grass",
+        "iconData": {
+          "top": "blocks/grass_top",
+          "sideL": "blocks/grass_side",
+          "sideR": "blocks/grass_side"
+        }
+      }
+    }
+  }
+}
