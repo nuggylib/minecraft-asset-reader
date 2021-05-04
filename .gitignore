@@ -2,6 +2,7 @@ node_modules
 out
 generated
 .env
+build
 
 # TODO:
 report.**.json

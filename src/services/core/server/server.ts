@@ -10,9 +10,15 @@ import {
   writeContentMapToDisk,
 } from "../../../api/content-map"
 import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
+import path from "path"
 
 var app = express()
 
+// Needed for React app
+app.use(express.static(path.join(__dirname, `../../../..`, `build`)))
+app.use(express.static(`public`))
+
+// Remaining stuff
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
