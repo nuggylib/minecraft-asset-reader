@@ -5,9 +5,7 @@ Monorepo for the `minecraft-asset-reader` CLI tool. This repository contains bot
 The main use case for this tool is to **make it easy to configure demo/portfolio site content using custom-generated assets and template content _based on your mod/modpack's code_.** In other words, _this makes it easy to create site content for your mod/modpack by_:
 
 1. Bulk-generation of scaled and rendered images (no need to manually-rescale/redraw the 16x16 images - we do it for you!)
-
-- You can even specify a wide range of scale sizes for supported content types (there are some limitations)
-
+    - You can even specify a wide range of scale sizes for supported content types (there are some limitations)
 2. Generation of template schemas based on your mod/modpack content
 3. Data export to local file system
 4. Data export to Sanity.io
