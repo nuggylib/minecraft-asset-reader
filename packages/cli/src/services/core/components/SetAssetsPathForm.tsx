@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
 import { MinecraftUtility } from "../../minecraft/minecraftUtility"
+import { checkForAssets } from "../../../utils"
 
 /**
  * A simple input form to get the base assets path
@@ -21,12 +22,18 @@ export const SetAssetsPathForm = (props: {
   const minecraftAssetReader = new MinecraftUtility()
 
   const submitHandler = (value: string) => {
-    if (value !== `q` && isValid) {
+    if (value === `q`) {
+      props.clearSelectedOptionHandler()
+    }
+    if (value === `default`) {
+      minecraftAssetReader.readInRawData({
+        path: checkForAssets(),
+      })
+      props.clearSelectedOptionHandler()
+    } else if (value !== `q` && isValid) {
       minecraftAssetReader.readInRawData({
         path: value,
       })
-      props.clearSelectedOptionHandler()
-    } else if (value === `q`) {
       props.clearSelectedOptionHandler()
     }
   }
@@ -47,7 +54,8 @@ export const SetAssetsPathForm = (props: {
     if (
       (lastPart === `assets` &&
         minecraftAssetReader.validatePathAsAssetsDirectory({ path: input })) ||
-      input === `q`
+      input === `q` ||
+      input === `default`
     ) {
       setIsValid(true)
     } else {
