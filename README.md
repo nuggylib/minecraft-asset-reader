@@ -17,6 +17,21 @@ The main use case for this tool is to **make it easy to configure demo/portfolio
 3. In the CLI tool, provide a path to a valid assets directory
 4. Navigate to `localhost:3000` to use the webapp
 
+## Example views
+
+### CLI example
+![CLI_example](https://user-images.githubusercontent.com/14364659/117087411-f9fd2480-ad14-11eb-8b13-d842e4b5b1d7.png)
+
+### Webapp example (main view)
+![example_webapp_view](https://user-images.githubusercontent.com/14364659/117087431-0b463100-ad15-11eb-9142-7a6f4204bbfe.png)
+
+### Webapp - block config
+![in-app_block_config_demo](https://user-images.githubusercontent.com/14364659/117087568-7f80d480-ad15-11eb-8dcb-76dda20afffb.png)
+
+### Example generated Block in Sanity.io Studio
+![sanity_block_config](https://user-images.githubusercontent.com/14364659/117087533-60824280-ad15-11eb-8b51-9d9b83edfb0e.png)
+
+
 ## Basic commands
 
 1. Running the CLI locally: `yarn start:cli` (start this first when testing locally so you can use React's port-conflict resolution logic)
