@@ -13,6 +13,9 @@ import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
 import { Menu } from "./services/core/components/shared/Menu"
 import { checkForAssets } from "./utils"
 import { CACHE } from "./main"
+import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
+
+const minecraftAssetReader = new MinecraftUtility()
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
@@ -42,11 +45,10 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        CACHE.setRootAssetsPath(checkForAssets())
-        // checkForAssets()
-        // clearSelectedOptionHandler()
-        console.log(selectedOption)
-        // setSelectedOption(`foo`)
+        minecraftAssetReader.readInRawData({
+          path: checkForAssets(),
+        })
+        // CACHE.setRootAssetsPath(checkForAssets())
       }
       default: {
         return <></>

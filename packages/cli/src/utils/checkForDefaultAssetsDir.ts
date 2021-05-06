@@ -11,9 +11,9 @@ let minecraftVersion = `1.12.2`
 const linuxJar = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
 const darwinJar = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
 const winJar = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\${minecraftVersion}.jar`
-const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/assets/`
-const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets/`
-const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets\\`
+const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/assets`
+const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets`
+const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
 
 // checkForAssets() gets the current operating system (OS),
 // then checks if the default assets directory for the OS
