@@ -83,7 +83,10 @@ export const BlockModal = (props: {
 
   const renderDropdownOptions = () =>
     Object.keys(blockTextures).map((textureName) => (
-      <option key={`${textureName}_opt`} value={`${textureName}`}>
+      <option
+        key={`${textureName}_opt`}
+        value={`${textureName.replace(`blocks/`, ``)}`}
+      >
         {textureName.replace(`blocks/`, ``)}
       </option>
     ))
@@ -101,9 +104,9 @@ export const BlockModal = (props: {
             type: BLOCK_MODAL_ACTION.LOAD_CACHED,
             payload: {
               title,
-              top: iconData.top.replace(`blocks/`, ``),
-              left: iconData.sideL.replace(`blocks/`, ``),
-              right: iconData.sideR.replace(`blocks/`, ``),
+              top: iconData.top,
+              left: iconData.sideL,
+              right: iconData.sideR,
             },
           })
         }
@@ -202,21 +205,17 @@ export const BlockModal = (props: {
           ))}
           <div className="grid grid-cols-3 mx-8">
             {[`top`, `left`, `right`].map((side) => {
-              let val
               let handler
               switch (side) {
                 case `top`: {
-                  val = modalState.top
                   handler = setTopHandler
                   break
                 }
                 case `left`: {
-                  val = modalState.left
                   handler = setLeftHandler
                   break
                 }
                 case `right`: {
-                  val = modalState.right
                   handler = setRightHandler
                   break
                 }
@@ -224,7 +223,7 @@ export const BlockModal = (props: {
               return (
                 <div className="modal-dropdown-row">
                   <h3>{side}</h3>
-                  <select value={val} onChange={handler}>
+                  <select value={modalState[side]} onChange={handler}>
                     <option value="none">none</option>
                     {renderDropdownOptions()}
                   </select>
