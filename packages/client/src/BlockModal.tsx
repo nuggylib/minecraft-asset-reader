@@ -108,7 +108,14 @@ export const BlockModal = (props: {
           })
         }
       })
-  }, [modalState.title, modalState.top, modalState.left, modalState.right])
+  }, [
+    modalState.title,
+    modalState.top,
+    modalState.left,
+    modalState.right,
+    props.namespace,
+    props.blockModelData.block,
+  ])
 
   const setTopHandler = (e: any) =>
     dispatch({
@@ -160,75 +167,88 @@ export const BlockModal = (props: {
       <div className="modal rounded-lg">
         <div className="modal-title">
           <h1>{props.blockModelData.block}</h1>
+          <input
+            className="modal-input"
+            type="text"
+            placeholder="In-game title (e.g., 'Cobblestone')"
+            value={modalState.title}
+            onChange={setTitleHandler}
+          />
         </div>
         <br />
-        <table className="table-auto mx-auto">
-          <thead>
-            <tr>
-              <th>Texture Name</th>
-              <th>Image</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(blockTextures).map((textureName) => (
-              <tr key={`${textureName}_scaled_row`}>
-                <td>{textureName.replace(`blocks/`, ``)}</td>
-                <td>
+        <div className="block-icon-config">
+          <h2 className="text-xl font-bold">Block icon configuration</h2>
+          <p className="italic text-justify mx-8">
+            Each texture name is shown alongside its corresponding texture
+            image. Select the images to use for the top, left and right sides.
+            These images will be used to generate an isometric view of your
+            block. <b>The same image may be used for multiple sides.</b>
+          </p>
+          {Object.keys(blockTextures).map((textureName) => (
+            <div key={`${textureName}_scaled_row`} className="mx-20">
+              <div className="grid grid-cols-2">
+                <div className="font-bold m-auto">
+                  {textureName.replace(`blocks/`, ``)}
+                </div>
+                <div>
                   <img
                     className="m-4 mx-auto"
                     src={blockTextures[textureName]}
                     alt={textureName}
                   />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="text-center">
-          <input
-            className="modal-input"
-            type="text"
-            placeholder="Title"
-            value={modalState.title}
-            onChange={setTitleHandler}
-          />
-          <div className="modal-dropdown-row">
-            <h3>top</h3>
-            <select value={modalState.top} onChange={setTopHandler}>
-              <option value="none">none</option>
-              {renderDropdownOptions()}
-            </select>
-          </div>
-          <div className="modal-dropdown-row">
-            <h3>sideL</h3>
-            <select value={modalState.left} onChange={setLeftHandler}>
-              <option value="none">none</option>
-              {renderDropdownOptions()}
-            </select>
-          </div>
-          <div className="modal-dropdown-row">
-            <h3>sideR</h3>
-            <select value={modalState.right} onChange={setRightHandler}>
-              <option value="none">none</option>
-              {renderDropdownOptions()}
-            </select>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div className="grid grid-cols-3 mx-8">
+            {[`top`, `left`, `right`].map((side) => {
+              let val
+              let handler
+              switch (side) {
+                case `top`: {
+                  val = modalState.top
+                  handler = setTopHandler
+                  break
+                }
+                case `left`: {
+                  val = modalState.left
+                  handler = setLeftHandler
+                  break
+                }
+                case `right`: {
+                  val = modalState.right
+                  handler = setRightHandler
+                  break
+                }
+              }
+              return (
+                <div className="modal-dropdown-row">
+                  <h3>{side}</h3>
+                  <select value={val} onChange={handler}>
+                    <option value="none">none</option>
+                    {renderDropdownOptions()}
+                  </select>
+                </div>
+              )
+            })}
           </div>
         </div>
-        <button className="modal-dismiss-button" onClick={props.dimiss}>
-          Dismiss
-        </button>
-
-        <button
-          className={
-            !!saveButtonDisabled
-              ? `modal-save-button-disabled`
-              : `modal-save-button`
-          }
-          onClick={saveHandler}
-          disabled={saveButtonDisabled}
-        >
-          Save
-        </button>
+        <div className="modal-button-row">
+          <button className="modal-dismiss-button" onClick={props.dimiss}>
+            Dismiss
+          </button>
+          <button
+            className={
+              !!saveButtonDisabled
+                ? `modal-save-button-disabled`
+                : `modal-save-button`
+            }
+            onClick={saveHandler}
+            disabled={saveButtonDisabled}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </>
   )
