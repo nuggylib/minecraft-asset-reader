@@ -8,6 +8,7 @@ export const enum OPTION_VALUE {
   VIEW_PARSED_DATA = `view_parsed_data`,
   EXPORT_PARSED_DATA = `export_parsed_data`,
   GENERATE_SITE_DATA = `generate_site_data`,
+  USE_DEFAULT_ASSETS_DIRECTORY = `use_default_assets_directory`,
 }
 
 export const useMenuOptions = (props: {
@@ -29,6 +30,11 @@ export const useMenuOptions = (props: {
     array.push({
       label: `Set assets directory`,
       value: OPTION_VALUE.SET_ASSETS_DIRECTORY,
+    })
+
+    array.push({
+      label: `Use default assets directory`,
+      value: OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY,
     })
 
     setOptions(array)

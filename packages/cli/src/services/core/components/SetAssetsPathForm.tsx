@@ -27,7 +27,7 @@ export const SetAssetsPathForm = (props: {
     }
     if (value === `default`) {
       minecraftAssetReader.readInRawData({
-        path: checkForAssets(),
+        path: `beep`, // previously checkForAssets()
       })
       props.clearSelectedOptionHandler()
     } else if (value !== `q` && isValid) {

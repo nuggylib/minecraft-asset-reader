@@ -11,6 +11,8 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
 import { Menu } from "./services/core/components/shared/Menu"
+import { checkForAssets } from "./utils"
+import { CACHE } from "./main"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
@@ -39,6 +41,13 @@ export const CLIApp = () => {
           />
         )
       }
+      case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
+        CACHE.setRootAssetsPath(checkForAssets())
+        // checkForAssets()
+        // clearSelectedOptionHandler()
+        console.log(selectedOption)
+        // setSelectedOption(`foo`)
+      }
       default: {
         return <></>
       }
@@ -47,11 +56,7 @@ export const CLIApp = () => {
   const menuSelectHandler = (option: { label: string; value: string }) => {
     // TODO: See about removing this - we probably don't need it anymore now that we rely on the webapp for most user interactions
     // switch (option.value) {
-    //   case OPTION_VALUE.GENERATE_SITE_DATA: {
-    //     CACHE.generateSiteContent().then(() =>
-    //       setSelectedOption((null as unknown) as string)
-    //     )
-    //   }
+
     // }
     // Always set the selected option, even if there is no GUI to render for the option
     setSelectedOption(option.value)
