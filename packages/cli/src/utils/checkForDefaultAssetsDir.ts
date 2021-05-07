@@ -15,6 +15,10 @@ const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}
 const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets`
 const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
 
+const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/`
+const darwinExportDir = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/`
+const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
+
 // checkForAssets() gets the current operating system (OS),
 // then checks if the default assets directory for the OS
 // exists. If it doesn't exist, it tries to find the default Minecraft
@@ -23,7 +27,7 @@ const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
 // returns the default assets directory based on the current OS.
 // TODO: Add logic to handle if the Jar file doesn't exist
 // TODO: If it falls through or fails, return to the main menu.
-export function checkForAssets() {
+export async function checkForAssets() {
   let os: any = currentOs
   console.log(os)
   switch (os) {
@@ -35,7 +39,7 @@ export function checkForAssets() {
         } else {
           console.log(`Assets directory does not exist.`)
           console.log(`Extracting jar...`)
-          extractJar(linuxJar)
+          extractJar(linuxJar, linuxExportDir)
           defaultDir = linuxAssets
         }
       } catch (e) {
@@ -53,7 +57,7 @@ export function checkForAssets() {
         } else {
           console.log(`Assets directory does not exist.`)
           console.log(`Extracting jar...`)
-          extractJar(darwinJar)
+          extractJar(darwinJar, darwinExportDir)
           defaultDir = darwinAssets
           return defaultDir
         }
@@ -72,7 +76,7 @@ export function checkForAssets() {
         } else {
           console.log(`Assets directory does not exist.`)
           console.log(`Extracting jar...`)
-          extractJar(winJar)
+          extractJar(winJar, winExportDir)
           defaultDir = winAssets
           return defaultDir
         }

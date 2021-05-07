@@ -56,6 +56,10 @@
     "open": "^8.0.2",
     "react": "^16.8.2",
     "redis": "^3.0.2",
+    "unzipper": "^0.10.11",
     "util": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/unzipper": "^0.10.3"
   }
 }

@@ -22,6 +22,7 @@ export class MinecraftUtility {
    * @returns     `true` if the data was read in successfully, otherwise `false`
    */
   readInRawData(args: { path: string }) {
+    console.log(`path to readInRawData: `, args.path)
     const assetsDir = fs.readdirSync(args.path)
     const namespaces = [] as string[]
     assetsDir.forEach((name) => {
