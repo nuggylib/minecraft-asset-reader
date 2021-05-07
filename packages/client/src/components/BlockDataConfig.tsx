@@ -1,7 +1,7 @@
 import React, { useReducer, useState } from "react"
-import { useBlockPageCountForNamespace } from "./hooks/useBlockPageCountForNamespace"
-import { usePaginatedBlocksForNamespace } from "./hooks/usePaginatedBlocksForNamespace"
-import { BlockModal } from "./BlockModal"
+import { useBlockPageCountForNamespace } from "../hooks/useBlockPageCountForNamespace"
+import { usePaginatedBlocksForNamespace } from "../hooks/usePaginatedBlocksForNamespace"
+import { BlockModal } from "./block-modal/BlockModal"
 
 const reducer = (prevState: any, action: any) => {
   switch (action.type) {
