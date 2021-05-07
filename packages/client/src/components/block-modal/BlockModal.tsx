@@ -17,6 +17,8 @@ export enum BLOCK_MODAL_ACTION {
   SET_LIGHT_LEVEL = `set_light_level`,
   SET_MIN_SPAWN = `set_min_spawn`,
   SET_MAX_SPAWN = `set_max_spawn`,
+  SET_HARVEST_TOOL = `set_harvest_tool`,
+  SET_HARVEST_TOOL_QUALITIES = `set_harvest_tool_qualities`,
   LOAD_CACHED = `load_cached`,
 }
 
@@ -29,6 +31,7 @@ const HARVEST_TOOL_QUALITIES = [
   `Diamond`,
   `Netherite`,
   `Gold`,
+  `None`,
 ]
 
 const RANGES = {
@@ -117,6 +120,28 @@ const reducer = (prevState: any, action: any) => {
         maxSpawn: action.payload.maxSpawn,
       }
     }
+    case BLOCK_MODAL_ACTION.SET_HARVEST_TOOL: {
+      const harvestTool = action.payload.harvestTool
+      if (harvestTool === `None` || harvestTool === `Hand`) {
+        return {
+          ...prevState,
+          harvestToolQualities: [`None`],
+          harvestTool: action.payload.harvestTool,
+        }
+      } else {
+        return {
+          ...prevState,
+          harvestToolQualities: [],
+          harvestTool: action.payload.harvestTool,
+        }
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_HARVEST_TOOL_QUALITIES: {
+      return {
+        ...prevState,
+        harvestToolQualities: action.payload.harvestToolQualities,
+      }
+    }
     // TODO: Backend needs to be udpated to support the new fields
     case BLOCK_MODAL_ACTION.LOAD_CACHED: {
       return {
@@ -160,6 +185,8 @@ export const BlockModal = (props: {
     lightLevel: 0,
     minSpawn: 0,
     maxSpawn: 0,
+    harvestTool: ``,
+    harvestToolQualities: [],
   })
 
   const blockTextures = useScaledBlockImages({
@@ -258,6 +285,29 @@ export const BlockModal = (props: {
     }
   }
 
+  const setHarvestToolHandler = (harvestTool: string) =>
+    dispatch({
+      type: BLOCK_MODAL_ACTION.SET_HARVEST_TOOL,
+      payload: {
+        harvestTool,
+      },
+    })
+
+  const setHarvestToolQualitiesHandler = (quality: string) => {
+    const newQualitiesArray = modalState.harvestToolQualities as string[]
+    if (newQualitiesArray.includes(quality)) {
+      newQualitiesArray.splice(newQualitiesArray.indexOf(quality), 1)
+    } else {
+      newQualitiesArray.push(quality)
+    }
+    dispatch({
+      type: BLOCK_MODAL_ACTION.SET_HARVEST_TOOL_QUALITIES,
+      payload: {
+        harvestToolQualities: newQualitiesArray,
+      },
+    })
+  }
+
   // Saving should be disabled when any of these values are unset
   const saveButtonDisabled =
     modalState.title.length === 0 ||
@@ -350,7 +400,7 @@ export const BlockModal = (props: {
           </div>
         </div>
         <br />
-        <div className="mx-24">
+        <div className="mx-2">
           <h2 className="text-xl font-bold">Block data</h2>
           <div className="text-center">
             <textarea
@@ -433,12 +483,49 @@ export const BlockModal = (props: {
             }
           />
           <div>
-            Harvest Tool
-            <input type="text" className="flex float-right" />
+            <h3 className="font-bold text-center">Harvest Tool</h3>
+            <div className="text-center">
+              {HARVEST_TOOLS.map((tool) => (
+                <div
+                  key={`tool_select_${tool}`}
+                  className="inline-block mx-2 mb-4"
+                >
+                  <input
+                    type="radio"
+                    value={tool}
+                    onChange={(e) => setHarvestToolHandler(e.target.value)}
+                    checked={modalState.harvestTool === tool}
+                  />
+                  <div>{tool}</div>
+                </div>
+              ))}
+            </div>
           </div>
           <div>
-            Harvest Tool Quality
-            <input type="text" className="flex float-right" />
+            <h3 className="font-bold text-center">Harvest Tool Quality</h3>
+            <div className="text-center">
+              {HARVEST_TOOL_QUALITIES.map((quality) => (
+                <div className="inline-block mx-2 mb-4">
+                  <input
+                    type="checkbox"
+                    value={quality}
+                    disabled={
+                      ((modalState.harvestTool === `None` ||
+                        modalState.harvestTool === `Hand`) &&
+                        quality !== `None`) ||
+                      ((modalState.harvestTool !== `None` ||
+                        modalState.harvestTool !== `Hand`) &&
+                        quality === `None`)
+                    }
+                    checked={modalState.harvestToolQualities.includes(quality)}
+                    onChange={(e) =>
+                      setHarvestToolQualitiesHandler(e.target.value)
+                    }
+                  />
+                  <div>{quality}</div>
+                </div>
+              ))}
+            </div>
           </div>
           {/* TODO: Decide how to handle entity linking */}
         </div>
