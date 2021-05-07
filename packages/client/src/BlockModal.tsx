@@ -2,15 +2,52 @@ import React, { useEffect, useReducer } from "react"
 import { useScaledBlockImages } from "./hooks/useScaledBlockImages"
 import { BlockModelData } from "./minecraft/types"
 import axios from "axios"
+import { BlockModalNumberInput } from "./BlockModalNumberInput"
 
 const NONE = `none`
 
-enum BLOCK_MODAL_ACTION {
+export enum BLOCK_MODAL_ACTION {
   SET_TITLE = `set_title`,
   SET_TOP = `set_top`,
   SET_LEFT = `set_left`,
   SET_RIGHT = `set_right`,
+  SET_DESCRIPTION = `set_description`,
+  SET_FLAMMABILITY_ENCOURAGEMENT = `set_flammability_encouragement`,
+  SET_FLAMMABILITY = `set_flammability`,
+  SET_LIGHT_LEVEL = `set_light_level`,
+  SET_MIN_SPAWN = `set_min_spawn`,
+  SET_MAX_SPAWN = `set_max_spawn`,
   LOAD_CACHED = `load_cached`,
+}
+
+const HARVEST_TOOLS = [`Axe`, `Hoe`, `Pickaxe`, `Shovel`, `Hand`, `None`]
+
+const HARVEST_TOOL_QUALITIES = [
+  `Wood`,
+  `Stone`,
+  `Iron`,
+  `Diamond`,
+  `Netherite`,
+  `Gold`,
+]
+
+const RANGES = {
+  flammabilityEncouragement: {
+    min: 0,
+    max: 60,
+  },
+  flammability: {
+    min: 0,
+    max: 100,
+  },
+  lightLevel: {
+    min: 0,
+    max: 15,
+  },
+  spawnLevel: {
+    min: 0,
+    max: 320,
+  },
 }
 
 /**
@@ -44,6 +81,43 @@ const reducer = (prevState: any, action: any) => {
         right: action.payload.right,
       }
     }
+    case BLOCK_MODAL_ACTION.SET_DESCRIPTION: {
+      return {
+        ...prevState,
+        description: action.payload.description,
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_FLAMMABILITY: {
+      return {
+        ...prevState,
+        flammability: action.payload.flammability,
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_FLAMMABILITY_ENCOURAGEMENT: {
+      return {
+        ...prevState,
+        flammabilityEncouragement: action.payload.flammabilityEncouragement,
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_LIGHT_LEVEL: {
+      return {
+        ...prevState,
+        lightLevel: action.payload.lightLevel,
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_MIN_SPAWN: {
+      return {
+        ...prevState,
+        minSpawn: action.payload.minSpawn,
+      }
+    }
+    case BLOCK_MODAL_ACTION.SET_MAX_SPAWN: {
+      return {
+        ...prevState,
+        maxSpawn: action.payload.maxSpawn,
+      }
+    }
+    // TODO: Backend needs to be udpated to support the new fields
     case BLOCK_MODAL_ACTION.LOAD_CACHED: {
       return {
         title: action.payload.title,
@@ -68,11 +142,24 @@ export const BlockModal = (props: {
   }
   dimiss: () => void
 }) => {
+  /**
+   * All cache-linked state values (which should be all of them in this component)
+   * need to be in this reducer. Technically, most cases in the reducer can be handled
+   * with a normal "set state" function. However, when this component is loading, *and
+   * there is data for this block in the cache*, we need to set ALL of these values at
+   * the same time, making useReducer necessary for this component's state management.
+   */
   const [modalState, dispatch] = useReducer(reducer, {
     title: ``,
     top: NONE,
     left: NONE,
     right: NONE,
+    description: ``,
+    flammabilityEncouragement: 0,
+    flammability: 0,
+    lightLevel: 0,
+    minSpawn: 0,
+    maxSpawn: 0,
   })
 
   const blockTextures = useScaledBlockImages({
@@ -91,6 +178,7 @@ export const BlockModal = (props: {
       </option>
     ))
 
+  // TODO: Update this once the backend supports the new fields through the cache
   useEffect(() => {
     axios
       .get(
@@ -157,6 +245,19 @@ export const BlockModal = (props: {
       })
       .then(() => props.dimiss())
   }
+  const numberInputHandler = (
+    payload: { [key: string]: number },
+    range: { min: number; max: number },
+    action: BLOCK_MODAL_ACTION
+  ) => {
+    const key = Object.keys(payload)[0]
+    if (payload[key] >= range.min && payload[key] <= range.max) {
+      dispatch({
+        type: action,
+        payload,
+      })
+    }
+  }
 
   // Saving should be disabled when any of these values are unset
   const saveButtonDisabled =
@@ -180,7 +281,7 @@ export const BlockModal = (props: {
         </div>
         <br />
         <div className="block-icon-config">
-          <h2 className="text-xl font-bold">Block icon configuration</h2>
+          <h2 className="text-xl font-bold">Block icon</h2>
           <p className="italic text-justify mx-8">
             Each texture name is shown alongside its corresponding texture
             image. Select the images to use for the top, left and right sides.
@@ -231,6 +332,99 @@ export const BlockModal = (props: {
               )
             })}
           </div>
+        </div>
+        <br />
+        <div className="mx-24">
+          <h2 className="text-xl font-bold">Block data</h2>
+          <div className="text-center">
+            <textarea
+              className="modal-input w-4/5 h-24 align-top"
+              placeholder="Block description"
+              value={modalState.description}
+              onChange={(e) =>
+                dispatch({
+                  type: BLOCK_MODAL_ACTION.SET_DESCRIPTION,
+                  payload: {
+                    description: e.target.value,
+                  },
+                })
+              }
+            />
+          </div>
+          <BlockModalNumberInput
+            label="Light Level"
+            value={modalState.lightLevel}
+            onChangeHandler={(e) =>
+              numberInputHandler(
+                {
+                  lightLevel: parseInt(e.target.value),
+                },
+                RANGES.lightLevel,
+                BLOCK_MODAL_ACTION.SET_LIGHT_LEVEL
+              )
+            }
+          />
+          <BlockModalNumberInput
+            label="Flammability Encouragement Value"
+            value={modalState.flammabilityEncouragement}
+            onChangeHandler={(e) =>
+              numberInputHandler(
+                {
+                  flammabilityEncouragement: parseInt(e.target.value),
+                },
+                RANGES.flammabilityEncouragement,
+                BLOCK_MODAL_ACTION.SET_FLAMMABILITY_ENCOURAGEMENT
+              )
+            }
+          />
+          <BlockModalNumberInput
+            label="Flammability Value"
+            value={modalState.flammability}
+            onChangeHandler={(e) =>
+              numberInputHandler(
+                {
+                  flammability: parseInt(e.target.value),
+                },
+                RANGES.flammability,
+                BLOCK_MODAL_ACTION.SET_FLAMMABILITY
+              )
+            }
+          />
+          <BlockModalNumberInput
+            label="Min Spawn Level"
+            value={modalState.minSpawn}
+            onChangeHandler={(e) =>
+              numberInputHandler(
+                {
+                  flammability: parseInt(e.target.value),
+                },
+                RANGES.spawnLevel,
+                BLOCK_MODAL_ACTION.SET_MIN_SPAWN
+              )
+            }
+          />
+          <BlockModalNumberInput
+            label="Max Spawn Level"
+            value={modalState.maxSpawn}
+            onChangeHandler={(e) =>
+              numberInputHandler(
+                {
+                  flammability: parseInt(e.target.value),
+                },
+                RANGES.spawnLevel,
+                BLOCK_MODAL_ACTION.SET_MAX_SPAWN
+              )
+            }
+          />
+          <div>
+            Harvest Tool
+            <input type="text" className="flex float-right" />
+          </div>
+          <div>
+            Harvest Tool Quality
+            <input type="text" className="flex float-right" />
+          </div>
+          {/* TODO: Decide how to handle entity linking */}
         </div>
         <div className="modal-button-row">
           <button className="modal-dismiss-button" onClick={props.dimiss}>
