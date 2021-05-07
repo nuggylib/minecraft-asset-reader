@@ -1,6 +1,5 @@
 import React from "react"
 import { BlockDataConfig } from "./BlockDataConfig"
-import { usePaginatedBlocksForNamespace } from "./hooks/usePaginatedBlocksForNamespace"
 
 export const ConfigureNamespace = (props: { namespace: string }) => (
   <div>

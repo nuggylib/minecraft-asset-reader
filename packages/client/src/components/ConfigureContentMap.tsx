@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useNamespaces } from "./hooks/useNamespaces"
+import { useNamespaces } from "../hooks/useNamespaces"
 import { BlockDataConfig } from "./BlockDataConfig"
 import { Sidebar } from "./Sidebar"
 import { ExportConfirmationModal } from "./ExportConfirmationModal"

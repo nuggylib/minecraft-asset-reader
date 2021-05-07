@@ -1,5 +1,5 @@
 import React from "react"
-import { useContentMap } from "./hooks/useContentMap"
+import { useContentMap } from "../hooks/useContentMap"
 
 export const Sidebar = (props: {
   isOpen: boolean

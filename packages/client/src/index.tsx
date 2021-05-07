@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
-import { ConfigContentMap } from "./ConfigureContentMap"
+import { ConfigContentMap } from "./components/ConfigureContentMap"
 
 ReactDOM.render(
   <React.StrictMode>

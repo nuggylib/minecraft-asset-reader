@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react"
-import { useScaledBlockImages } from "./hooks/useScaledBlockImages"
-import { BlockModelData } from "./minecraft/types"
+import { useScaledBlockImages } from "../../hooks/useScaledBlockImages"
+import { BlockModelData } from "../../minecraft/types"
 import axios from "axios"
 import { BlockModalNumberInput } from "./BlockModalNumberInput"
 
@@ -208,26 +208,6 @@ export const BlockModal = (props: {
     props.blockModelData.block,
   ])
 
-  const setTopHandler = (e: any) =>
-    dispatch({
-      type: BLOCK_MODAL_ACTION.SET_TOP,
-      payload: { top: e.target.value },
-    })
-  const setRightHandler = (e: any) =>
-    dispatch({
-      type: BLOCK_MODAL_ACTION.SET_RIGHT,
-      payload: { right: e.target.value },
-    })
-  const setLeftHandler = (e: any) =>
-    dispatch({
-      type: BLOCK_MODAL_ACTION.SET_LEFT,
-      payload: { left: e.target.value },
-    })
-  const setTitleHandler = (e: any) =>
-    dispatch({
-      type: BLOCK_MODAL_ACTION.SET_TITLE,
-      payload: { title: e.target.value },
-    })
   const saveHandler = () => {
     axios
       .post(`http://localhost:3000/content-map/blocks`, {
@@ -245,6 +225,25 @@ export const BlockModal = (props: {
       })
       .then(() => props.dimiss())
   }
+  /**
+   * Helper method to set string state values in the reducer
+   *
+   * This only exists so that we don't need to make a state handler for each string value in the reducer state.
+   *
+   */
+  const setStringValueHandler = (args: {
+    payload: { [key: string]: string }
+    type: BLOCK_MODAL_ACTION
+  }) =>
+    dispatch({
+      ...args,
+    })
+  /**
+   * Helper method to set number state values in the reducer
+   *
+   * This only exists so that we don't need to make a state handler for each number value in the reducer state.
+   *
+   */
   const numberInputHandler = (
     payload: { [key: string]: number },
     range: { min: number; max: number },
@@ -276,7 +275,14 @@ export const BlockModal = (props: {
             type="text"
             placeholder="In-game title (e.g., 'Cobblestone')"
             value={modalState.title}
-            onChange={setTitleHandler}
+            onChange={(e) => {
+              const payload = {} as any
+              payload.title = e.target.value
+              setStringValueHandler({
+                payload,
+                type: BLOCK_MODAL_ACTION.SET_TITLE,
+              })
+            }}
           />
         </div>
         <br />
@@ -306,25 +312,35 @@ export const BlockModal = (props: {
           ))}
           <div className="grid grid-cols-3 mx-8">
             {[`top`, `left`, `right`].map((side) => {
-              let handler
+              let type: string
               switch (side) {
                 case `top`: {
-                  handler = setTopHandler
+                  type = BLOCK_MODAL_ACTION.SET_TOP
                   break
                 }
                 case `left`: {
-                  handler = setLeftHandler
+                  type = BLOCK_MODAL_ACTION.SET_LEFT
                   break
                 }
                 case `right`: {
-                  handler = setRightHandler
+                  type = BLOCK_MODAL_ACTION.SET_RIGHT
                   break
                 }
               }
               return (
                 <div className="modal-dropdown-row">
                   <h3>{side}</h3>
-                  <select value={modalState[side]} onChange={handler}>
+                  <select
+                    value={modalState[side]}
+                    onChange={(e) => {
+                      const payload = {} as any
+                      payload[side] = e.target.value
+                      setStringValueHandler({
+                        payload,
+                        type: type as BLOCK_MODAL_ACTION,
+                      })
+                    }}
+                  >
                     <option value="none">none</option>
                     {renderDropdownOptions()}
                   </select>

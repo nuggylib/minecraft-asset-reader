@@ -1,6 +1,6 @@
 import axios from "axios"
 import React, { useState } from "react"
-import { EXPORT_LOCATION } from "./constants"
+import { EXPORT_LOCATION } from "../constants"
 import { LoadingIndicator } from "./shared/LoadingIndicator"
 
 export const ExportConfirmationModal = (props: {
