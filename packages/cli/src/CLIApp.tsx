@@ -21,9 +21,10 @@ export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
     (null as unknown) as string
   )
-  let rawAssetsPath = useRawAssetsPath({
-    watch: selectedOption,
-  })
+  const [rawAssetsPath, setRawAssetsPath] = useState(``)
+  // let rawAssetsPath = useRawAssetsPath({
+  //   watch: selectedOption,
+  // })
   let rawData = useRawData({
     watch: selectedOption,
   })
@@ -45,9 +46,14 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        minecraftAssetReader.readInRawData({
-          path: checkForAssets(),
+        checkForAssets().then((path) => {
+          minecraftAssetReader.readInRawData({
+            path,
+          })
+          CACHE.setRootAssetsPath(path)
+          setRawAssetsPath(path)
         })
+
         // CACHE.setRootAssetsPath(checkForAssets())
       }
       default: {

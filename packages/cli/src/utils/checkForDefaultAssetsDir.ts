@@ -29,7 +29,6 @@ const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
 // TODO: If it falls through or fails, return to the main menu.
 export async function checkForAssets() {
   let os: any = currentOs
-  console.log(os)
   switch (os) {
     case `Linux`:
       try {
@@ -39,7 +38,7 @@ export async function checkForAssets() {
         } else {
           console.log(`Assets directory does not exist.`)
           console.log(`Extracting jar...`)
-          extractJar(linuxJar, linuxExportDir)
+          await extractJar(linuxJar, linuxExportDir)
           defaultDir = linuxAssets
         }
       } catch (e) {
