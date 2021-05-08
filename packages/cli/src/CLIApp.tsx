@@ -10,7 +10,7 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
 import { Menu } from "./services/core/components/shared/Menu"
-import { checkForAssets } from "./utils"
+import { checkForAssets, detectVersions } from "./utils"
 import { CACHE } from "./main"
 import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
 
@@ -45,7 +45,8 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        checkForAssets().then((path) => {
+        let version = detectVersions()
+        checkForAssets(version).then((path) => {
           minecraftAssetReader.readInRawData({
             path,
           })

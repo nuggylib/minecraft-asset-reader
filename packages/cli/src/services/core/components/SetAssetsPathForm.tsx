@@ -54,8 +54,7 @@ export const SetAssetsPathForm = (props: {
     if (
       (lastPart === `assets` &&
         minecraftAssetReader.validatePathAsAssetsDirectory({ path: input })) ||
-      input === `q` ||
-      input === `default`
+      input === `q`
     ) {
       setIsValid(true)
     } else {

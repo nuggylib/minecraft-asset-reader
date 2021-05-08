@@ -7,17 +7,6 @@ let defaultDir = ``
 // Constants
 const currentOs = os.type()
 // TODO: Prompt for version
-let minecraftVersion = `1.12.2`
-const linuxJar = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
-const darwinJar = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
-const winJar = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\${minecraftVersion}.jar`
-const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/assets`
-const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets`
-const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
-
-const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/`
-const darwinExportDir = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/`
-const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
 
 // checkForAssets() gets the current operating system (OS),
 // then checks if the default assets directory for the OS
@@ -27,7 +16,18 @@ const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
 // returns the default assets directory based on the current OS.
 // TODO: Add logic to handle if the Jar file doesn't exist
 // TODO: If it falls through or fails, return to the main menu.
-export async function checkForAssets() {
+export async function checkForAssets(version: any) {
+  let minecraftVersion = version
+  const linuxJar = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
+  const darwinJar = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
+  const winJar = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\${minecraftVersion}.jar`
+  const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/assets`
+  const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets`
+  const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
+
+  const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/`
+  const darwinExportDir = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/`
+  const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
   let os: any = currentOs
   switch (os) {
     case `Linux`:
