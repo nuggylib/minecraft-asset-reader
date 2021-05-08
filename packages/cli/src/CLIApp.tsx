@@ -3,7 +3,6 @@ import { useState } from "react"
 import {
   OPTION_VALUE,
   useMenuOptions,
-  useRawAssetsPath,
   useRawData,
 } from "./services/core/components/hooks"
 import { Layout } from "./services/core/components/Layout"
