@@ -39,45 +39,32 @@ export const CLIApp = () => {
     setSelectedOption((null as unknown) as string)
   const renderSelectedOptionMenu = () => {
     console.log(`jarExists: `, jarExists)
-    if (jarExists) {
-      switch (selectedOption) {
-        case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
-          return (
-            <SetAssetsPathForm
-              clearSelectedOptionHandler={clearSelectedOptionHandler}
-            />
-          )
-        }
-        case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-          checkForAssets().then((path) => {
-            if (path) {
-              minecraftAssetReader.readInRawData({
-                path,
-              })
-              CACHE.setRootAssetsPath(path)
-              setRawAssetsPath(path)
-            } else {
-              console.log(`path did not exist when passed to readInRawData`)
-            }
-          })
-          // CACHE.setRootAssetsPath(checkForAssets())
-        }
-        default: {
-          return <></>
-        }
+
+    switch (selectedOption) {
+      case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
+        return (
+          <SetAssetsPathForm
+            clearSelectedOptionHandler={clearSelectedOptionHandler}
+          />
+        )
       }
-    } else {
-      switch (selectedOption) {
-        case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
-          return (
-            <SetAssetsPathForm
-              clearSelectedOptionHandler={clearSelectedOptionHandler}
-            />
-          )
-        }
-        default: {
-          return <></>
-        }
+      case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
+        detectVersions()
+        checkForAssets().then((path) => {
+          if (path) {
+            minecraftAssetReader.readInRawData({
+              path,
+            })
+            CACHE.setRootAssetsPath(path)
+            setRawAssetsPath(path)
+          } else {
+            console.log(`path did not exist when passed to readInRawData`)
+          }
+        })
+        // CACHE.setRootAssetsPath(checkForAssets())
+      }
+      default: {
+        return <></>
       }
     }
   }

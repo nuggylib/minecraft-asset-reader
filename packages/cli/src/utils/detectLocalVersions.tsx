@@ -28,13 +28,18 @@ export async function detectVersions() {
         if (fs.existsSync(linuxVersions)) {
           versionsDir = linuxVersions
           try {
-            const installations = await fs.readdir(versionsDir)
+            const installations = fs.readdirSync(versionsDir)
             for (const version of installations) {
-              let versionOption = {
-                label: `${version}`,
-                value: `${version}`,
+              if (
+                version.match(/([1-9]\.[1-9])/g) &&
+                !versionsArray.find((v) => v.value === version)
+              ) {
+                let versionOption = {
+                  label: `${version}`,
+                  value: `${version}`,
+                }
+                versionsArray.push(versionOption)
               }
-              versionsArray.push(versionOption)
             }
             console.log(`versions Array: `, versionsArray)
             return versionsArray
@@ -49,7 +54,8 @@ export async function detectVersions() {
         }
       } catch (e) {
         console.log(
-          `An error occurred while checking for the Minecraft installations directory.`
+          `An error occurred while checking for the Minecraft installations directory.`,
+          e
         )
       }
       break
@@ -92,5 +98,5 @@ export async function detectVersions() {
     default:
       console.log(`Fell through to default`)
   }
-  // return versionsDir
+  return versionsDir
 }

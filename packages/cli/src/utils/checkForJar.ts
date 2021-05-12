@@ -1,5 +1,3 @@
-import { readdir } from "node:fs"
-import { useState } from "react"
 const fs = require(`fs`)
 const os = require(`os`)
 const { join } = require(`path`)

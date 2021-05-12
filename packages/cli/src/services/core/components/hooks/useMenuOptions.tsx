@@ -35,6 +35,7 @@ export const useMenuOptions = (props: {
       value: OPTION_VALUE.SET_ASSETS_DIRECTORY,
     })
 
+    // Only add the option to use the default directory if the jar exists
     if (jarExists) {
       array.push({
         label: `Use default assets directory`,
