@@ -14,6 +14,7 @@ import { checkForAssets, detectVersions, extractJar } from "./utils"
 import { CACHE } from "./main"
 import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
 import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
+import { checkForJar } from "./utils/checkForJar"
 
 const minecraftAssetReader = new MinecraftUtility()
 
@@ -33,37 +34,54 @@ export const CLIApp = () => {
     rawAssetsPath,
     rawData,
   })
-
+  const jarExists = checkForJar()
   const clearSelectedOptionHandler = () =>
     setSelectedOption((null as unknown) as string)
   const renderSelectedOptionMenu = () => {
-    switch (selectedOption) {
-      case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
-        return (
-          <SetAssetsPathForm
-            clearSelectedOptionHandler={clearSelectedOptionHandler}
-          />
-        )
+    console.log(`jarExists: `, jarExists)
+    if (jarExists) {
+      switch (selectedOption) {
+        case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
+          return (
+            <SetAssetsPathForm
+              clearSelectedOptionHandler={clearSelectedOptionHandler}
+            />
+          )
+        }
+        case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
+          checkForAssets().then((path) => {
+            if (path) {
+              minecraftAssetReader.readInRawData({
+                path,
+              })
+              CACHE.setRootAssetsPath(path)
+              setRawAssetsPath(path)
+            } else {
+              console.log(`path did not exist when passed to readInRawData`)
+            }
+          })
+          // CACHE.setRootAssetsPath(checkForAssets())
+        }
+        default: {
+          return <></>
+        }
       }
-      case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        checkForAssets().then((path) => {
-          if (path) {
-            minecraftAssetReader.readInRawData({
-              path,
-            })
-            CACHE.setRootAssetsPath(path)
-            setRawAssetsPath(path)
-          } else {
-            console.log(`PATH did not exist when passed to readInRawData`)
-          }
-        })
-        // CACHE.setRootAssetsPath(checkForAssets())
-      }
-      default: {
-        return <></>
+    } else {
+      switch (selectedOption) {
+        case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
+          return (
+            <SetAssetsPathForm
+              clearSelectedOptionHandler={clearSelectedOptionHandler}
+            />
+          )
+        }
+        default: {
+          return <></>
+        }
       }
     }
   }
+
   const menuSelectHandler = (option: { label: string; value: string }) => {
     // TODO: See about removing this - we probably don't need it anymore now that we rely on the webapp for most user interactions
     // switch (option.value) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { RawAssetData } from "../../../../types/cache"
+import { checkForJar } from "../../../../utils/checkForJar"
 
 export const enum OPTION_VALUE {
   SET_ASSETS_DIRECTORY = `set_assets_directory`,
@@ -18,7 +19,8 @@ export const useMenuOptions = (props: {
   const [options, setOptions] = useState(
     [] as { label: string; value: OPTION_VALUE }[]
   )
-
+  const jarExists = checkForJar()
+  console.log(`jarExists: `, jarExists)
   useEffect(() => {
     const array = []
     /**
@@ -27,15 +29,18 @@ export const useMenuOptions = (props: {
      * We always want to show the SET_ASSETS_DIRECTORY option so that the user
      * can specify a different path if they want to.
      */
+
     array.push({
       label: `Set assets directory`,
       value: OPTION_VALUE.SET_ASSETS_DIRECTORY,
     })
 
-    array.push({
-      label: `Use default assets directory`,
-      value: OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY,
-    })
+    if (jarExists) {
+      array.push({
+        label: `Use default assets directory`,
+        value: OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY,
+      })
+    }
 
     setOptions(array)
   }, [!!props.rawData, props.rawAssetsPath])
