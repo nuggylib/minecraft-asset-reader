@@ -11,6 +11,7 @@ import {
 } from "../../../api/content-map"
 import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
 import path from "path"
+import { addOrUpdateBlock } from "../../../api/content-map/addOrUpdateBlock"
 
 var app = express()
 
@@ -22,6 +23,20 @@ app.use(express.static(`public`))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
+
+/**
+ * Logging middleware - use this for debugging; for now, just uncomment it - eventually, this will be controlled with a flag
+ */
+app.use(`/`, (req, res, next) => {
+  // TODO: Make this optional (e.g., only log when using something like a --debug flag)
+  // if (req.body) {
+  //   console.log(req.body)
+  // }
+  // if (req.query) {
+  //   console.log(req.query)
+  // }
+  next()
+})
 
 app.use(paginate.middleware(10, 50))
 
@@ -38,6 +53,9 @@ app.get(`/content-map`, getContentMap)
 app.get(`/content-map/block`, getBlockFromContentMap)
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
 app.post(`/content-map/export`, writeContentMapToDisk)
+
+app.get(`/block`)
+app.post(`/block`, addOrUpdateBlock)
 
 /*******************************************
  * Site data routes
