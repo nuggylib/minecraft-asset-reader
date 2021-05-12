@@ -46,7 +46,6 @@
     "ink-spinner": "^4.0.1",
     "ink-text-input": "^4.0.1",
     "inquirer": "^8.0.0",
-    "lerna": "^4.0.0",
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "ngrok": "^3.4.1",
@@ -62,6 +61,10 @@
   "devDependencies": {
     "@types/ink-select-input": "^3.0.0",
     "@types/node": "^15.0.2",
-    "@types/unzipper": "^0.10.3"
+    "@types/unzipper": "^0.10.3",
+    "sqlite": "^4.0.21",
+    "sqlite3": "^4.2.0",
+    "util": "^0.12.3",
+    "@types/sqlite3": "^3.1.7"
   }
 }
