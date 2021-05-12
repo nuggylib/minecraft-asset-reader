@@ -1,6 +1,7 @@
 const fs = require(`fs`)
 const os = require(`os`)
 const systemUser = os.userInfo().username
+import { SetMinecraftVersion } from "../services/core/components/SetMinecraftVersion"
 import { extractJar } from "./index"
 
 let defaultDir = ``
@@ -16,8 +17,8 @@ const currentOs = os.type()
 // returns the default assets directory based on the current OS.
 // TODO: Add logic to handle if the Jar file doesn't exist
 // TODO: If it falls through or fails, return to the main menu.
-export async function checkForAssets(version: any) {
-  let minecraftVersion = version
+export async function checkForAssets() {
+  let minecraftVersion = SetMinecraftVersion()
   const linuxJar = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
   const darwinJar = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
   const winJar = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\${minecraftVersion}.jar`

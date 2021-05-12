@@ -13,6 +13,7 @@ import { Menu } from "./services/core/components/shared/Menu"
 import { checkForAssets, detectVersions } from "./utils"
 import { CACHE } from "./main"
 import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
+import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
 
 const minecraftAssetReader = new MinecraftUtility()
 
@@ -45,8 +46,8 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        let version = detectVersions()
-        checkForAssets(version).then((path) => {
+        return <SetMinecraftVersion />
+        checkForAssets().then((path) => {
           minecraftAssetReader.readInRawData({
             path,
           })
