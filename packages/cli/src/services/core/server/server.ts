@@ -47,6 +47,5 @@ app.post(`/site-data/export/sanity`, exportToSanity)
 
 export async function initServer() {
   app.listen(3000)
-  // return ngrok.connect(3000)
   return ``
 }

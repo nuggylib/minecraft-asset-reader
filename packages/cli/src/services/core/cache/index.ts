@@ -170,6 +170,7 @@ export default class AppCache {
     }
   }
 
+  // TODO: Make this use the database instead of the cache content map
   updateContentMapBlocksForNamespace(args: {
     namespace: string
     blocks: {
