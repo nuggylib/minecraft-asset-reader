@@ -28,8 +28,7 @@ The main use case for this tool is to **make it easy to configure demo/portfolio
 ![example_webapp_view](https://user-images.githubusercontent.com/14364659/117087431-0b463100-ad15-11eb-9142-7a6f4204bbfe.png)
 
 ### Webapp - block config
-
-![in-app_block_config_demo](https://user-images.githubusercontent.com/14364659/117087568-7f80d480-ad15-11eb-8dcb-76dda20afffb.png)
+![image](https://user-images.githubusercontent.com/14364659/117509893-a70fb100-af50-11eb-9645-d1d3d89a95a1.png)
 
 ### Example generated Block in Sanity.io Studio
 
