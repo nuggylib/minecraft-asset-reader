@@ -10,7 +10,7 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
 import { Menu } from "./services/core/components/shared/Menu"
-import { checkForAssets, detectVersions } from "./utils"
+import { checkForAssets, detectVersions, extractJar } from "./utils"
 import { CACHE } from "./main"
 import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
 import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
@@ -46,15 +46,17 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        return <SetMinecraftVersion />
         checkForAssets().then((path) => {
-          minecraftAssetReader.readInRawData({
-            path,
-          })
-          CACHE.setRootAssetsPath(path)
-          setRawAssetsPath(path)
+          if (path) {
+            minecraftAssetReader.readInRawData({
+              path,
+            })
+            CACHE.setRootAssetsPath(path)
+            setRawAssetsPath(path)
+          } else {
+            console.log(`PATH did not exist when passed to readInRawData`)
+          }
         })
-
         // CACHE.setRootAssetsPath(checkForAssets())
       }
       default: {

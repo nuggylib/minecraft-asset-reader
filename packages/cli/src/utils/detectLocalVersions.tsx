@@ -37,7 +37,6 @@ export async function detectVersions() {
               versionsArray.push(versionOption)
             }
             console.log(`versions Array: `, versionsArray)
-
             return versionsArray
           } catch (e) {
             console.error(e)
