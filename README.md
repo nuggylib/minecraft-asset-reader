@@ -48,6 +48,6 @@ The main use case for this tool is to **make it easy to configure demo/portfolio
      - _Install the dependencies within the broken package directory by `cd`-ing into the root of the affected package and run `yarn`; once complete, `cd` back to the project root. You should now be able to run the package-specific start command (e.g., `yarn start:cli`)_
 2. Versions 5.0.0 and 5.0.2 ("current" version) of `sqlite3` can fail when running certain SQL operations in worker threads
 
-- SOURCE: https://github.com/mapbox/node-sqlite3/issues/1381
-- **WORKAROUND**
-  - _Use version `4.2.0` of `sqlite3`_
+   - SOURCE: https://github.com/mapbox/node-sqlite3/issues/1381
+   - **WORKAROUND**
+      - _Use version `4.2.0` of `sqlite3`_
