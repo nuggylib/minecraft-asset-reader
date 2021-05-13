@@ -15,7 +15,6 @@ import { CACHE } from "./main"
 import { MinecraftUtility } from "../src/services/minecraft/minecraftUtility"
 import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
 import { checkForJar } from "./utils/checkForJar"
-
 const minecraftAssetReader = new MinecraftUtility()
 
 export const CLIApp = () => {
@@ -49,18 +48,23 @@ export const CLIApp = () => {
         )
       }
       case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
-        detectVersions()
-        checkForAssets().then((path) => {
-          if (path) {
-            minecraftAssetReader.readInRawData({
-              path,
-            })
-            CACHE.setRootAssetsPath(path)
-            setRawAssetsPath(path)
-          } else {
-            console.log(`path did not exist when passed to readInRawData`)
-          }
-        })
+        return (
+          <SetMinecraftVersion
+            clearSelectedOptionHandler={clearSelectedOptionHandler}
+          />
+        )
+        // detectVersions()
+        // checkForAssets().then((path) => {
+        //   if (path) {
+        //     minecraftAssetReader.readInRawData({
+        //       path,
+        //     })
+        //     CACHE.setRootAssetsPath(path)
+        //     setRawAssetsPath(path)
+        //   } else {
+        //     console.log(`path did not exist when passed to readInRawData`)
+        //   }
+        // })
         // CACHE.setRootAssetsPath(checkForAssets())
       }
       default: {
