@@ -38,13 +38,13 @@ export async function Dao() {
       // TODO: stop simply replacing the values; make this logic conditional based on if data already exists (replacing updates the IDs)
       // Populate the harvest_tool table
       var popHarvestToolsResult = await db.run(
-        `INSERT OR REPLACE INTO harvest_tool (key) VALUES (?),(?),(?),(?),(?),(?)`,
+        `INSERT OR IGNORE INTO harvest_tool (key) VALUES (?),(?),(?),(?),(?),(?)`,
         [`axe`, `hoe`, `pickaxe`, `shovel`, `hand`, `none`]
       )
 
       // Populate the harvest_tool_quality table
       var popHarvestToolQualitiesResult = await db.run(
-        `INSERT OR REPLACE INTO harvest_tool_quality (key) VALUES (?),(?),(?),(?),(?),(?),(?)`,
+        `INSERT OR IGNORE INTO harvest_tool_quality (key) VALUES (?),(?),(?),(?),(?),(?),(?)`,
         [`wood`, `stone`, `iron`, `gold`, `diamond`, `netherite`, `none`]
       )
 
@@ -62,11 +62,13 @@ export async function Dao() {
      * @returns Array of all harvest tools
      */
     getHarvestTools: async () => {
-      const toolsResult = await db.get(
-        `SELECT rowid AS id, key FROM harvest_tool`
-      )
+      const harvestTools = [] as any[]
+      await db.each(`SELECT rowid AS id, key FROM harvest_tool`, (err, row) => {
+        if (err) console.log(`ERROR: `, err.message)
+        harvestTools.push(row)
+      })
       await db.close()
-      return toolsResult
+      return harvestTools
     },
     /**
      * Get the list of harvest tool qualities for tools used to break blocks, indicating the "tier"
@@ -83,11 +85,16 @@ export async function Dao() {
      * @returns Array of all harvest tools
      */
     getHarvestToolQualities: async () => {
-      const getHarvestToolQualitiesResult = await db.get(
-        `SELECT rowid AS id, key FROM harvest_tool_quality`
+      const harvestToolQualities = [] as any[]
+      await db.each(
+        `SELECT rowid AS id, key FROM harvest_tool_quality`,
+        (err, row) => {
+          if (err) console.log(`ERROR: `, err.message)
+          harvestToolQualities.push(row)
+        }
       )
       await db.close()
-      return getHarvestToolQualitiesResult
+      return harvestToolQualities
     },
     /**
      * Add a new block, if it doesn't exist, or update the existing one if it does
