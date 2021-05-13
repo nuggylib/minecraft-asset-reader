@@ -10,12 +10,8 @@ export const CACHE = new AppCache()
 export function cli(_args: any) {
   initServer()
     .then(() => Dao())
-    .then((db) => {
-      if (!!db) {
-        db.initDb()
-      }
-      return render(<CLIApp />)
-    })
+    .then((db) => db.initDb())
+    .then(() => render(<CLIApp />))
     .catch((e) => console.error(e))
 }
 

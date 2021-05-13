@@ -12,6 +12,7 @@ import {
 import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
 import path from "path"
 import { addOrUpdateBlock } from "../../../api/content-map/addOrUpdateBlock"
+import { getBlocks } from "../../../api/content-map/getBlocks"
 
 var app = express()
 
@@ -54,7 +55,7 @@ app.get(`/content-map/block`, getBlockFromContentMap)
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
 app.post(`/content-map/export`, writeContentMapToDisk)
 
-app.get(`/block`)
+app.get(`/block`, getBlocks)
 app.post(`/block`, addOrUpdateBlock)
 
 /*******************************************
