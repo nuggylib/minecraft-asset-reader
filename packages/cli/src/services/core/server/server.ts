@@ -15,6 +15,7 @@ import { addOrUpdateBlock } from "../../../api/content-map/UPDATED/addOrUpdateBl
 import { getBlocks } from "../../../api/content-map/UPDATED/getBlocks"
 import { getHarvestTools } from "../../../api/content-map/UPDATED/getHarvestTools"
 import { getHarvestToolQualities } from "../../../api/content-map/UPDATED/getHarvestToolQualities"
+import { deleteBlock } from "../../../api/content-map/UPDATED/deleteBlock"
 
 var app = express()
 
@@ -62,6 +63,7 @@ app.post(`/content-map/export`, writeContentMapToDisk)
  *******************************************/
 app.get(`/block`, getBlocks)
 app.post(`/block`, addOrUpdateBlock)
+app.delete(`/block`, deleteBlock)
 
 /*******************************************
  * Harvest Tool API routes

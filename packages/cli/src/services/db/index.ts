@@ -244,5 +244,10 @@ export async function Dao() {
       await db.close()
       return blocks
     },
+    deleteBlock: async (args: { key: string }) => {
+      const response = await db.run(`DELETE FROM block WHERE key = ?`, args.key)
+      console.log(`DELETE BLOCK RESPONSE: `, response)
+      return response
+    },
   }
 }
