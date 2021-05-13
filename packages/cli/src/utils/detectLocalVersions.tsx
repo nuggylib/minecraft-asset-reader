@@ -1,3 +1,4 @@
+import { ItemProps, Item } from "ink-select-input"
 import { readdir } from "node:fs"
 import { useState } from "react"
 const fs = require(`fs`)
@@ -5,9 +6,15 @@ const os = require(`os`)
 const { join } = require(`path`)
 const systemUser = os.userInfo().username
 
-let versionsDir = ``
-let versionsArray: Item<unknown>[] = []
+type ChoiceValue = any
+interface ChoiceOption {
+  key?: string
+  label: string
+  value: ChoiceValue
+}
 
+let versionsDir = ``
+let versionsArray: ChoiceOption[] = []
 export interface Item<V> {
   key?: string
   label: string
@@ -32,7 +39,7 @@ export async function detectVersions() {
             for (const version of installations) {
               if (
                 version.match(/([1-9]\.[1-9])/g) &&
-                !versionsArray.find((v) => v.value === version)
+                !versionsArray.find((v: any) => v.value === version)
               ) {
                 let versionOption = {
                   label: `${version}`,
@@ -98,5 +105,5 @@ export async function detectVersions() {
     default:
       console.log(`Fell through to default`)
   }
-  return versionsDir
+  return versionsArray
 }
