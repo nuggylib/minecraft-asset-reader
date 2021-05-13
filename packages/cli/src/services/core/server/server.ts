@@ -11,8 +11,10 @@ import {
 } from "../../../api/content-map"
 import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
 import path from "path"
-import { addOrUpdateBlock } from "../../../api/content-map/addOrUpdateBlock"
-import { getBlocks } from "../../../api/content-map/getBlocks"
+import { addOrUpdateBlock } from "../../../api/content-map/UPDATED/addOrUpdateBlock"
+import { getBlocks } from "../../../api/content-map/UPDATED/getBlocks"
+import { getHarvestTools } from "../../../api/content-map/UPDATED/getHarvestTools"
+import { getHarvestToolQualities } from "../../../api/content-map/UPDATED/getHarvestToolQualities"
 
 var app = express()
 
@@ -55,8 +57,17 @@ app.get(`/content-map/block`, getBlockFromContentMap)
 app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
 app.post(`/content-map/export`, writeContentMapToDisk)
 
+/*******************************************
+ * Block API routes
+ *******************************************/
 app.get(`/block`, getBlocks)
 app.post(`/block`, addOrUpdateBlock)
+
+/*******************************************
+ * Harvest Tool API routes
+ *******************************************/
+app.get(`/harvest-tool`, getHarvestTools)
+app.get(`/harvest-tool/quality`, getHarvestToolQualities)
 
 /*******************************************
  * Site data routes
