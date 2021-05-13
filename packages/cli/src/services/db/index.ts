@@ -35,19 +35,16 @@ export async function Dao() {
         db.run(CREATE_NAMESPACE_TABLE),
         db.run(CREATE_GAME_VERSION_TABLE),
       ])
-      await db.close()
-    },
-    populate: async () => {
-      // TODO: Add a check to see if the "constants" tables have already been populated
+      // TODO: stop simply replacing the values; make this logic conditional based on if data already exists (replacing updates the IDs)
       // Populate the harvest_tool table
       var popHarvestToolsResult = await db.run(
-        `INSERT INTO harvest_tool (key) VALUES (?),(?),(?),(?),(?),(?)`,
+        `INSERT OR REPLACE INTO harvest_tool (key) VALUES (?),(?),(?),(?),(?),(?)`,
         [`axe`, `hoe`, `pickaxe`, `shovel`, `hand`, `none`]
       )
 
       // Populate the harvest_tool_quality table
       var popHarvestToolQualitiesResult = await db.run(
-        `INSERT INTO harvest_tool_quality (key) VALUES (?),(?),(?),(?),(?),(?),(?)`,
+        `INSERT OR REPLACE INTO harvest_tool_quality (key) VALUES (?),(?),(?),(?),(?),(?),(?)`,
         [`wood`, `stone`, `iron`, `gold`, `diamond`, `netherite`, `none`]
       )
 
@@ -183,7 +180,7 @@ export async function Dao() {
 
       try {
         var insertBlockResult = await db.run(
-          `INSERT INTO block (
+          `INSERT OR REPLACE INTO block (
             key, 
             title, 
             icon, 
@@ -221,15 +218,22 @@ export async function Dao() {
     },
     getBlocks: async (args: { search?: string }) => {
       const { search } = args
-      let blocks = [] as any[] | undefined
+      const blocks = [] as any[]
       if (!!search) {
-        blocks = await db.get(`SELECT * FROM block WHERE key LIKE ?%`, [
-          `${search}`,
-        ])
+        await db.each(
+          `SELECT * FROM block WHERE key LIKE ?`,
+          `${search}%`,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            blocks.push(row)
+          }
+        )
       } else {
-        blocks = await db.get(`SELECT * FROM block`, [])
+        await db.each(`SELECT * FROM block`, (err, row) => {
+          if (err) console.log(`ERROR: `, err.message)
+          blocks.push(row)
+        })
       }
-
       await db.close()
       return blocks
     },
