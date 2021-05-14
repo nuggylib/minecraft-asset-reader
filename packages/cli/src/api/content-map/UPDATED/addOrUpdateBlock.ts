@@ -35,5 +35,6 @@ export function addOrUpdateBlock(req: express.Request, res: express.Response) {
       .then((result) => {
         res.send(result)
       })
+      .catch((e) => res.status(422).status(e))
   }
 }

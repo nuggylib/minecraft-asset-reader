@@ -12,6 +12,9 @@ export function getHarvestToolQualities(
   }
 
   Dao(gameVersion as string).then((db) =>
-    db.getHarvestToolQualities().then((result) => res.send(result))
+    db
+      .getHarvestToolQualities()
+      .then((result) => res.send(result))
+      .catch((e) => res.status(422).status(e))
   )
 }
