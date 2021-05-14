@@ -8,11 +8,13 @@ export function deleteBlock(req: express.Request, res: express.Response) {
     res.status(422).send(`'key' and 'gameVersion' parameters are required`)
   }
 
-  Dao(gameVersion as string).then((db) =>
-    db
-      .deleteBlock({
-        key: key as string,
-      })
-      .then((result) => res.send(result))
-  )
+  Dao(gameVersion as string)
+    .then((db) =>
+      db
+        .deleteBlock({
+          key: key as string,
+        })
+        .then((result) => res.send(result))
+    )
+    .catch((e) => res.status(422).status(e))
 }

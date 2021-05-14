@@ -14,5 +14,6 @@ export function getBlocks(req: express.Request, res: express.Response) {
         search: q as string | undefined,
       })
       .then((result) => res.send(result))
+      .catch((e) => res.status(422).status(e))
   )
 }

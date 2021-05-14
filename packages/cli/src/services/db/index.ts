@@ -5,6 +5,7 @@ import {
   CREATE_GAME_VERSION_TABLE,
   CREATE_HARVEST_TOOL_QUALITY_TABLE,
   CREATE_HARVEST_TOOL_TABLE,
+  CREATE_IMPORTED_GAME_VERSION_TABLE,
   CREATE_NAMESPACE_TABLE,
 } from "./mutations/createTables"
 import { Int, MutationResult } from "../../types/shared"
@@ -19,21 +20,53 @@ const sqlite3 = sqlitePkg.verbose()
  *
  * @returns an object containing all necessary database operations for the minecraft asset reader app to function
  */
-export async function Dao(gameVersion: string) {
+export async function Dao(gameVersion?: string) {
   /**
    * All game version database files are stored in /tmp/minecraft-asset-reader (on UNIX - still needs Windows support)
    */
   await mkdirp(`/tmp/minecraft-asset-reader/`)
-  const fp = `/tmp/minecraft-asset-reader/${gameVersion}.db`
+  let fp
+  if (gameVersion) {
+    fp = `/tmp/minecraft-asset-reader/${gameVersion}.db`
+  } else {
+    fp = `/tmp/minecraft-asset-reader/main.db`
+  }
   const db = await open({
     filename: fp,
     driver: sqlite3.Database,
   })
   return {
     /**
-     * Set up the tables in the database
+     * Set up the main database
      */
-    initDb: async () => {
+    initMainDb: async () => {
+      await db.run(CREATE_IMPORTED_GAME_VERSION_TABLE)
+      await db.close()
+    },
+    /**
+     * Gets the list of game versions that have actually been imported (so we know when an unknown game version
+     * has been specified for a game-version specific API)
+     */
+    getImportedGameVersions: async () => {
+      const versions = [] as string[]
+      await db.each(`SELECT version FROM imported_game_version`, (err, row) => {
+        if (err) console.log(`ERROR: `, err.message)
+        versions.push(row.version)
+      })
+      await db.close()
+      return versions
+    },
+    addImportedGameVersion: async (gameVersion: string) => {
+      await db.run(
+        `INSERT OR IGNORE INTO imported_game_version (version) VALUES (?)`,
+        gameVersion
+      )
+      await db.close()
+    },
+    /**
+     * Set up the tables in the database for a game version
+     */
+    initGameVersionDatabase: async () => {
       await Promise.all([
         db.run(CREATE_HARVEST_TOOL_TABLE),
         db.run(CREATE_HARVEST_TOOL_QUALITY_TABLE),
@@ -252,6 +285,7 @@ export async function Dao(gameVersion: string) {
     },
     deleteBlock: async (args: { key: string }) => {
       const response = await db.run(`DELETE FROM block WHERE key = ?`, args.key)
+      await db.close()
       return response
     },
   }

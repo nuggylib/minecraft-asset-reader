@@ -7,6 +7,9 @@ export function getHarvestTools(req: express.Request, res: express.Response) {
     res.status(422).send(`'gameVersion' parameter is required`)
   }
   Dao(gameVersion as string).then((db) =>
-    db.getHarvestTools().then((result) => res.send(result))
+    db
+      .getHarvestTools()
+      .then((result) => res.send(result))
+      .catch((e) => res.status(422).status(e))
   )
 }

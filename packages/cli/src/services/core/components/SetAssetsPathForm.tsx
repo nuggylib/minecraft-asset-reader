@@ -31,7 +31,9 @@ export const SetAssetsPathForm = (props: {
        * to store the configured content (NOT the raw content; that's always just cached).
        */
       Dao(gameVersion!)
-        .then((db) => db.initDb())
+        .then((db) => db.initGameVersionDatabase())
+        .then(() => Dao())
+        .then((db) => db.addImportedGameVersion(gameVersion))
         .then(() => {
           minecraftAssetReader.readInRawData({
             path: value,
