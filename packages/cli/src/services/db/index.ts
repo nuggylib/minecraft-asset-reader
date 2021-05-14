@@ -47,6 +47,7 @@ export async function Dao(gameVersion?: string) {
           success: true,
         }
       } catch (e) {
+        await db.close()
         return {
           success: false,
           message: `Error: ${e.message}`,
@@ -79,6 +80,7 @@ export async function Dao(gameVersion?: string) {
           success: true,
         }
       } catch (e) {
+        await db.close()
         return {
           success: false,
           message: `Error: ${e.message}`,
@@ -97,7 +99,6 @@ export async function Dao(gameVersion?: string) {
           db.run(CREATE_NAMESPACE_TABLE),
           db.run(CREATE_GAME_VERSION_TABLE),
         ])
-        // TODO: stop simply replacing the values; make this logic conditional based on if data already exists (replacing updates the IDs)
         // Populate the harvest_tool table
         var popHarvestToolsResult = await db.run(
           `INSERT OR IGNORE INTO harvest_tool (key) VALUES (?),(?),(?),(?),(?),(?)`,
@@ -123,6 +124,7 @@ export async function Dao(gameVersion?: string) {
           message: `Created game-version database for currently-imported raw game data (no data exists yet)`,
         }
       } catch (e) {
+        await db.close()
         return {
           success: false,
           message: `Error: ${e.message}`,
@@ -142,6 +144,34 @@ export async function Dao(gameVersion?: string) {
       })
       await db.close()
       return harvestTools
+    },
+    addNamespace: async (namespace: string): Promise<MutationResult> => {
+      try {
+        await db.run(
+          `INSERT OR IGNORE INTO namespace (key) VALUES (?)`,
+          namespace
+        )
+        await db.close()
+        return {
+          success: true,
+          message: `Created namespace '${namespace}' successfully`,
+        }
+      } catch (e) {
+        await db.close()
+        return {
+          success: false,
+          message: `Error: ${e.message}`,
+        }
+      }
+    },
+    getNamespaces: async () => {
+      const namespace = [] as any[]
+      await db.each(`SELECT key FROM namespace`, (err, row) => {
+        if (err) console.log(`ERROR: `, err.message)
+        namespace.push(row.key)
+      })
+      await db.close()
+      return namespace
     },
     /**
      * Get the list of harvest tool qualities for tools used to break blocks, indicating the "tier"
@@ -252,6 +282,7 @@ export async function Dao(gameVersion?: string) {
           maxSpawn > LIMIT.SPAWN.MAX ||
           minSpawn > maxSpawn)
       ) {
+        await db.close()
         return {
           success: false,
           message: `Min and max spawn must be between ${LIMIT.SPAWN.MIN} and ${LIMIT.SPAWN.MAX}, and min spawn cannot be greater than max spawn`,
@@ -323,7 +354,6 @@ export async function Dao(gameVersion?: string) {
           `DELETE FROM block WHERE key = ?`,
           args.key
         )
-        console.log(`DELETE RESULT: `, deleteResult)
         await db.close()
         if (!!deleteResult.changes && deleteResult.changes >= 1) {
           return {
@@ -337,6 +367,7 @@ export async function Dao(gameVersion?: string) {
           }
         }
       } catch (e) {
+        await db.close()
         return {
           success: false,
           message: `Error: ${e.message}`,
