@@ -29,21 +29,21 @@ export async function checkForAssets(
     clearSelectedOptionHandler: () => void
   }
 ) {
-  let minecraftVersion = `1.12.2`
-  if (selectedVersion) {
-    let minecraftVersion = selectedVersion
-  }
+  // let minecraftVersion = `1.12.2`
+  // if (selectedVersion) {
+  //   let minecraftVersion = selectedVersion
+  // }
 
-  const linuxJar = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
-  const darwinJar = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/${minecraftVersion}.jar`
-  const winJar = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\${minecraftVersion}.jar`
-  const linuxAssets = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/assets`
-  const darwinAssets = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/assets`
-  const winAssets = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\assets`
+  const linuxJar = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/${selectedVersion}.jar`
+  const darwinJar = `~/Library/Application Support/minecraft/versions/${selectedVersion}/${selectedVersion}.jar`
+  const winJar = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\${selectedVersion}.jar`
+  const linuxAssets = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/assets`
+  const darwinAssets = `~/Library/Application Support/minecraft/versions/${selectedVersion}/assets`
+  const winAssets = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\assets`
 
-  const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${minecraftVersion}/`
-  const darwinExportDir = `~/Library/Application Support/minecraft/versions/${minecraftVersion}/`
-  const winExportDir = `%appdata%\\.minecraft\\versions\\${minecraftVersion}\\`
+  const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/`
+  const darwinExportDir = `~/Library/Application Support/minecraft/versions/${selectedVersion}/`
+  const winExportDir = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\`
   let os: any = currentOs
   switch (os) {
     case `Linux`:

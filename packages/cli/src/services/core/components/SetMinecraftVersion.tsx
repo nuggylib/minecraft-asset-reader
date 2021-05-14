@@ -25,6 +25,7 @@ export interface Item<V> {
 
 export const SetMinecraftVersion = (props: {
   clearSelectedOptionHandler: () => void
+  setRawAssetsPathHandler: (v: string) => void
 }) => {
   // let minecraftVersions: ChoiceOption[]
   // detectVersions().then((v) => (minecraftVersions = v))
@@ -35,7 +36,7 @@ export const SetMinecraftVersion = (props: {
     setSelectedOption((null as unknown) as string)
   const [minecraftVersions, setMinecraftVersions] = useState()
   const [selectedVersion, setSelectedVersion] = useState(``)
-  const [rawAssetsPath, setRawAssetsPath] = useState(``)
+  // const [rawAssetsPath, setRawAssetsPath] = useState(``)
   // const minecraftAssetReader = new MinecraftUtility()
   // const versionsArray = detectVersions()
 
@@ -66,7 +67,7 @@ export const SetMinecraftVersion = (props: {
             path,
           })
           CACHE.setRootAssetsPath(path)
-          setRawAssetsPath(path)
+          props.setRawAssetsPathHandler(path)
           // props.clearSelectedOptionHandler()
         } else {
           console.log(`path did not exist when passed to readInRawData`)

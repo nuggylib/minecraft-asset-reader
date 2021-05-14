@@ -51,21 +51,9 @@ export const CLIApp = () => {
         return (
           <SetMinecraftVersion
             clearSelectedOptionHandler={clearSelectedOptionHandler}
+            setRawAssetsPathHandler={(v) => setRawAssetsPath(v)}
           />
         )
-        // detectVersions()
-        // checkForAssets().then((path) => {
-        //   if (path) {
-        //     minecraftAssetReader.readInRawData({
-        //       path,
-        //     })
-        //     CACHE.setRootAssetsPath(path)
-        //     setRawAssetsPath(path)
-        //   } else {
-        //     console.log(`path did not exist when passed to readInRawData`)
-        //   }
-        // })
-        // CACHE.setRootAssetsPath(checkForAssets())
       }
       default: {
         return <></>
