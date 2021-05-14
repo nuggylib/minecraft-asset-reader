@@ -2,13 +2,13 @@ import express from "express"
 import { Dao } from "../../../services/db"
 
 export function deleteBlock(req: express.Request, res: express.Response) {
-  const { key } = req.query
+  const { gameVersion, key } = req.query
 
-  if (!key) {
-    res.status(422).send(`'key' parameter is required`)
+  if (!key || !gameVersion) {
+    res.status(422).send(`'key' and 'gameVersion' parameters are required`)
   }
 
-  Dao().then((db) =>
+  Dao(gameVersion as string).then((db) =>
     db
       .deleteBlock({
         key: key as string,

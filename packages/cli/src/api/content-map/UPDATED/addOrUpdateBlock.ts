@@ -4,6 +4,7 @@ import { Dao } from "../../../services/db"
 export function addOrUpdateBlock(req: express.Request, res: express.Response) {
   const {
     key,
+    gameVersion,
     title,
     icon,
     description,
@@ -14,10 +15,10 @@ export function addOrUpdateBlock(req: express.Request, res: express.Response) {
     maxSpawn,
   } = req.body
 
-  if (!key) {
-    res.status(422).send(`'key' parameter is required`)
+  if (!key || !gameVersion) {
+    res.status(422).send(`'key' and 'gameVersion' parameters are required`)
   } else {
-    Dao()
+    Dao(gameVersion)
       .then((db) =>
         db.addOrUpdateBlock({
           key,

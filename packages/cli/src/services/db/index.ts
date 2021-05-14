@@ -9,16 +9,22 @@ import {
 } from "./mutations/createTables"
 import { Int, MutationResult } from "../../types/shared"
 import { LIMIT } from "./constants"
+import mkdirp from "mkdirp"
 const sqlite3 = sqlitePkg.verbose()
 
+// TODO: https://www.sqlitetutorial.net/sqlite-foreign-key/
 /**
  * Closure to connect to the underlying SQLite database - returned methods use the database
  * connection
  *
  * @returns an object containing all necessary database operations for the minecraft asset reader app to function
  */
-export async function Dao() {
-  const fp = `/tmp/data.db`
+export async function Dao(gameVersion: string) {
+  /**
+   * All game version database files are stored in /tmp/minecraft-asset-reader (on UNIX - still needs Windows support)
+   */
+  await mkdirp(`/tmp/minecraft-asset-reader/`)
+  const fp = `/tmp/minecraft-asset-reader/${gameVersion}.db`
   const db = await open({
     filename: fp,
     driver: sqlite3.Database,
@@ -246,7 +252,6 @@ export async function Dao() {
     },
     deleteBlock: async (args: { key: string }) => {
       const response = await db.run(`DELETE FROM block WHERE key = ?`, args.key)
-      console.log(`DELETE BLOCK RESPONSE: `, response)
       return response
     },
   }

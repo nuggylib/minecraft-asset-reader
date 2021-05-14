@@ -5,7 +5,13 @@ export function getHarvestToolQualities(
   req: express.Request,
   res: express.Response
 ) {
-  Dao().then((db) =>
+  const { gameVersion } = req.query
+
+  if (!gameVersion) {
+    res.status(422).send(`'gameVersion' parameter is required`)
+  }
+
+  Dao(gameVersion as string).then((db) =>
     db.getHarvestToolQualities().then((result) => res.send(result))
   )
 }
