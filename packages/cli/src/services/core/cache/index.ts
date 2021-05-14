@@ -15,6 +15,7 @@ const enum KEYS {
   RAW_DATA = `raw_data`,
   SITE_DATA = `site_data`,
   ASSETS_PATH = `assets_path`,
+  GAME_VERSION = `game_version`,
 }
 
 export default class AppCache {
@@ -216,5 +217,23 @@ export default class AppCache {
 
   getRootAssetsPath() {
     return this.cache.get(KEYS.ASSETS_PATH)
+  }
+
+  /**
+   * Set the game version
+   *
+   * The cached game version is how we know which database to use (or create). A database is not initialized until the
+   * user specifies where they want to import assets from. If it's a game version they have imported before, then we
+   * load the existing database so that they can review their previous configuration and optionally update if they want
+   * to.
+   *
+   * @param version
+   */
+  setGameVersion(version: string) {
+    return this.cache.set(KEYS.GAME_VERSION, version)
+  }
+
+  getGameVersion() {
+    return this.cache.get(KEYS.GAME_VERSION)
   }
 }
