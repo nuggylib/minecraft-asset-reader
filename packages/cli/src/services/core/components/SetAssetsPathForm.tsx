@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
 import { MinecraftUtility } from "../../minecraft/minecraftUtility"
-import { checkForAssets } from "../../../utils"
+import { Dao } from "../../db"
 
 /**
  * A simple input form to get the base assets path
@@ -22,18 +22,25 @@ export const SetAssetsPathForm = (props: {
   const minecraftAssetReader = new MinecraftUtility()
 
   const submitHandler = (value: string) => {
-    if (value === `q`) {
-      props.clearSelectedOptionHandler()
-    }
-    if (value === `default`) {
-      minecraftAssetReader.readInRawData({
-        path: `beep`, // previously checkForAssets()
-      })
-      props.clearSelectedOptionHandler()
-    } else if (value !== `q` && isValid) {
-      minecraftAssetReader.readInRawData({
-        path: value,
-      })
+    if (value !== `q` && isValid) {
+      const parts = value.split(`/`)
+      // Assumes the parent directory name to the assets directory is the game version name (as is the case with base Minecraft game files)
+      const gameVersion = parts[parts.length - 2]
+      /**
+       * Once we know the path is valid, we create a game version-specific SQLite database
+       * to store the configured content (NOT the raw content; that's always just cached).
+       */
+      Dao(gameVersion!)
+        .then((db) => db.initGameVersionDatabase())
+        .then(() => Dao())
+        .then((db) => db.addImportedGameVersion(gameVersion))
+        .then(() => {
+          minecraftAssetReader.readInRawData({
+            path: value,
+          })
+          props.clearSelectedOptionHandler()
+        })
+    } else if (value === `q`) {
       props.clearSelectedOptionHandler()
     }
   }

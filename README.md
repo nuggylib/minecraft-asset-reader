@@ -48,7 +48,12 @@ The main use case for this tool is to **make it easy to configure demo/portfolio
    - **WORKAROUND**
      - _Install the dependencies within the broken package directory by `cd`-ing into the root of the affected package and run `yarn`; once complete, `cd` back to the project root. You should now be able to run the package-specific start command (e.g., `yarn start:cli`)_
 2. Versions 5.0.0 and 5.0.2 ("current" version) of `sqlite3` can fail when running certain SQL operations in worker threads
-
    - SOURCE: https://github.com/mapbox/node-sqlite3/issues/1381
    - **WORKAROUND**
-      - _Use version `4.2.0` of `sqlite3`_
+     - _Use version `4.2.0` of `sqlite3`_
+3. Sanity does not allow you to create content type definitions through the API
+   - SOURCE: _"experience"_; This is a known limitation - the schema is defined as JS/TS files in the Sanity studio, so it's independent of the API
+   - **WORKAROUND**
+     - _Create a custom "minecraft asset reader" Sanity studio and use it during the bootstrap process_
+     - With this flow, you won't need to download or generate any schema files - simply give the starter the requisite types
+     - Admittedly, this isn't as easy as simply setting up a project with content types (e.g., as Contentful, Flotiq, and many others allow)

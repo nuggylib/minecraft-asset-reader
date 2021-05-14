@@ -1,3 +1,8 @@
+export const CREATE_IMPORTED_GAME_VERSION_TABLE = `CREATE TABLE IF NOT EXISTS imported_game_version (
+    id      INTEGER    PRIMARY KEY AUTOINCREMENT,
+    version TEXT       NOT NULL UNIQUE
+)`
+
 export const CREATE_HARVEST_TOOL_TABLE = `CREATE TABLE IF NOT EXISTS harvest_tool (
     id  INTEGER    PRIMARY KEY AUTOINCREMENT,
     key TEXT       NOT NULL UNIQUE
@@ -12,7 +17,7 @@ export const CREATE_HARVEST_TOOL_QUALITY_TABLE = `CREATE TABLE IF NOT EXISTS har
 export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
     id                          INTEGER PRIMARY KEY AUTOINCREMENT,
     key                         TEXT    NOT NULL UNIQUE,
-    title                       TEXT    NOT NULL,
+    title                       TEXT    UNIQUE,
     icon                        TEXT,
     description                 TEXT,
     flammability_encouragement  INTEGER DEFAULT 0,
