@@ -59,7 +59,7 @@ app.use(`/imported`, (req, res, next) => {
   if (req.body) {
     ver = req.body.gameVersion as string | undefined
   }
-  if (req.query) {
+  if (!!req.query && !ver) {
     const { gameVersion } = req.query
     ver = gameVersion as string | undefined
   }

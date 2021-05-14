@@ -32,7 +32,7 @@ export const SetAssetsPathForm = (props: {
        */
       Dao(gameVersion!)
         .then((db) => db.initGameVersionDatabase())
-        .then(() => Dao())
+        .then((_initDbResult) => Dao())
         .then((db) => db.addImportedGameVersion(gameVersion))
         .then(() => {
           minecraftAssetReader.readInRawData({
