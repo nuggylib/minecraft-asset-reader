@@ -26,14 +26,14 @@ export interface Item<V> {
 export const SetMinecraftVersion = (props: {
   clearSelectedOptionHandler: () => void
 }) => {
-  let minecraftVersions: ChoiceOption[]
-  detectVersions().then((v) => (minecraftVersions = v))
+  // let minecraftVersions: ChoiceOption[]
+  // detectVersions().then((v) => (minecraftVersions = v))
   const [selectedOption, setSelectedOption] = useState(
     (null as unknown) as string
   )
   const clearSelectedOptionHandler = () =>
     setSelectedOption((null as unknown) as string)
-
+  const [minecraftVersions, setMinecraftVersions] = useState()
   const [selectedVersion, setSelectedVersion] = useState(``)
   const [rawAssetsPath, setRawAssetsPath] = useState(``)
   // const minecraftAssetReader = new MinecraftUtility()
@@ -41,9 +41,24 @@ export const SetMinecraftVersion = (props: {
 
   const selectHandler = (value: any) => {
     setSelectedVersion(value)
+    if (value) {
+      props.clearSelectedOptionHandler()
+    }
   }
 
+  // useEffect(() => {
+  //   let minecraftVersionsArray
+  // detectVersions().then((v) => (minecraftVersionsArray = v))
+  //   setMinecraftVersions(minecraftVersionsArray)
+  //   console.log(`minecraftVersions in useEffect: `, minecraftVersions)
+  // })
+
   useEffect(() => {
+    let minecraftVersionsArray: any
+    detectVersions()
+      .then((v) => (minecraftVersionsArray = v))
+      .then(() => setMinecraftVersions(minecraftVersionsArray))
+    console.log(`minecraftVersions in useEffect: `, minecraftVersions)
     checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
       (path) => {
         if (path) {
@@ -52,11 +67,12 @@ export const SetMinecraftVersion = (props: {
           })
           CACHE.setRootAssetsPath(path)
           setRawAssetsPath(path)
-          props.clearSelectedOptionHandler()
+          // props.clearSelectedOptionHandler()
         } else {
           console.log(`path did not exist when passed to readInRawData`)
-          props.clearSelectedOptionHandler()
+          // props.clearSelectedOptionHandler()
         }
+        // props.clearSelectedOptionHandler()
       }
     )
   })
@@ -66,10 +82,14 @@ export const SetMinecraftVersion = (props: {
       <Box>
         <Text>Select the Minecraft version you want to use: </Text>
       </Box>
-      <SelectInput
-        items={minecraftVersions}
-        onSelect={(item) => selectHandler(item)}
-      />
+      {!!minecraftVersions ? (
+        <SelectInput
+          items={minecraftVersions}
+          onSelect={(item) => selectHandler(item)}
+        />
+      ) : (
+        <Text>...</Text>
+      )}
     </>
   )
 }
