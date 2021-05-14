@@ -18,6 +18,8 @@ import { getHarvestToolQualities } from "../../../api/content-map/UPDATED/getHar
 import { deleteBlock } from "../../../api/content-map/UPDATED/deleteBlock"
 import { getImportedGameVersions } from "../../../api/content-map/UPDATED/getImportedGameVersions"
 import { Dao } from "../../db"
+import { addNamespace } from "../../../api/content-map/UPDATED/addNamespace"
+import { getNamespacesFromDb } from "../../../api/content-map/UPDATED/getNamespaces"
 
 var app = express()
 
@@ -106,11 +108,15 @@ app.post(`/content-map/export`, writeContentMapToDisk)
 app.get(`/core/imported-versions`, getImportedGameVersions)
 
 /*******************************************
- * Block API routes
+ * Game version-specific API routes
  *******************************************/
+// Blocks
 app.get(`/imported/block`, getBlocks)
 app.post(`/imported/block`, addOrUpdateBlock)
 app.delete(`/imported/block`, deleteBlock)
+// Namespaces
+app.get(`/imported/namespace`, getNamespacesFromDb)
+app.post(`/imported/namespace`, addNamespace)
 
 /*******************************************
  * Harvest Tool API routes

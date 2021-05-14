@@ -37,7 +37,7 @@ export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
 
 export const CREATE_NAMESPACE_TABLE = `CREATE TABLE IF NOT EXISTS namespace (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    key         TEXT    NOT NULL,
+    key         TEXT    NOT NULL UNIQUE,
     block_id    INTEGER,
     FOREIGN KEY (block_id) REFERENCES block (block_id) ON DELETE CASCADE ON UPDATE CASCADE
 )`

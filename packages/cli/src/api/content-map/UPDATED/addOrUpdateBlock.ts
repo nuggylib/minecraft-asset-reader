@@ -15,8 +15,8 @@ export function addOrUpdateBlock(req: express.Request, res: express.Response) {
     maxSpawn,
   } = req.body
 
-  if (!key || !gameVersion) {
-    res.status(422).send(`'key' and 'gameVersion' parameters are required`)
+  if (!key) {
+    res.status(422).send(`'key' parameter is required`)
   } else {
     Dao(gameVersion)
       .then((db) =>
