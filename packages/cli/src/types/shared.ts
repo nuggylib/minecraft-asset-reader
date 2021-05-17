@@ -7,4 +7,5 @@ export const roundToInt = (num: number): Int => Math.round(num) as Int
 export type MutationResult = {
   success: boolean
   message?: string
+  data?: any
 }
