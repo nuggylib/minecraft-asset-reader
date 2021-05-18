@@ -163,7 +163,7 @@ export async function Dao(gameVersion?: string) {
       const namespaces = [] as { id: Int; key: string }[]
       if (!!search) {
         try {
-          const result = await db.each(
+          await db.each(
             `SELECT * FROM namespace WHERE key LIKE ?`,
             `${search}%`,
             (err, row) => {
@@ -171,7 +171,6 @@ export async function Dao(gameVersion?: string) {
               namespaces.push(row)
             }
           )
-          console.log(`RESULT: `, result)
         } catch (e) {
           console.log(`Error getting namespaces: `, e.message)
         }
