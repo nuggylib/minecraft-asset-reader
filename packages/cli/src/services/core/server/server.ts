@@ -58,6 +58,7 @@ app.use(`/`, (req, res, next) => {
  */
 app.use(`/imported`, (req, res, next) => {
   let ver: string | undefined
+  // TODO: Make these mutually-exclusive (either body OR query)
   if (req.body) {
     ver = req.body.gameVersion as string | undefined
   }

@@ -145,33 +145,47 @@ export async function Dao(gameVersion?: string) {
       await db.close()
       return harvestTools
     },
-    addNamespace: async (namespace: string): Promise<MutationResult> => {
+    addNamespace: async (namespace: string): Promise<Int> => {
       try {
-        await db.run(
+        const data = await db.run(
           `INSERT OR IGNORE INTO namespace (key) VALUES (?)`,
           namespace
         )
         await db.close()
-        return {
-          success: true,
-          message: `Created namespace '${namespace}' successfully`,
-        }
+        return data.lastID as Int
       } catch (e) {
+        console.log(`Error inserting namespace: `, e.message)
         await db.close()
-        return {
-          success: false,
-          message: `Error: ${e.message}`,
-        }
+        return 0 as Int
       }
     },
-    getNamespaces: async () => {
-      const namespace = [] as any[]
-      await db.each(`SELECT key FROM namespace`, (err, row) => {
-        if (err) console.log(`ERROR: `, err.message)
-        namespace.push(row.key)
-      })
+    getNamespaces: async (search?: string) => {
+      const namespaces = [] as { id: Int; key: string }[]
+      if (!!search) {
+        try {
+          const result = await db.each(
+            `SELECT * FROM namespace WHERE key LIKE ?`,
+            `${search}%`,
+            (err, row) => {
+              if (err) console.log(`ERROR: `, err)
+              namespaces.push(row)
+            }
+          )
+          console.log(`RESULT: `, result)
+        } catch (e) {
+          console.log(`Error getting namespaces: `, e.message)
+        }
+      } else {
+        await db.each(`SELECT * FROM namespace`, (err, row) => {
+          if (err) console.log(`ERROR: `, err.message)
+          namespaces.push(row)
+        })
+      }
+
       await db.close()
-      return namespace
+      return {
+        items: namespaces,
+      }
     },
     /**
      * Get the list of harvest tool qualities for tools used to break blocks, indicating the "tier"
@@ -217,6 +231,7 @@ export async function Dao(gameVersion?: string) {
      */
     addOrUpdateBlock: async (args: {
       key: string
+      namespace: string
       title?: string
       icon?: string
       description?: string
@@ -228,6 +243,7 @@ export async function Dao(gameVersion?: string) {
     }): Promise<MutationResult> => {
       const {
         key,
+        namespace,
         title,
         icon,
         description,
@@ -289,10 +305,21 @@ export async function Dao(gameVersion?: string) {
         }
       }
 
+      let namespaceId = -1
+      const getNamespaceResult = await (await Dao(gameVersion)).getNamespaces(
+        namespace
+      )
+      if (getNamespaceResult.items.length === 0) {
+        namespaceId = await (await Dao(gameVersion)).addNamespace(namespace)
+      } else {
+        namespaceId = getNamespaceResult.items[0].id
+      }
+
       try {
         var insertBlockResult = await db.run(
           `INSERT OR REPLACE INTO block (
-            key, 
+            key,
+            namespace_id,
             title, 
             icon, 
             description, 
@@ -301,9 +328,10 @@ export async function Dao(gameVersion?: string) {
             light_level, 
             min_spawn, 
             max_spawn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             key,
+            namespaceId,
             title,
             icon,
             description,
@@ -314,6 +342,7 @@ export async function Dao(gameVersion?: string) {
             maxSpawn,
           ]
         )
+
         await db.close()
         return {
           success: true,
