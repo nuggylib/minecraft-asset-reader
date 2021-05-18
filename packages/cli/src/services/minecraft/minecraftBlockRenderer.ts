@@ -4,7 +4,6 @@ import { CACHE } from "../../main"
 import mkdirp from "mkdirp"
 import { BlockIconData } from "../../types/cache"
 import { Int } from "../../types/shared"
-import { SanityClient } from "@sanity/client"
 
 // TODO: Test the impact of the different values
 /**
@@ -24,7 +23,6 @@ export enum LIGHT_DIRECTION {
   RIGHT = `RIGHT`,
 }
 
-// TODO: wtf is this
 const SIZE = 16
 
 /**
@@ -65,7 +63,7 @@ export class MinecraftBlockRenderer {
     blockKey: string
     blockIconData: BlockIconData
     lightDirection: LIGHT_DIRECTION
-    scale: Int
+    scale?: Int
     writePath?: string
   }): Promise<Buffer> {
     const canvas = createCanvas(32, 32)
@@ -75,35 +73,45 @@ export class MinecraftBlockRenderer {
     const { scale, namespace } = args
     let { writePath } = args
 
+    let scaleValue = 16
+    if (!!scale) {
+      scaleValue = scale
+    }
+
     if (!writePath) {
       writePath = `./generated/export`
     }
 
     const rawAssetsPath = await CACHE.getRootAssetsPath()
 
-    const topFullPath = `${rawAssetsPath}/${namespace}/textures/${top}.png`
-    const sideLFullPath = `${rawAssetsPath}/${namespace}/textures/${sideL}.png`
-    const sideRFullPath = `${rawAssetsPath}/${namespace}/textures/${sideR}.png`
-
+    const topFullPath = `${rawAssetsPath}/${namespace}/textures${
+      top.includes(`/blocks`) ? top : `/blocks/${top}`
+    }.png`
+    const sideLFullPath = `${rawAssetsPath}/${namespace}/textures${
+      sideL.includes(`/blocks`) ? sideL : `/blocks/${sideL}`
+    }.png`
+    const sideRFullPath = `${rawAssetsPath}/${namespace}/textures${
+      sideR.includes(`/blocks`) ? sideR : `/blocks/${sideR}`
+    }.png`
     const topBuf = readFileSync(topFullPath)
     const sideLBuf = readFileSync(sideLFullPath)
     const sideRBuf = readFileSync(sideRFullPath)
 
     const topPart = this.scale({
       sourceImage: await loadImage(topBuf, scale),
-      scale,
+      scale: scaleValue,
       patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
     })
 
     const sideLPart = this.scale({
       sourceImage: await loadImage(sideLBuf, scale),
-      scale,
+      scale: scaleValue,
       patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
     })
 
     const sideRPart = this.scale({
       sourceImage: await loadImage(sideRBuf, scale),
-      scale,
+      scale: scaleValue,
       patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
     })
 
@@ -111,7 +119,7 @@ export class MinecraftBlockRenderer {
     // Calculate dimensions for the canvas that will be used
     const isoWidth = 0.5
     const skew = isoWidth * 2
-    const z = (scale * SIZE) / 2
+    const z = (scaleValue * SIZE) / 2
     const sideHeight = topPart.height * 1.2
 
     // Setup the canvas to get ready to draw
@@ -124,7 +132,7 @@ export class MinecraftBlockRenderer {
     context.drawImage(topPart, -z - 1, z, topPart.width, topPart.height + 1.5)
 
     // Draw right
-    var _x = SIZE * scale
+    var _x = SIZE * scaleValue
     context.setTransform(1, -isoWidth, 0, skew, 0, isoWidth)
     context.drawImage(sideRPart, _x, _x + z, sideRPart.width, sideHeight)
 
@@ -132,18 +140,14 @@ export class MinecraftBlockRenderer {
     context.setTransform(1, isoWidth, 0, skew, 0, 0)
     context.drawImage(sideLPart, 0, z, sideLPart.width, sideHeight)
 
-    const baseWritePath = `${writePath}/${namespace}/images/${namespace}/blocks`
-    await mkdirp(baseWritePath)
-    const filePath = `${baseWritePath}/${args.blockKey}_${scale}.png`
-    const out = createWriteStream(filePath)
-
     // const stream = canvas.createPNGStream()
     // stream.pipe(out)
     // out.on(`finish`, () => {
     // console.log(`Saved icon for block ${args.blockKey}`)
     // })
     // Seems we don't need to return this afterall (need to use the onFinish callback)
-    return canvas.toBuffer()
+    const iconBuffer = canvas.toBuffer()
+    return iconBuffer
   }
 
   /**

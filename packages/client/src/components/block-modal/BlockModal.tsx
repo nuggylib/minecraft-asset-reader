@@ -149,6 +149,7 @@ const reducer = (prevState: any, action: any) => {
         top: action.payload.top,
         left: action.payload.left,
         right: action.payload.right,
+        ...prevState,
       }
     }
     default: {
@@ -237,17 +238,16 @@ export const BlockModal = (props: {
 
   const saveHandler = () => {
     axios
-      .post(`http://localhost:3000/content-map/blocks`, {
+      .post(`http://localhost:3000/imported/block`, {
+        key: props.blockModelData.block,
         namespace: props.namespace,
-        blocks: {
-          [props.blockModelData.block]: {
-            title: modalState.title,
-            iconData: {
-              top: `${modalState.top}`,
-              sideL: `${modalState.left}`,
-              sideR: `${modalState.right}`,
-            },
-          },
+        // TODO: set the game version using the cache once the full integration is setup
+        gameVersion: `1.12.2`,
+        title: modalState.title,
+        iconData: {
+          top: `${modalState.top}`,
+          sideL: `${modalState.left}`,
+          sideR: `${modalState.right}`,
         },
       })
       .then(() => props.dimiss())

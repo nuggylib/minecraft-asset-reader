@@ -29,17 +29,17 @@ export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
     harvest_tool_quality_id     INTEGER,
     related_blocks              INTEGER,
     ingredient_for_blocks       INTEGER,
+    namespace_id                INTEGER,
     FOREIGN KEY (harvest_tool_id) REFERENCES harvest_tool (harvest_tool_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     FOREIGN KEY (harvest_tool_quality_id) REFERENCES harvest_tool_quality (harvest_tool_quality_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     FOREIGN KEY (related_blocks) REFERENCES block (related_blocks) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (ingredient_for_blocks) REFERENCES block (ingredient_for_blocks) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (ingredient_for_blocks) REFERENCES block (ingredient_for_blocks) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (namespace_id) REFERENCES namespace (ingredient_for_blocks) ON DELETE CASCADE ON UPDATE CASCADE
 )`
 
 export const CREATE_NAMESPACE_TABLE = `CREATE TABLE IF NOT EXISTS namespace (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    key         TEXT    NOT NULL,
-    block_id    INTEGER,
-    FOREIGN KEY (block_id) REFERENCES block (block_id) ON DELETE CASCADE ON UPDATE CASCADE
+    key         TEXT    NOT NULL UNIQUE
 )`
 
 export const CREATE_GAME_VERSION_TABLE = `CREATE TABLE IF NOT EXISTS game_version (

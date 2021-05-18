@@ -68,6 +68,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "dotenv": "^9.0.2",
     "minecraft-asset-reader": "file:packages/cli",
     "minecraft-asset-reader-webapp": "file:packages/client",
     "unzipper": "^0.10.11"

@@ -11,7 +11,7 @@ export function cli(_args: any) {
   initServer()
     .then(() => Dao())
     .then((db) => db.initMainDb())
-    .then(() => render(<CLIApp />))
+    .then((_initResult) => render(<CLIApp />))
     .catch((e) => console.error(e))
 }
 

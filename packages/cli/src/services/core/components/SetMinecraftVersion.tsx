@@ -27,8 +27,6 @@ export const SetMinecraftVersion = (props: {
   clearSelectedOptionHandler: () => void
   setRawAssetsPathHandler: (v: string) => void
 }) => {
-  // let minecraftVersions: ChoiceOption[]
-  // detectVersions().then((v) => (minecraftVersions = v))
   const [selectedOption, setSelectedOption] = useState(
     (null as unknown) as string
   )
@@ -36,9 +34,6 @@ export const SetMinecraftVersion = (props: {
     setSelectedOption((null as unknown) as string)
   const [minecraftVersions, setMinecraftVersions] = useState()
   const [selectedVersion, setSelectedVersion] = useState(``)
-  // const [rawAssetsPath, setRawAssetsPath] = useState(``)
-  // const minecraftAssetReader = new MinecraftUtility()
-  // const versionsArray = detectVersions()
 
   const selectHandler = (value: any) => {
     setSelectedVersion(value)
@@ -46,13 +41,6 @@ export const SetMinecraftVersion = (props: {
       props.clearSelectedOptionHandler()
     }
   }
-
-  // useEffect(() => {
-  //   let minecraftVersionsArray
-  // detectVersions().then((v) => (minecraftVersionsArray = v))
-  //   setMinecraftVersions(minecraftVersionsArray)
-  //   console.log(`minecraftVersions in useEffect: `, minecraftVersions)
-  // })
 
   useEffect(() => {
     let minecraftVersionsArray: any
@@ -68,12 +56,9 @@ export const SetMinecraftVersion = (props: {
           })
           CACHE.setRootAssetsPath(path)
           props.setRawAssetsPathHandler(path)
-          // props.clearSelectedOptionHandler()
         } else {
           console.log(`path did not exist when passed to readInRawData`)
-          // props.clearSelectedOptionHandler()
         }
-        // props.clearSelectedOptionHandler()
       }
     )
   })
