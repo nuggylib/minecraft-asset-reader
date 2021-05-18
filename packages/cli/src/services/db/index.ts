@@ -317,7 +317,7 @@ export async function Dao(gameVersion?: string) {
 
       try {
         var insertBlockResult = await db.run(
-          `INSERT OR REPLACE INTO block (
+          `INSERT INTO block (
             key,
             namespace_id,
             title, 
@@ -328,7 +328,18 @@ export async function Dao(gameVersion?: string) {
             light_level, 
             min_spawn, 
             max_spawn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              ON CONFLICT(key) DO UPDATE SET
+                key=excluded.key,
+                namespace_id=excluded.namespace_id,
+                title=excluded.title, 
+                icon=excluded.icon, 
+                description=excluded.description, 
+                flammability_encouragement=excluded.flammability_encouragement, 
+                flammability=excluded.flammability, 
+                light_level=excluded.light_level, 
+                min_spawn=excluded.min_spawn, 
+                max_spawn=excluded.max_spawn;`,
           [
             key,
             namespaceId,
