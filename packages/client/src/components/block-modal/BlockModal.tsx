@@ -145,11 +145,8 @@ const reducer = (prevState: any, action: any) => {
     // TODO: Backend needs to be udpated to support the new fields
     case BLOCK_MODAL_ACTION.LOAD_CACHED: {
       return {
-        title: action.payload.title,
-        top: action.payload.top,
-        left: action.payload.left,
-        right: action.payload.right,
         ...prevState,
+        title: action.payload.title,
       }
     }
     default: {
@@ -208,23 +205,23 @@ export const BlockModal = (props: {
 
   // TODO: Update this once the backend supports the new fields through the cache
   useEffect(() => {
+    const version = `1.12.2`
     axios
       .get(
-        `http://localhost:3000/content-map/block?namespace=${props.namespace}&block=${props.blockModelData.block}`
+        `http://localhost:3000/imported/block?gameVersion=${version}&namespace=${props.namespace}&q=${props.blockModelData.block}`
       )
       .then((res) => {
-        const { title, iconData } = res.data
+        if (res.data && res.data.length > 0) {
+          const { title } = res.data[0]
 
-        if (title && iconData) {
-          dispatch({
-            type: BLOCK_MODAL_ACTION.LOAD_CACHED,
-            payload: {
-              title,
-              top: iconData.top,
-              left: iconData.sideL,
-              right: iconData.sideR,
-            },
-          })
+          if (title) {
+            dispatch({
+              type: BLOCK_MODAL_ACTION.LOAD_CACHED,
+              payload: {
+                title,
+              },
+            })
+          }
         }
       })
   }, [
