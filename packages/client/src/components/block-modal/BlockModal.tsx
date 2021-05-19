@@ -203,13 +203,15 @@ export const BlockModal = (props: {
       </option>
     ))
 
-  // TODO: Update this once the backend supports the new fields through the cache
   useEffect(() => {
-    const version = `1.12.2`
     axios
-      .get(
-        `http://localhost:3000/imported/block?gameVersion=${version}&namespace=${props.namespace}&q=${props.blockModelData.block}`
-      )
+      .get(`http://localhost:3000/cache/game-version`)
+      .then((response) => {
+        const gameVersion = response.data
+        return axios.get(
+          `http://localhost:3000/imported/block?gameVersion=${gameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
+        )
+      })
       .then((res) => {
         if (res.data && res.data.length > 0) {
           const { title } = res.data[0]
@@ -235,17 +237,20 @@ export const BlockModal = (props: {
 
   const saveHandler = () => {
     axios
-      .post(`http://localhost:3000/imported/block`, {
-        key: props.blockModelData.block,
-        namespace: props.namespace,
-        // TODO: set the game version using the cache once the full integration is setup
-        gameVersion: `1.12.2`,
-        title: modalState.title,
-        iconData: {
-          top: `${modalState.top}`,
-          sideL: `${modalState.left}`,
-          sideR: `${modalState.right}`,
-        },
+      .get(`http://localhost:3000/cache/game-version`)
+      .then((response) => {
+        const gameVersion = response.data
+        return axios.post(`http://localhost:3000/imported/block`, {
+          key: props.blockModelData.block,
+          namespace: props.namespace,
+          gameVersion,
+          title: modalState.title,
+          iconData: {
+            top: `${modalState.top}`,
+            sideL: `${modalState.left}`,
+            sideR: `${modalState.right}`,
+          },
+        })
       })
       .then(() => props.dimiss())
   }
