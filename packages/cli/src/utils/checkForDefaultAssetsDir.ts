@@ -34,16 +34,17 @@ export async function checkForAssets(
   //   let minecraftVersion = selectedVersion
   // }
 
-  const linuxJar = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/${selectedVersion}.jar`
-  const darwinJar = `~/Library/Application Support/minecraft/versions/${selectedVersion}/${selectedVersion}.jar`
-  const winJar = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\${selectedVersion}.jar`
-  const linuxAssets = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/assets`
-  const darwinAssets = `~/Library/Application Support/minecraft/versions/${selectedVersion}/assets`
-  const winAssets = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\assets`
+  const fallbackDefaultDir = `/home/${systemUser}/.minecraft/versions/1.12.2/assets`
+  const linuxJar = `/home/${systemUser}/.minecraft/versions/${selectedVersion.value}/${selectedVersion.value}.jar`
+  const darwinJar = `~/Library/Application Support/minecraft/versions/${selectedVersion.value}/${selectedVersion.value}.jar`
+  const winJar = `%appdata%\\.minecraft\\versions\\${selectedVersion.value}\\${selectedVersion.value}.jar`
+  const linuxAssets = `/home/${systemUser}/.minecraft/versions/${selectedVersion.value}/assets`
+  const darwinAssets = `~/Library/Application Support/minecraft/versions/${selectedVersion.value}/assets`
+  const winAssets = `%appdata%\\.minecraft\\versions\\${selectedVersion.value}\\assets`
 
-  const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${selectedVersion}/`
-  const darwinExportDir = `~/Library/Application Support/minecraft/versions/${selectedVersion}/`
-  const winExportDir = `%appdata%\\.minecraft\\versions\\${selectedVersion}\\`
+  const linuxExportDir = `/home/${systemUser}/.minecraft/versions/${selectedVersion.value}/`
+  const darwinExportDir = `~/Library/Application Support/minecraft/versions/${selectedVersion.value}/`
+  const winExportDir = `%appdata%\\.minecraft\\versions\\${selectedVersion.value}\\`
   let os: any = currentOs
   switch (os) {
     case `Linux`:
@@ -105,5 +106,13 @@ export async function checkForAssets(
       // TODO: Prompt for default directory
       console.log(`Fell through to default`)
   }
-  return defaultDir
+  if (selectedVersion) {
+    return defaultDir
+  } else {
+    console.log(
+      `selectedVersion is empty, using fallbackDefaultDir: `,
+      fallbackDefaultDir
+    )
+    return fallbackDefaultDir
+  }
 }

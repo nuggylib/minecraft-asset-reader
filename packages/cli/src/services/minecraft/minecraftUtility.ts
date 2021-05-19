@@ -140,18 +140,29 @@ export class MinecraftUtility {
       const content = fs.readFileSync(blockModelsPath + filename, `utf-8`)
       const blockModelName = filename.split(`.`)[0]
       const rawBlock = JSON.parse(content) as BlockModelData
+
       let convertedBlock = {
         textures: {},
       } as BlockModelData
       if (!!rawBlock.textures) {
         Object.keys(rawBlock.textures).forEach((textureKey) => {
           if (!rawBlock.textures![textureKey]!.includes(`#`)) {
+            let texturePathFragment = rawBlock.textures![textureKey]
+            if (rawBlock.textures![textureKey]?.includes(`:`)) {
+              // TODO: remove everything before and including the colon
+              // use get index of colon
+            }
+            console.log(
+              `${texturesPathRoot}/${rawBlock.textures![textureKey]}.png`
+            )
             const base64 = fs
+
               .readFileSync(
                 `${texturesPathRoot}/${rawBlock.textures![textureKey]}.png`
               )
               .toString(`base64`)
-            // Here, we replace the "old" key (which is really generic) with the texture name - the value is the base64 for the image
+            // Here, we replace the "old" key (which is really generic)
+            // with the texture name - the value is the base64 for the image
             convertedBlock.textures![
               rawBlock.textures![textureKey]!
             ] = `data:image/png;base64,${base64}`
