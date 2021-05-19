@@ -219,21 +219,11 @@ export default class AppCache {
     return this.cache.get(KEYS.ASSETS_PATH)
   }
 
-  /**
-   * Set the game version
-   *
-   * The cached game version is how we know which database to use (or create). A database is not initialized until the
-   * user specifies where they want to import assets from. If it's a game version they have imported before, then we
-   * load the existing database so that they can review their previous configuration and optionally update if they want
-   * to.
-   *
-   * @param version
-   */
-  setGameVersion(version: string) {
+  setCachedGameVersion(version: string) {
     return this.cache.set(KEYS.GAME_VERSION, version)
   }
 
-  getGameVersion() {
+  getCachedGameVersion() {
     return this.cache.get(KEYS.GAME_VERSION)
   }
 }
