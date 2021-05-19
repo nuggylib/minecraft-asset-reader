@@ -46,6 +46,11 @@ export class MinecraftUtility {
         ...rawNamespaceData,
       }
     })
+    const parts = args.path.split(`/`)
+    // TODO: Find out how easy it is to break this and make it less breakable (this can certainly be cleaned up)
+    // Assumes the parent directory name to the assets directory is the game version name (as is the case with base Minecraft game files)
+    const gameVersion = parts[parts.length - 2]
+    CACHE.setCachedGameVersion(gameVersion)
     CACHE.setCachedRawData(rawData)
     CACHE.setRootAssetsPath(args.path)
   }

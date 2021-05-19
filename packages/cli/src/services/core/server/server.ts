@@ -20,6 +20,7 @@ import { getImportedGameVersions } from "../../../api/content-map/UPDATED/getImp
 import { Dao } from "../../db"
 import { addNamespace } from "../../../api/content-map/UPDATED/addNamespace"
 import { getNamespacesFromDb } from "../../../api/content-map/UPDATED/getNamespaces"
+import { getCachedGameVersion } from "../../../api/session/getCachedGameVersion"
 
 var app = express()
 
@@ -107,6 +108,11 @@ app.post(`/content-map/export`, writeContentMapToDisk)
  * Core API routes
  *******************************************/
 app.get(`/core/imported-versions`, getImportedGameVersions)
+
+/*******************************************
+ * Session API routes
+ *******************************************/
+app.get(`/cache/game-version`, getCachedGameVersion)
 
 /*******************************************
  * Game version-specific API routes

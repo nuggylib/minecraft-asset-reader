@@ -145,11 +145,8 @@ const reducer = (prevState: any, action: any) => {
     // TODO: Backend needs to be udpated to support the new fields
     case BLOCK_MODAL_ACTION.LOAD_CACHED: {
       return {
-        title: action.payload.title,
-        top: action.payload.top,
-        left: action.payload.left,
-        right: action.payload.right,
         ...prevState,
+        title: action.payload.title,
       }
     }
     default: {
@@ -206,25 +203,27 @@ export const BlockModal = (props: {
       </option>
     ))
 
-  // TODO: Update this once the backend supports the new fields through the cache
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:3000/content-map/block?namespace=${props.namespace}&block=${props.blockModelData.block}`
-      )
+      .get(`http://localhost:3000/cache/game-version`)
+      .then((response) => {
+        const gameVersion = response.data
+        return axios.get(
+          `http://localhost:3000/imported/block?gameVersion=${gameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
+        )
+      })
       .then((res) => {
-        const { title, iconData } = res.data
+        if (res.data && res.data.length > 0) {
+          const { title } = res.data[0]
 
-        if (title && iconData) {
-          dispatch({
-            type: BLOCK_MODAL_ACTION.LOAD_CACHED,
-            payload: {
-              title,
-              top: iconData.top,
-              left: iconData.sideL,
-              right: iconData.sideR,
-            },
-          })
+          if (title) {
+            dispatch({
+              type: BLOCK_MODAL_ACTION.LOAD_CACHED,
+              payload: {
+                title,
+              },
+            })
+          }
         }
       })
   }, [
@@ -238,17 +237,20 @@ export const BlockModal = (props: {
 
   const saveHandler = () => {
     axios
-      .post(`http://localhost:3000/imported/block`, {
-        key: props.blockModelData.block,
-        namespace: props.namespace,
-        // TODO: set the game version using the cache once the full integration is setup
-        gameVersion: `1.12.2`,
-        title: modalState.title,
-        iconData: {
-          top: `${modalState.top}`,
-          sideL: `${modalState.left}`,
-          sideR: `${modalState.right}`,
-        },
+      .get(`http://localhost:3000/cache/game-version`)
+      .then((response) => {
+        const gameVersion = response.data
+        return axios.post(`http://localhost:3000/imported/block`, {
+          key: props.blockModelData.block,
+          namespace: props.namespace,
+          gameVersion,
+          title: modalState.title,
+          iconData: {
+            top: `${modalState.top}`,
+            sideL: `${modalState.left}`,
+            sideR: `${modalState.right}`,
+          },
+        })
       })
       .then(() => props.dimiss())
   }
