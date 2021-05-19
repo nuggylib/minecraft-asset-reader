@@ -142,11 +142,19 @@ const reducer = (prevState: any, action: any) => {
         harvestToolQualities: action.payload.harvestToolQualities,
       }
     }
-    // TODO: Backend needs to be udpated to support the new fields
     case BLOCK_MODAL_ACTION.LOAD_CACHED: {
       return {
         ...prevState,
         title: action.payload.title,
+        top: action.payload.top,
+        left: action.payload.left,
+        right: action.payload.right,
+        description: action.payload.description,
+        flammabilityEncouragement: action.payload.flammabilityEncouragement,
+        flammability: action.payload.flammability,
+        lightLevel: action.payload.lightLevel,
+        minSpawn: action.payload.minSpawn,
+        maxSpawn: action.payload.maxSpawn,
       }
     }
     default: {
@@ -205,22 +213,42 @@ export const BlockModal = (props: {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/cache/game-version`)
+      .get(`http://localhost:3000/session/game-version`)
       .then((response) => {
         const gameVersion = response.data
         return axios.get(
-          `http://localhost:3000/imported/block?gameVersion=${gameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
+          `http://localhost:3000/persistence/block?gameVersion=${gameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
         )
       })
       .then((res) => {
         if (res.data && res.data.length > 0) {
-          const { title } = res.data[0]
+          const {
+            title,
+            icon_side_top,
+            icon_side_left,
+            icon_side_right,
+            description,
+            flammability_encouragement,
+            flammability,
+            light_level,
+            min_spawn,
+            max_spawn,
+          } = res.data[0]
 
           if (title) {
             dispatch({
               type: BLOCK_MODAL_ACTION.LOAD_CACHED,
               payload: {
                 title,
+                top: icon_side_top,
+                left: icon_side_left,
+                right: icon_side_right,
+                description,
+                flammabilityEncouragement: flammability_encouragement,
+                flammability,
+                lightLevel: light_level,
+                minSpawn: min_spawn,
+                maxSpawn: max_spawn,
               },
             })
           }
@@ -237,10 +265,10 @@ export const BlockModal = (props: {
 
   const saveHandler = () => {
     axios
-      .get(`http://localhost:3000/cache/game-version`)
+      .get(`http://localhost:3000/session/game-version`)
       .then((response) => {
         const gameVersion = response.data
-        return axios.post(`http://localhost:3000/imported/block`, {
+        return axios.post(`http://localhost:3000/persistence/block`, {
           key: props.blockModelData.block,
           namespace: props.namespace,
           gameVersion,
@@ -250,6 +278,12 @@ export const BlockModal = (props: {
             sideL: `${modalState.left}`,
             sideR: `${modalState.right}`,
           },
+          description: modalState.description,
+          flammabilityEncouragementValue: modalState.flammabilityEncouragement,
+          flammability: modalState.flammability,
+          lightLevel: modalState.lightLevel,
+          minSpawn: modalState.minSpawn,
+          maxSpawn: modalState.maxSpawn,
         })
       })
       .then(() => props.dimiss())
@@ -464,7 +498,7 @@ export const BlockModal = (props: {
             onChangeHandler={(e) =>
               numberInputHandler(
                 {
-                  flammability: parseInt(e.target.value),
+                  minSpawn: parseInt(e.target.value),
                 },
                 RANGES.spawnLevel,
                 BLOCK_MODAL_ACTION.SET_MIN_SPAWN
@@ -477,7 +511,7 @@ export const BlockModal = (props: {
             onChangeHandler={(e) =>
               numberInputHandler(
                 {
-                  flammability: parseInt(e.target.value),
+                  maxSpawn: parseInt(e.target.value),
                 },
                 RANGES.spawnLevel,
                 BLOCK_MODAL_ACTION.SET_MAX_SPAWN
