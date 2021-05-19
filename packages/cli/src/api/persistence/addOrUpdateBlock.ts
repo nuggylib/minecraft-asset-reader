@@ -1,9 +1,9 @@
 import express from "express"
-import { Dao } from "../../../services/db"
+import { Dao } from "../../services/db"
 import {
   LIGHT_DIRECTION,
   MinecraftBlockRenderer,
-} from "../../../services/minecraft"
+} from "../../services/minecraft"
 
 export async function addOrUpdateBlock(
   req: express.Request,
@@ -52,6 +52,10 @@ export async function addOrUpdateBlock(
           lightLevel,
           minSpawn,
           maxSpawn,
+          // We store these in the DB so that we can pre-populate the drop down selections in the BlockModal - for everything else, use the icon
+          iconSideTop: iconData.top,
+          iconSideLeft: iconData.sideL,
+          iconSideRight: iconData.sideR,
         })
       )
       .then((result) => {

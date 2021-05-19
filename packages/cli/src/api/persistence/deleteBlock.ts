@@ -1,5 +1,5 @@
 import express from "express"
-import { Dao } from "../../../services/db"
+import { Dao } from "../../services/db"
 
 export function deleteBlock(req: express.Request, res: express.Response) {
   const { gameVersion, key } = req.query
