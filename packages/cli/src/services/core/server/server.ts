@@ -21,6 +21,8 @@ import { Dao } from "../../db"
 import { getCachedGameVersion } from "../../../api/session/getCachedGameVersion"
 import { addNamespace } from "../../../api/persistence/addNamespace"
 import { getNamespacesFromDb } from "../../../api/persistence/getNamespaces"
+import { getHarvestToolsForBlock } from "../../../api/persistence/getHarvestToolsForBlock"
+import { getHarvestToolQualitiesForBlock } from "../../../api/persistence/getHarvestToolQualitiesForBlock"
 
 var app = express()
 
@@ -119,6 +121,11 @@ app.get(`/session/game-version`, getCachedGameVersion)
  *******************************************/
 // Blocks
 app.get(`/persistence/block`, getBlocks)
+app.get(`/persistence/block/harvest-tools`, getHarvestToolsForBlock)
+app.get(
+  `/persistence/block/harvest-tool-qualities`,
+  getHarvestToolQualitiesForBlock
+)
 app.post(`/persistence/block`, addOrUpdateBlock)
 app.delete(`/persistence/block`, deleteBlock)
 // Namespaces

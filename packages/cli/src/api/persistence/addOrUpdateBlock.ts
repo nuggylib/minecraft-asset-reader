@@ -23,6 +23,9 @@ export async function addOrUpdateBlock(
     lightLevel,
     minSpawn,
     maxSpawn,
+    // Harvest tools
+    harvestTool,
+    harvestToolQualities,
   } = req.body
 
   if (!key) {
@@ -56,6 +59,8 @@ export async function addOrUpdateBlock(
           iconSideTop: iconData.top,
           iconSideLeft: iconData.sideL,
           iconSideRight: iconData.sideR,
+          harvestTool,
+          harvestToolQualities,
         })
       )
       .then((result) => {
