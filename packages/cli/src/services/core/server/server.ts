@@ -11,16 +11,16 @@ import {
 } from "../../../api/content-map"
 import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
 import path from "path"
-import { addOrUpdateBlock } from "../../../api/content-map/UPDATED/addOrUpdateBlock"
-import { getBlocks } from "../../../api/content-map/UPDATED/getBlocks"
-import { getHarvestTools } from "../../../api/content-map/UPDATED/getHarvestTools"
-import { getHarvestToolQualities } from "../../../api/content-map/UPDATED/getHarvestToolQualities"
-import { deleteBlock } from "../../../api/content-map/UPDATED/deleteBlock"
-import { getImportedGameVersions } from "../../../api/content-map/UPDATED/getImportedGameVersions"
+import { addOrUpdateBlock } from "../../../api/persistence/addOrUpdateBlock"
+import { getBlocks } from "../../../api/persistence/getBlocks"
+import { getHarvestTools } from "../../../api/persistence/getHarvestTools"
+import { getHarvestToolQualities } from "../../../api/persistence/getHarvestToolQualities"
+import { deleteBlock } from "../../../api/persistence/deleteBlock"
+import { getImportedGameVersions } from "../../../api/persistence/getImportedGameVersions"
 import { Dao } from "../../db"
-import { addNamespace } from "../../../api/content-map/UPDATED/addNamespace"
-import { getNamespacesFromDb } from "../../../api/content-map/UPDATED/getNamespaces"
 import { getCachedGameVersion } from "../../../api/session/getCachedGameVersion"
+import { addNamespace } from "../../../api/persistence/addNamespace"
+import { getNamespacesFromDb } from "../../../api/persistence/getNamespaces"
 
 var app = express()
 
@@ -112,24 +112,24 @@ app.get(`/core/imported-versions`, getImportedGameVersions)
 /*******************************************
  * Session API routes
  *******************************************/
-app.get(`/cache/game-version`, getCachedGameVersion)
+app.get(`/session/game-version`, getCachedGameVersion)
 
 /*******************************************
  * Game version-specific API routes
  *******************************************/
 // Blocks
-app.get(`/imported/block`, getBlocks)
-app.post(`/imported/block`, addOrUpdateBlock)
-app.delete(`/imported/block`, deleteBlock)
+app.get(`/persistence/block`, getBlocks)
+app.post(`/persistence/block`, addOrUpdateBlock)
+app.delete(`/persistence/block`, deleteBlock)
 // Namespaces
-app.get(`/imported/namespace`, getNamespacesFromDb)
-app.post(`/imported/namespace`, addNamespace)
+app.get(`/persistence/namespace`, getNamespacesFromDb)
+app.post(`/persistence/namespace`, addNamespace)
 
 /*******************************************
  * Harvest Tool API routes
  *******************************************/
-app.get(`/imported/harvest-tool`, getHarvestTools)
-app.get(`/imported/harvest-tool/quality`, getHarvestToolQualities)
+app.get(`/persistence/harvest-tool`, getHarvestTools)
+app.get(`/persistence/harvest-tool/quality`, getHarvestToolQualities)
 
 /*******************************************
  * Site data routes

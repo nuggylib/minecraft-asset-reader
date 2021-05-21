@@ -1,5 +1,5 @@
 import express from "express"
-import { Dao } from "../../../services/db"
+import { Dao } from "../../services/db"
 
 export function addNamespace(req: express.Request, res: express.Response) {
   const { key, gameVersion } = req.body

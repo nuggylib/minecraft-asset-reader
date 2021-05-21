@@ -233,6 +233,9 @@ export async function Dao(gameVersion?: string) {
       namespace: string
       title?: string
       icon?: string
+      iconSideTop?: string
+      iconSideLeft?: string
+      iconSideRight?: string
       description?: string
       flammabilityEncouragementValue?: Int
       flammability?: Int
@@ -251,6 +254,9 @@ export async function Dao(gameVersion?: string) {
         lightLevel,
         minSpawn,
         maxSpawn,
+        iconSideTop,
+        iconSideLeft,
+        iconSideRight,
       } = args
 
       if (
@@ -297,6 +303,7 @@ export async function Dao(gameVersion?: string) {
           maxSpawn > LIMIT.SPAWN.MAX ||
           minSpawn > maxSpawn)
       ) {
+        console.log(`OOPS`)
         await db.close()
         return {
           success: false,
@@ -326,8 +333,11 @@ export async function Dao(gameVersion?: string) {
             flammability, 
             light_level, 
             min_spawn, 
-            max_spawn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            max_spawn,
+            icon_side_top,
+            icon_side_left,
+            icon_side_right
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               ON CONFLICT(key) DO UPDATE SET
                 key=excluded.key,
                 namespace_id=excluded.namespace_id,
@@ -338,7 +348,10 @@ export async function Dao(gameVersion?: string) {
                 flammability=excluded.flammability, 
                 light_level=excluded.light_level, 
                 min_spawn=excluded.min_spawn, 
-                max_spawn=excluded.max_spawn;`,
+                max_spawn=excluded.max_spawn,
+                icon_side_top=excluded.icon_side_top,
+                icon_side_left=excluded.icon_side_left,
+                icon_side_right=excluded.icon_side_right;`,
           [
             key,
             namespaceId,
@@ -350,6 +363,9 @@ export async function Dao(gameVersion?: string) {
             lightLevel,
             minSpawn,
             maxSpawn,
+            iconSideTop,
+            iconSideLeft,
+            iconSideRight,
           ]
         )
 
@@ -359,6 +375,7 @@ export async function Dao(gameVersion?: string) {
           message: `Created block record for '${key}' with ID: ${insertBlockResult.lastID}`,
         }
       } catch (e) {
+        console.log(`Unable to insert record: `, e.message)
         await db.close()
         return {
           success: false,
