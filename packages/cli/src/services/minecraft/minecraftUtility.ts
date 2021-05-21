@@ -32,6 +32,12 @@ export class MinecraftUtility {
       }
     })
     let rawData = {} as RawAssetData
+    /**
+     * TODO: Only add namespace to rawData if it has the expected data
+     * For example, the `realms` namespace in version 1.16.5 doesn't have the
+     * expected file structure
+     */
+
     namespaces.forEach((namespace) => {
       const rawNamespaceData = {
         [namespace]: {
@@ -152,24 +158,34 @@ export class MinecraftUtility {
       if (!!rawBlock.textures) {
         Object.keys(rawBlock.textures).forEach((textureKey) => {
           if (!rawBlock.textures![textureKey]!.includes(`#`)) {
-            let texturePathFragment = rawBlock.textures![textureKey]
-            if (rawBlock.textures![textureKey]?.includes(`:`)) {
-              // TODO: remove everything before and including the colon
-              // use get index of colon
+            let texturePathFragment:
+              | string
+              | string[]
+              | undefined = rawBlock.textures![textureKey]
+            if (texturePathFragment?.includes(`:`)) {
+              let colonIndex = texturePathFragment.indexOf(`:`)
+              console.log(`colonIndex --> `, colonIndex)
+              let texturePathFragmentArray = Array.from(texturePathFragment)
+              console.log(
+                `texturePathFragmentArray --> `,
+                texturePathFragmentArray
+              )
+              texturePathFragmentArray.splice(0, colonIndex + 1)
+
+              texturePathFragment = texturePathFragmentArray.join(``)
+              console.log(`texturePathFragment --> `, texturePathFragment)
             }
-            console.log(
-              `${texturesPathRoot}/${rawBlock.textures![textureKey]}.png`
-            )
+            // console.log(
+            //   `${texturesPathRoot}/${texturePathFragment}.png`
+            // )
             const base64 = fs
 
-              .readFileSync(
-                `${texturesPathRoot}/${rawBlock.textures![textureKey]}.png`
-              )
+              .readFileSync(`${texturesPathRoot}/${texturePathFragment}.png`)
               .toString(`base64`)
             // Here, we replace the "old" key (which is really generic)
             // with the texture name - the value is the base64 for the image
             convertedBlock.textures![
-              rawBlock.textures![textureKey]!
+              texturePathFragment!
             ] = `data:image/png;base64,${base64}`
           }
         })
