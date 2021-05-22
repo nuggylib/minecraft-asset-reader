@@ -16,10 +16,12 @@ import { LIMIT } from "./constants"
 import mkdirp from "mkdirp"
 const sqlite3 = sqlitePkg.verbose()
 
-// TODO: https://www.sqlitetutorial.net/sqlite-foreign-key/
 /**
  * Closure to connect to the underlying SQLite database - returned methods use the database
  * connection
+ *
+ * When gameVersion is not provided, the game-version specific operations will not work (this will be improved
+ * in the future by safely preventing calls to APIs that shouldn't be enabled)
  *
  * @returns an object containing all necessary database operations for the minecraft asset reader app to function
  */
@@ -156,6 +158,15 @@ export async function Dao(gameVersion?: string) {
         }
       }
     },
+    /**
+     * Get currently-saved namespaces for the passed-in game version
+     *
+     * Note that the only namespaces that are saved are ones that the user has configured
+     * data for via the webapp (or API, if they are doing something fancy on their own)
+     *
+     * @param search
+     * @returns Array of `QueryResult` objects where `data` is the string for the namespace name
+     */
     getNamespaces: async (search?: string): Promise<QueryResult[]> => {
       const namespaces = [] as QueryResult[]
       if (!!search) {
@@ -167,7 +178,7 @@ export async function Dao(gameVersion?: string) {
               if (err) console.log(`ERROR: `, err)
               namespaces.push({
                 id: row.id,
-                data: row,
+                data: row.key,
               })
             }
           )
@@ -179,7 +190,7 @@ export async function Dao(gameVersion?: string) {
           if (err) console.log(`ERROR: `, err.message)
           namespaces.push({
             id: row.id,
-            data: row,
+            data: row.key,
           })
         })
       }
@@ -482,10 +493,46 @@ export async function Dao(gameVersion?: string) {
         }
       }
     },
-    getBlocks: async (args: { search?: string }): Promise<QueryResult[]> => {
-      const { search } = args
+    /**
+     * Get blocks
+     *
+     * If `search` is defined, but `namespaceId` is not, this will return query all blocks in all namespaces that match
+     * the given `search` parameter (either partial or exact)
+     *
+     * If `search` is defined and `namespaceId` are both defined, this will return all blocks in the target namespace
+     * that match the given `search` parameter (either partial or exact)
+     *
+     * If `search` and `namespaceId` are both undefined, all blocks from all namespaces (within the cached game version)
+     * will be returned.
+     *
+     * SPECIAL NOTE:
+     * When the result set only includes one result, the `harvest_tools` and `harvest_tool_qualities` fields are added to the
+     * returned `data` object (within the `QueryResult`)
+     *
+     * @param args
+     * @returns
+     */
+    getBlocks: async (args: {
+      search?: string
+      namespaceId?: Int
+    }): Promise<QueryResult[]> => {
+      const { search, namespaceId } = args
       const blocks = [] as QueryResult[]
-      if (!!search) {
+      // Get all blocks by key AND namespace ID
+      if (!!search && !!namespaceId) {
+        await db.each(
+          `SELECT * FROM block WHERE key LIKE ? AND namespace_id=?`,
+          [`${search}%`, namespaceId],
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            blocks.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+        // Get all blocks just by key (capable of getting matching blocks from multiple namespaces in the same game version)
+      } else if (!!search && !namespaceId) {
         await db.each(
           `SELECT * FROM block WHERE key LIKE ?`,
           `${search}%`,
@@ -497,7 +544,21 @@ export async function Dao(gameVersion?: string) {
             })
           }
         )
-      } else {
+      } else if (!search && !!namespaceId) {
+        await db.each(
+          `SELECT * FROM block WHERE namespace_id=?`,
+          namespaceId,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            blocks.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+      }
+      // Just gets all blocks for the current game version
+      else {
         await db.each(`SELECT * FROM block`, (err, row) => {
           if (err) console.log(`ERROR: `, err.message)
           blocks.push({

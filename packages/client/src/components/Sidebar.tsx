@@ -1,17 +1,44 @@
-import React from "react"
-import { useContentMap } from "../hooks/useContentMap"
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import { useCachedGameVersion } from "../hooks/useCachedGameVersion"
+import { Int } from "../types"
 
 export const Sidebar = (props: {
   isOpen: boolean
   toggleSidebarHandler: () => void
   openExportModalHandler: () => void
 }) => {
-  // TODO: Fix this so that the user doesn't have to close and reopen the menu to see an up-to-date reflection of the stored data
-  const cachedContentMap = useContentMap({
-    watch: props.isOpen,
-  })
+  const [namespaces, setNamespaces] = useState([] as string[])
+  const gameVersion = useCachedGameVersion()
 
-  const namespaces = Object.keys(cachedContentMap)
+  useEffect(() => {
+    axios
+      .get(
+        `http://localhost:3000/persistence/namespace?gameVersion=${gameVersion}`
+      )
+      .then((response) => {
+        if (!!response.data) {
+          const cachedNamespaces = response.data.map(
+            (queryResult: { id: Int; data: string }) => queryResult.data
+          ) as string[]
+
+          setNamespaces((prevState) => [...prevState, ...cachedNamespaces])
+        }
+      })
+    /**
+     * N.B.
+     *
+     * If you tried removing the array entirely, this will trigger an infinite loop - the namespace will be repeatedly rendered since
+     * useEffect triggers a state update, which in turn triggers another render cycle (meaning useEffect will naturally be triggered
+     * again). Since each render cycle triggers useEffect, and each time useEffect is called, a new render cycle is triggered, the
+     * loop will never terminate.
+     *
+     * By setting passing gameVersion, we make it so that this effect will only run if the game version changes. We do this because,
+     * if the game version changed, that means the user changed the root assets path they are working with, which will use an entirely
+     * separate database file; the namespaces will not be the same set. By changing with the game version, this ensures the sidebar
+     * reflects the database for the version that the user is currently configuring.
+     */
+  }, [gameVersion])
 
   return (
     <aside
@@ -43,12 +70,12 @@ export const Sidebar = (props: {
                 <li>
                   <div className="sidebar-namespace-label">{namespace}</div>
                 </li>
-                <li>
+                {/* <li>
                   <div className="sidebar-nested-field-label">Blocks:</div>
                   <div className="sidebar-nested-field-value">
                     {Object.keys(cachedContentMap[namespace].blocks).length}
                   </div>
-                </li>
+                </li> */}
               </ul>
             ))}
             <button
