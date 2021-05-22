@@ -3,6 +3,7 @@ import { useScaledBlockImages } from "../../hooks/useScaledBlockImages"
 import { BlockModelData } from "../../minecraft/types"
 import axios from "axios"
 import { BlockModalNumberInput } from "./BlockModalNumberInput"
+import { useCachedGameVersion } from "../../hooks/useCachedGameVersion"
 
 const NONE = `none`
 
@@ -22,16 +23,16 @@ export enum BLOCK_MODAL_ACTION {
   LOAD_CACHED = `load_cached`,
 }
 
-const HARVEST_TOOLS = [`Axe`, `Hoe`, `Pickaxe`, `Shovel`, `Hand`, `None`]
+const HARVEST_TOOLS = [`axe`, `hoe`, `pickaxe`, `shovel`, `hand`, `none`]
 
 const HARVEST_TOOL_QUALITIES = [
-  `Wood`,
-  `Stone`,
-  `Iron`,
-  `Diamond`,
-  `Netherite`,
-  `Gold`,
-  `None`,
+  `wood`,
+  `stone`,
+  `iron`,
+  `diamond`,
+  `netherite`,
+  `gold`,
+  `none`,
 ]
 
 const RANGES = {
@@ -122,10 +123,10 @@ const reducer = (prevState: any, action: any) => {
     }
     case BLOCK_MODAL_ACTION.SET_HARVEST_TOOL: {
       const harvestTool = action.payload.harvestTool
-      if (harvestTool === `None` || harvestTool === `Hand`) {
+      if (harvestTool === `none` || harvestTool === `hand`) {
         return {
           ...prevState,
-          harvestToolQualities: [`None`],
+          harvestToolQualities: [`none`],
           harvestTool: action.payload.harvestTool,
         }
       } else {
@@ -155,6 +156,8 @@ const reducer = (prevState: any, action: any) => {
         lightLevel: action.payload.lightLevel,
         minSpawn: action.payload.minSpawn,
         maxSpawn: action.payload.maxSpawn,
+        harvestTool: action.payload.harvestTool,
+        harvestToolQualities: action.payload.harvestToolQualities,
       }
     }
     default: {
@@ -173,6 +176,8 @@ export const BlockModal = (props: {
   }
   dimiss: () => void
 }) => {
+  const cachedGameVersion = useCachedGameVersion()
+
   /**
    * All cache-linked state values (which should be all of them in this component)
    * need to be in this reducer. Technically, most cases in the reducer can be handled
@@ -213,13 +218,9 @@ export const BlockModal = (props: {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/session/game-version`)
-      .then((response) => {
-        const gameVersion = response.data
-        return axios.get(
-          `http://localhost:3000/persistence/block?gameVersion=${gameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
-        )
-      })
+      .get(
+        `http://localhost:3000/persistence/block?gameVersion=${cachedGameVersion}&namespace=${props.namespace}&q=${props.blockModelData.block}`
+      )
       .then((res) => {
         if (res.data && res.data.length > 0) {
           const {
@@ -233,8 +234,9 @@ export const BlockModal = (props: {
             light_level,
             min_spawn,
             max_spawn,
-          } = res.data[0]
-
+            harvest_tools,
+            harvest_tool_qualities,
+          } = res.data[0].data
           if (title) {
             dispatch({
               type: BLOCK_MODAL_ACTION.LOAD_CACHED,
@@ -249,6 +251,10 @@ export const BlockModal = (props: {
                 lightLevel: light_level,
                 minSpawn: min_spawn,
                 maxSpawn: max_spawn,
+                harvestTool: harvest_tools[0].data,
+                harvestToolQualities: harvest_tool_qualities.map(
+                  (qObj: { id: string; data: string }) => qObj.data
+                ),
               },
             })
           }
@@ -261,30 +267,29 @@ export const BlockModal = (props: {
     modalState.right,
     props.namespace,
     props.blockModelData.block,
+    cachedGameVersion,
   ])
 
   const saveHandler = () => {
     axios
-      .get(`http://localhost:3000/session/game-version`)
-      .then((response) => {
-        const gameVersion = response.data
-        return axios.post(`http://localhost:3000/persistence/block`, {
-          key: props.blockModelData.block,
-          namespace: props.namespace,
-          gameVersion,
-          title: modalState.title,
-          iconData: {
-            top: `${modalState.top}`,
-            sideL: `${modalState.left}`,
-            sideR: `${modalState.right}`,
-          },
-          description: modalState.description,
-          flammabilityEncouragementValue: modalState.flammabilityEncouragement,
-          flammability: modalState.flammability,
-          lightLevel: modalState.lightLevel,
-          minSpawn: modalState.minSpawn,
-          maxSpawn: modalState.maxSpawn,
-        })
+      .post(`http://localhost:3000/persistence/block`, {
+        key: props.blockModelData.block,
+        namespace: props.namespace,
+        gameVersion: cachedGameVersion,
+        title: modalState.title,
+        iconData: {
+          top: `${modalState.top}`,
+          sideL: `${modalState.left}`,
+          sideR: `${modalState.right}`,
+        },
+        description: modalState.description,
+        flammabilityEncouragementValue: modalState.flammabilityEncouragement,
+        flammability: modalState.flammability,
+        lightLevel: modalState.lightLevel,
+        minSpawn: modalState.minSpawn,
+        maxSpawn: modalState.maxSpawn,
+        harvestTool: modalState.harvestTool,
+        harvestToolQualities: modalState.harvestToolQualities,
       })
       .then(() => props.dimiss())
   }
@@ -546,12 +551,12 @@ export const BlockModal = (props: {
                     type="checkbox"
                     value={quality}
                     disabled={
-                      ((modalState.harvestTool === `None` ||
-                        modalState.harvestTool === `Hand`) &&
-                        quality !== `None`) ||
-                      ((modalState.harvestTool !== `None` ||
-                        modalState.harvestTool !== `Hand`) &&
-                        quality === `None`)
+                      ((modalState.harvestTool === `none` ||
+                        modalState.harvestTool === `hand`) &&
+                        quality !== `none`) ||
+                      ((modalState.harvestTool !== `none` ||
+                        modalState.harvestTool !== `hand`) &&
+                        quality === `none`)
                     }
                     checked={modalState.harvestToolQualities.includes(quality)}
                     onChange={(e) =>

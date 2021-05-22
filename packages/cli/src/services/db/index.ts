@@ -2,13 +2,16 @@ import sqlitePkg from "sqlite3"
 import { open } from "sqlite"
 import {
   CREATE_BLOCK_TABLE,
+  CREATE_BLOCK_TO_BLOCK_TABLE,
   CREATE_GAME_VERSION_TABLE,
   CREATE_HARVEST_TOOL_QUALITY_TABLE,
+  CREATE_HARVEST_TOOL_QUALITY_TO_BLOCK_TABLE,
   CREATE_HARVEST_TOOL_TABLE,
+  CREATE_HARVEST_TOOL_TO_BLOCK_TABLE,
   CREATE_IMPORTED_GAME_VERSION_TABLE,
   CREATE_NAMESPACE_TABLE,
 } from "./mutations/createTables"
-import { Int, MutationResult } from "../../types/shared"
+import { Int, MutationResult, QueryResult } from "../../types/shared"
 import { LIMIT } from "./constants"
 import mkdirp from "mkdirp"
 const sqlite3 = sqlitePkg.verbose()
@@ -98,6 +101,9 @@ export async function Dao(gameVersion?: string) {
           db.run(CREATE_BLOCK_TABLE),
           db.run(CREATE_NAMESPACE_TABLE),
           db.run(CREATE_GAME_VERSION_TABLE),
+          db.run(CREATE_HARVEST_TOOL_QUALITY_TO_BLOCK_TABLE),
+          db.run(CREATE_HARVEST_TOOL_TO_BLOCK_TABLE),
+          db.run(CREATE_BLOCK_TO_BLOCK_TABLE),
         ])
         // Populate the harvest_tool table
         var popHarvestToolsResult = await db.run(
@@ -131,36 +137,27 @@ export async function Dao(gameVersion?: string) {
         }
       }
     },
-    /**
-     * Get the list of harvest tools that can be used to break blocks (e.g., shovels, axes, etc.)
-     *
-     * @returns Array of all harvest tools
-     */
-    getHarvestTools: async () => {
-      const harvestTools = [] as any[]
-      await db.each(`SELECT rowid AS id, key FROM harvest_tool`, (err, row) => {
-        if (err) console.log(`ERROR: `, err.message)
-        harvestTools.push(row)
-      })
-      await db.close()
-      return harvestTools
-    },
-    addNamespace: async (namespace: string): Promise<Int> => {
+    addNamespace: async (namespace: string): Promise<MutationResult> => {
       try {
         const data = await db.run(
           `INSERT OR IGNORE INTO namespace (key) VALUES (?)`,
           namespace
         )
         await db.close()
-        return data.lastID as Int
+        return {
+          success: true,
+          id: data.lastID as Int,
+        }
       } catch (e) {
-        console.log(`Error inserting namespace: `, e.message)
         await db.close()
-        return 0 as Int
+        return {
+          success: false,
+          message: e.message,
+        }
       }
     },
-    getNamespaces: async (search?: string) => {
-      const namespaces = [] as { id: Int; key: string }[]
+    getNamespaces: async (search?: string): Promise<QueryResult[]> => {
+      const namespaces = [] as QueryResult[]
       if (!!search) {
         try {
           await db.each(
@@ -168,7 +165,10 @@ export async function Dao(gameVersion?: string) {
             `${search}%`,
             (err, row) => {
               if (err) console.log(`ERROR: `, err)
-              namespaces.push(row)
+              namespaces.push({
+                id: row.id,
+                data: row,
+              })
             }
           )
         } catch (e) {
@@ -177,14 +177,46 @@ export async function Dao(gameVersion?: string) {
       } else {
         await db.each(`SELECT * FROM namespace`, (err, row) => {
           if (err) console.log(`ERROR: `, err.message)
-          namespaces.push(row)
+          namespaces.push({
+            id: row.id,
+            data: row,
+          })
         })
       }
 
       await db.close()
-      return {
-        items: namespaces,
+      return namespaces
+    },
+    /**
+     * Get the list of harvest tools that can be used to break blocks (e.g., shovels, axes, etc.)
+     *
+     * @returns Array of all harvest tools
+     */
+    getHarvestTools: async (search?: string): Promise<QueryResult[]> => {
+      const harvestTools = [] as QueryResult[]
+      if (!!search) {
+        await db.each(
+          `SELECT * FROM harvest_tool WHERE key LIKE ?`,
+          `${search}%`,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err)
+            harvestTools.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+      } else {
+        await db.each(`SELECT * FROM harvest_tool`, (err, row) => {
+          if (err) console.log(`ERROR: `, err.message)
+          harvestTools.push({
+            id: row.id,
+            data: row,
+          })
+        })
       }
+      await db.close()
+      return harvestTools
     },
     /**
      * Get the list of harvest tool qualities for tools used to break blocks, indicating the "tier"
@@ -200,15 +232,31 @@ export async function Dao(gameVersion?: string) {
      *
      * @returns Array of all harvest tools
      */
-    getHarvestToolQualities: async () => {
-      const harvestToolQualities = [] as any[]
-      await db.each(
-        `SELECT rowid AS id, key FROM harvest_tool_quality`,
-        (err, row) => {
+    getHarvestToolQualities: async (
+      search?: string
+    ): Promise<QueryResult[]> => {
+      const harvestToolQualities = [] as QueryResult[]
+      if (!!search) {
+        await db.each(
+          `SELECT * FROM harvest_tool_quality WHERE key LIKE ?`,
+          `${search}%`,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err)
+            harvestToolQualities.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+      } else {
+        await db.each(`SELECT * FROM harvest_tool_quality`, (err, row) => {
           if (err) console.log(`ERROR: `, err.message)
-          harvestToolQualities.push(row)
-        }
-      )
+          harvestToolQualities.push({
+            id: row.id,
+            data: row,
+          })
+        })
+      }
       await db.close()
       return harvestToolQualities
     },
@@ -242,6 +290,8 @@ export async function Dao(gameVersion?: string) {
       lightLevel?: Int
       minSpawn?: Int
       maxSpawn?: Int
+      harvestTool?: string
+      harvestToolQualities?: string[]
     }): Promise<MutationResult> => {
       const {
         key,
@@ -257,6 +307,8 @@ export async function Dao(gameVersion?: string) {
         iconSideTop,
         iconSideLeft,
         iconSideRight,
+        harvestTool,
+        harvestToolQualities,
       } = args
 
       if (
@@ -303,7 +355,6 @@ export async function Dao(gameVersion?: string) {
           maxSpawn > LIMIT.SPAWN.MAX ||
           minSpawn > maxSpawn)
       ) {
-        console.log(`OOPS`)
         await db.close()
         return {
           success: false,
@@ -315,14 +366,16 @@ export async function Dao(gameVersion?: string) {
       const getNamespaceResult = await (await Dao(gameVersion)).getNamespaces(
         namespace
       )
-      if (getNamespaceResult.items.length === 0) {
-        namespaceId = await (await Dao(gameVersion)).addNamespace(namespace)
+      if (getNamespaceResult.length === 0) {
+        namespaceId = await (
+          await (await Dao(gameVersion)).addNamespace(namespace)
+        ).id!
       } else {
-        namespaceId = getNamespaceResult.items[0].id
+        namespaceId = getNamespaceResult[0].id
       }
 
       try {
-        var insertBlockResult = await db.run(
+        await db.run(
           `INSERT INTO block (
             key,
             namespace_id,
@@ -369,10 +422,56 @@ export async function Dao(gameVersion?: string) {
           ]
         )
 
+        const blocks = await (await Dao(gameVersion)).getBlocks({
+          search: key,
+        })
+
+        if (!!harvestTool) {
+          const matchingHarvestTools = await (
+            await Dao(gameVersion)
+          ).getHarvestTools(harvestTool)
+
+          await (await Dao(gameVersion)).resetHarvestToolsForBlock(
+            blocks[0].id as Int
+          )
+          /**
+           * Since this method may be called a number of times, we only want to insert the corresponding value for this
+           * once.
+           */
+          await db.run(
+            `INSERT INTO harvest_tool_to_block (
+            block_id,
+            harvest_tool_id
+          ) VALUES (?, ?) ON CONFLICT DO NOTHING;`,
+            [blocks[0].id, matchingHarvestTools[0].id]
+          )
+        }
+
+        if (!!harvestToolQualities) {
+          await (await Dao(gameVersion)).resetHarvestToolQualitiesForBlock(
+            blocks[0].id as Int
+          )
+          await Promise.all(
+            harvestToolQualities!.map(async (quality) => {
+              const matchingHarvestToolQuality = await (
+                await Dao(gameVersion)
+              ).getHarvestToolQualities(quality)
+
+              await db.run(
+                `INSERT INTO harvest_tool_quality_to_block (
+                block_id,
+                harvest_tool_quality_id
+              ) VALUES (?, ?) ON CONFLICT DO NOTHING;`,
+                [blocks[0].id, matchingHarvestToolQuality[0].id]
+              )
+            })
+          )
+        }
+
         await db.close()
         return {
           success: true,
-          message: `Created block record for '${key}' with ID: ${insertBlockResult.lastID}`,
+          message: `Created/updated block record for '${key}' with ID: ${blocks[0].id}`,
         }
       } catch (e) {
         console.log(`Unable to insert record: `, e.message)
@@ -383,26 +482,129 @@ export async function Dao(gameVersion?: string) {
         }
       }
     },
-    getBlocks: async (args: { search?: string }) => {
+    getBlocks: async (args: { search?: string }): Promise<QueryResult[]> => {
       const { search } = args
-      const blocks = [] as any[]
+      const blocks = [] as QueryResult[]
       if (!!search) {
         await db.each(
           `SELECT * FROM block WHERE key LIKE ?`,
           `${search}%`,
           (err, row) => {
             if (err) console.log(`ERROR: `, err.message)
-            blocks.push(row)
+            blocks.push({
+              id: row.id,
+              data: row,
+            })
           }
         )
       } else {
         await db.each(`SELECT * FROM block`, (err, row) => {
           if (err) console.log(`ERROR: `, err.message)
-          blocks.push(row)
+          blocks.push({
+            id: row.id,
+            data: row,
+          })
         })
       }
+
+      // If there is only one block in the search result, return some more information (mostly used for BlockModal)
+      if (blocks.length === 1) {
+        const blockId = blocks[0].id
+        const harvestToolsForBlock = await (
+          await Dao(gameVersion)
+        ).getHarvestToolsForBlock(blockId)
+        const harvestToolQualitiesForBlock = await (
+          await Dao(gameVersion)
+        ).getHarvestToolQualitiesForBlock(blockId)
+
+        const swap = {
+          id: blockId,
+          data: {
+            ...blocks[0].data,
+            harvest_tools: harvestToolsForBlock,
+            harvest_tool_qualities: harvestToolQualitiesForBlock,
+          },
+        }
+
+        blocks[0] = swap
+      }
+
       await db.close()
       return blocks
+    },
+    getHarvestToolsForBlock: async (blockId: Int): Promise<QueryResult[]> => {
+      const harvestTools = [] as QueryResult[]
+      try {
+        await db.each(
+          `SELECT * FROM harvest_tool_to_block
+            LEFT JOIN harvest_tool ON harvest_tool_to_block.harvest_tool_id = harvest_tool.id
+            WHERE block_id = ?`,
+          [blockId],
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            harvestTools.push({
+              id: row.id,
+              data: row.key,
+            })
+          }
+        )
+      } catch (e) {
+        console.log(`Unable to get harvest tools for block: `, e.message)
+      }
+
+      return harvestTools
+    },
+    getHarvestToolQualitiesForBlock: async (
+      blockId: Int
+    ): Promise<QueryResult[]> => {
+      const harvestTools = [] as QueryResult[]
+      try {
+        await db.each(
+          `SELECT * FROM harvest_tool_quality_to_block
+            LEFT JOIN harvest_tool_quality ON harvest_tool_quality_to_block.harvest_tool_quality_id = harvest_tool_quality.id
+            WHERE block_id = ?`,
+          [blockId],
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            harvestTools.push({
+              id: row.id,
+              data: row.key,
+            })
+          }
+        )
+      } catch (e) {
+        console.log(`Unable to get harvest tools for block: `, e.message)
+      }
+
+      return harvestTools
+    },
+    resetHarvestToolsForBlock: async (blockId: Int) => {
+      try {
+        await db.run(
+          `DELETE FROM harvest_tool_to_block WHERE block_id = ?`,
+          blockId
+        )
+        await db.close()
+      } catch (e) {
+        console.log(
+          `Error resetting harvest tools for block ID '${blockId}': `,
+          e.message
+        )
+      }
+    },
+    resetHarvestToolQualitiesForBlock: async (blockId: Int) => {
+      try {
+        await db.run(
+          `DELETE FROM harvest_tool_quality_to_block WHERE block_id = ?`,
+          blockId
+        )
+        await db.close()
+      } catch (e) {
+        console.log(
+          `Error resetting harvest tool qualities for block ID '${blockId}': `,
+          e.message
+        )
+      }
     },
     deleteBlock: async (args: { key: string }): Promise<MutationResult> => {
       try {
