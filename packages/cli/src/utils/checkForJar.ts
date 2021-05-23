@@ -26,10 +26,7 @@ export function checkForJar() {
       try {
         if (fs.existsSync(linuxJar)) {
           jarDir = linuxJar
-          console.log(
-            `Found Minecraft jar for version ${minecraftVersion}: `,
-            linuxJar
-          )
+
           jarExists = true
         } else {
           console.error(
@@ -48,10 +45,6 @@ export function checkForJar() {
     case `Darwin`:
       try {
         if (fs.existsSync(darwinJar)) {
-          console.log(
-            `Found Minecraft jar for version ${minecraftVersion}: `,
-            darwinJar
-          )
           jarDir = darwinJar
           jarExists = true
         } else {
@@ -71,10 +64,6 @@ export function checkForJar() {
     case `Windows_NT`:
       try {
         if (fs.existsSync(winJar)) {
-          console.log(
-            `Found Minecraft jar for version ${minecraftVersion}: `,
-            winJar
-          )
           jarDir = winJar
           jarExists = true
         } else {
