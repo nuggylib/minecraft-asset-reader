@@ -43,8 +43,8 @@ export class MinecraftUtility {
       console.log(`NAMESPACE:   `, namespace)
       try {
         if (
-          fs.existsSync(namespace + `/models`) &&
-          fs.existsSync(namespace + `/textures`)
+          fs.existsSync(args.path + `/` + namespace + `/models`) &&
+          fs.existsSync(args.path + `/` + namespace + `/textures`)
         ) {
           const rawNamespaceData = {
             [namespace]: {
@@ -181,14 +181,14 @@ export class MinecraftUtility {
               let colonIndex = texturePathFragment.indexOf(`:`)
               console.log(`colonIndex --> `, colonIndex)
               let texturePathFragmentArray = Array.from(texturePathFragment)
-              console.log(
-                `texturePathFragmentArray --> `,
-                texturePathFragmentArray
-              )
+              // console.log(
+              //   `texturePathFragmentArray --> `,
+              //   texturePathFragmentArray
+              // )
               texturePathFragmentArray.splice(0, colonIndex + 1)
 
               texturePathFragment = texturePathFragmentArray.join(``)
-              console.log(`texturePathFragment --> `, texturePathFragment)
+              // console.log(`texturePathFragment --> `, texturePathFragment)
             }
             // console.log(
             //   `${texturesPathRoot}/${texturePathFragment}.png`

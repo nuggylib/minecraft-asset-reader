@@ -53,8 +53,6 @@ export const SetMinecraftVersion = (props: {
         setMinecraftVersions(minecraftVersionsArray)
       })
 
-    console.log(`minecraftVersions in useEffect: `, minecraftVersions)
-
     checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
       (path) => {
         if (path) {
@@ -64,7 +62,7 @@ export const SetMinecraftVersion = (props: {
           CACHE.setRootAssetsPath(path)
           props.setRawAssetsPathHandler(path)
         } else {
-          console.log(`path did not exist when passed to readInRawData`)
+          console.error(`path did not exist when passed to readInRawData`)
         }
       }
     )

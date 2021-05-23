@@ -20,7 +20,6 @@ export const useMenuOptions = (props: {
     [] as { label: string; value: OPTION_VALUE }[]
   )
   const jarExists = checkForJar()
-  console.log(`jarExists: `, jarExists)
   useEffect(() => {
     const array = []
     /**

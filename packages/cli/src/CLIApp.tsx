@@ -32,8 +32,6 @@ export const CLIApp = () => {
   const clearSelectedOptionHandler = () =>
     setSelectedOption((null as unknown) as string)
   const renderSelectedOptionMenu = () => {
-    console.log(`jarExists: `, jarExists)
-
     switch (selectedOption) {
       case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
         return (

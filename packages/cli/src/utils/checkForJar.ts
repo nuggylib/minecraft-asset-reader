@@ -32,14 +32,15 @@ export function checkForJar() {
           )
           jarExists = true
         } else {
-          console.log(
+          console.error(
             `Minecraft jar for version ${minecraftVersion} does not exist.`
           )
           jarExists = false
         }
       } catch (e) {
-        console.log(
-          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`
+        console.error(
+          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`,
+          e
         )
         jarExists = false
       }
@@ -54,14 +55,15 @@ export function checkForJar() {
           jarDir = darwinJar
           jarExists = true
         } else {
-          console.log(
+          console.error(
             `Minecraft jar for version ${minecraftVersion} does not exist.`
           )
           jarExists = false
         }
       } catch (e) {
-        console.log(
-          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`
+        console.error(
+          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`,
+          e
         )
         jarExists = false
       }
@@ -76,14 +78,15 @@ export function checkForJar() {
           jarDir = winJar
           jarExists = true
         } else {
-          console.log(
+          console.error(
             `Minecraft  jar for version ${minecraftVersion} does not exist.`
           )
           jarExists = false
         }
       } catch (e) {
-        console.log(
-          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`
+        console.error(
+          `An error occurred while checking for the Minecraft jar for version ${minecraftVersion}.`,
+          e
         )
         jarExists = false
       }
