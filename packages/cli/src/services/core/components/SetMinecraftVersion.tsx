@@ -42,12 +42,19 @@ export const SetMinecraftVersion = (props: {
     }
   }
 
+  // TODO: Find out why there's a memory leak in this component. It's probably in useEffect().
   useEffect(() => {
+    let isMounted = true
     let minecraftVersionsArray: any
+
     detectVersions()
       .then((v) => (minecraftVersionsArray = v))
-      .then(() => setMinecraftVersions(minecraftVersionsArray))
+      .then(() => {
+        setMinecraftVersions(minecraftVersionsArray)
+      })
+
     console.log(`minecraftVersions in useEffect: `, minecraftVersions)
+
     checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
       (path) => {
         if (path) {
@@ -61,7 +68,7 @@ export const SetMinecraftVersion = (props: {
         }
       }
     )
-  })
+  }, [selectedVersion, minecraftVersions])
 
   return (
     <>

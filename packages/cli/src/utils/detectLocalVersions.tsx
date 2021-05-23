@@ -1,9 +1,5 @@
-import { ItemProps, Item } from "ink-select-input"
-import { readdir } from "node:fs"
-import { useState } from "react"
 const fs = require(`fs`)
 const os = require(`os`)
-const { join } = require(`path`)
 const systemUser = os.userInfo().username
 
 type ChoiceValue = any
@@ -15,11 +11,6 @@ interface ChoiceOption {
 
 let versionsDir = ``
 let versionsArray: ChoiceOption[] = []
-export interface Item<V> {
-  key?: string
-  label: string
-  value: V
-}
 
 const currentOs = os.type()
 
@@ -67,40 +58,76 @@ export async function detectVersions() {
       }
       break
     case `Darwin`:
-      // try {
-      //   if (fs.existsSync(darwinVersions)) {
-      //     console.log(`Found Minecraft installations: `, darwinVersions)
-      //     versionsDir = darwinVersions
-      //     return versionsDir
-      //   } else {
-      //     console.log(`Minecraft installations directory does not exist.`)
+      try {
+        if (fs.existsSync(darwinVersions)) {
+          versionsDir = darwinVersions
+          try {
+            const installations = fs.readdirSync(versionsDir)
+            for (const version of installations) {
+              if (
+                version.match(/([1-9]\.[1-9])/g) &&
+                !versionsArray.find((v: any) => v.value === version)
+              ) {
+                let versionOption = {
+                  label: `${version}`,
+                  value: `${version}`,
+                }
+                versionsArray.push(versionOption)
+              }
+            }
+            console.log(`versions Array: `, versionsArray)
+            return versionsArray
+          } catch (e) {
+            console.error(e)
+          }
+          console.log(`Found Minecraft installations: `, darwinVersions)
+        } else {
+          console.log(`Minecraft installations directory does not exist.`)
 
-      //     versionsDir = darwinVersions
-      //     // return versionsDir
-      //   }
-      // } catch (e) {
-      //   console.log(
-      //     `An error occurred while checking for the Minecraft installations directory.`
-      //   )
-      // }
+          versionsDir = darwinVersions
+        }
+      } catch (e) {
+        console.log(
+          `An error occurred while checking for the Minecraft installations directory.`,
+          e
+        )
+      }
       break
     case `Windows_NT`:
-      // try {
-      //   if (fs.existsSync(winVersions)) {
-      //     console.log(`Found Minecraft installations: `, winVersions)
-      //     versionsDir = winVersions
-      //     return versionsDir
-      //   } else {
-      //     console.log(`Minecraft installations directory does not exist.`)
+      try {
+        if (fs.existsSync(winVersions)) {
+          versionsDir = winVersions
+          try {
+            const installations = fs.readdirSync(versionsDir)
+            for (const version of installations) {
+              if (
+                version.match(/([1-9]\/.[1-9])/g) &&
+                !versionsArray.find((v: any) => v.value === version)
+              ) {
+                let versionOption = {
+                  label: `${version}`,
+                  value: `${version}`,
+                }
+                versionsArray.push(versionOption)
+              }
+            }
+            console.log(`versions Array: `, versionsArray)
+            return versionsArray
+          } catch (e) {
+            console.error(e)
+          }
+          console.log(`Found Minecraft installations: `, winVersions)
+        } else {
+          console.log(`Minecraft installations directory does not exist.`)
 
-      //     versionsDir = winVersions
-      //     // return versionsDir
-      //   }
-      // } catch (e) {
-      //   console.log(
-      //     `An error occurred while checking for the Minecraft installations directory.`
-      //   )
-      // }
+          versionsDir = winVersions
+        }
+      } catch (e) {
+        console.log(
+          `An error occurred while checking for the Minecraft installations directory.`,
+          e
+        )
+      }
       break
     default:
       console.log(`Fell through to default`)

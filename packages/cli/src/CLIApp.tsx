@@ -20,9 +20,6 @@ export const CLIApp = () => {
     (null as unknown) as string
   )
   const [rawAssetsPath, setRawAssetsPath] = useState(``)
-  // let rawAssetsPath = useRawAssetsPath({
-  //   watch: selectedOption,
-  // })
   let rawData = useRawData({
     watch: selectedOption,
   })
@@ -61,9 +58,7 @@ export const CLIApp = () => {
 
   const menuSelectHandler = (option: { label: string; value: string }) => {
     // TODO: See about removing this - we probably don't need it anymore now that we rely on the webapp for most user interactions
-    // switch (option.value) {
 
-    // }
     // Always set the selected option, even if there is no GUI to render for the option
     setSelectedOption(option.value)
   }
