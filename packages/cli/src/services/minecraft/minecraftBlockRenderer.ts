@@ -1,7 +1,7 @@
-import { createCanvas, Image, loadImage } from "canvas"
-import { readFileSync, createWriteStream } from "fs"
+import { Canvas, createCanvas, Image, loadImage } from "canvas"
+import { readFileSync } from "fs"
 import { CACHE } from "../../main"
-import mkdirp from "mkdirp"
+// import mkdirp from "mkdirp"
 import { BlockIconData } from "../../types/cache"
 import { Int } from "../../types/shared"
 
@@ -168,7 +168,7 @@ export class MinecraftBlockRenderer {
     scale: number
     patternQuality: CONTEXT_PATTERN_QUALITY
     disableSmoothing?: boolean
-  }) {
+  }): Canvas {
     let scaleCanvas = createCanvas(32, 32)
     let scaleContext = scaleCanvas.getContext(`2d`)
 
