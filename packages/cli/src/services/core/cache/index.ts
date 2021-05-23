@@ -223,7 +223,7 @@ export default class AppCache {
     return this.cache.set(KEYS.GAME_VERSION, version)
   }
 
-  getCachedGameVersion() {
-    return this.cache.get(KEYS.GAME_VERSION)
+  getCachedGameVersion(): string {
+    return this.cache.get(KEYS.GAME_VERSION) as string
   }
 }
