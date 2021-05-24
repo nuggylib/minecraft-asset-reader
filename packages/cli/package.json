@@ -55,11 +55,16 @@
     "open": "^8.0.2",
     "react": "^16.8.2",
     "redis": "^3.0.2",
-    "sqlite": "^4.0.21",
-    "sqlite3": "^4.2.0",
+    "unzipper": "^0.10.11",
     "util": "^0.12.3"
   },
   "devDependencies": {
+    "@types/ink-select-input": "^3.0.0",
+    "@types/node": "^15.0.2",
+    "@types/unzipper": "^0.10.3",
+    "sqlite": "^4.0.21",
+    "sqlite3": "^4.2.0",
+    "util": "^0.12.3",
     "@types/sqlite3": "^3.1.7"
   }
 }

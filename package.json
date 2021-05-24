@@ -71,7 +71,8 @@
   "dependencies": {
     "dotenv": "^9.0.2",
     "minecraft-asset-reader": "file:packages/cli",
-    "minecraft-asset-reader-webapp": "file:packages/client"
+    "minecraft-asset-reader-webapp": "file:packages/client",
+    "unzipper": "^0.10.11"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,yml,yaml}": [
