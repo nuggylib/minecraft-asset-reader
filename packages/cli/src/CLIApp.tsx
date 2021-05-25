@@ -11,14 +11,16 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
 import { Menu } from "./components/shared/Menu"
+import { MinecraftUtility } from "../src/minecraft"
+import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
+import { checkForJar } from "./utils/checkForJar"
+const minecraftAssetReader = new MinecraftUtility()
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
     (null as unknown) as string
   )
-  let rawAssetsPath = useRawAssetsPath({
-    watch: selectedOption,
-  })
+  const [rawAssetsPath, setRawAssetsPath] = useState(``)
   let rawData = useRawData({
     watch: selectedOption,
   })
@@ -28,6 +30,7 @@ export const CLIApp = () => {
     rawData,
   })
 
+  const jarExists = checkForJar()
   const clearSelectedOptionHandler = () =>
     setSelectedOption((null as unknown) as string)
   const renderSelectedOptionMenu = () => {
@@ -39,6 +42,14 @@ export const CLIApp = () => {
           />
         )
       }
+      case OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY: {
+        return (
+          <SetMinecraftVersion
+            clearSelectedOptionHandler={clearSelectedOptionHandler}
+            setRawAssetsPathHandler={(v) => setRawAssetsPath(v)}
+          />
+        )
+      }
       default: {
         return <></>
       }
@@ -46,13 +57,6 @@ export const CLIApp = () => {
   }
   const menuSelectHandler = (option: { label: string; value: string }) => {
     // TODO: See about removing this - we probably don't need it anymore now that we rely on the webapp for most user interactions
-    // switch (option.value) {
-    //   case OPTION_VALUE.GENERATE_SITE_DATA: {
-    //     CACHE.generateSiteContent().then(() =>
-    //       setSelectedOption((null as unknown) as string)
-    //     )
-    //   }
-    // }
     // Always set the selected option, even if there is no GUI to render for the option
     setSelectedOption(option.value)
   }
