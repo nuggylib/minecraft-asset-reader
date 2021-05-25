@@ -1,11 +1,11 @@
 import sanity, { SanityClient } from "@sanity/client"
 // import mkdirp from "mkdirp"
 // import fs from "fs"
-import { CACHE } from "../main"
-import { CONTEXT_PATTERN_QUALITY, MinecraftBlockRenderer } from "../minecraft"
-import { Int } from "../types/shared"
-import { SanityRESTClient } from "../cms/sanityRestClient"
-import { Dao } from "../db"
+import { CACHE } from "./main"
+import { CONTEXT_PATTERN_QUALITY, MinecraftBlockRenderer } from "./minecraft"
+import { Int } from "./types/shared"
+import { SanityRESTClient } from "./cms/sanityRestClient"
+import { Dao } from "./db"
 import { loadImage } from "canvas"
 
 /**

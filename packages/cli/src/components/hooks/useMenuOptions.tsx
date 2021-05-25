@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { RawAssetData } from "../../../types/cache"
+import { RawAssetData } from "../../types/cache"
 
 export const enum OPTION_VALUE {
   SET_ASSETS_DIRECTORY = `set_assets_directory`,

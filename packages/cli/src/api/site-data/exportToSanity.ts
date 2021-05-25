@@ -1,5 +1,5 @@
 import express from "express"
-import { Exporter } from "../../core/exporter"
+import { Exporter } from "../../exporter"
 
 export async function exportToSanity(
   req: express.Request,
