@@ -1,4 +1,4 @@
-import { CreateProjectResponse, SanityMutation } from "../../types/sanity"
+import { CreateProjectResponse, SanityMutation } from "../types/sanity"
 import fetch from "node-fetch"
 
 const SANITY_API_VERSION = `v2021-03-25`

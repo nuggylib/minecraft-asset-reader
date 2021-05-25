@@ -11,7 +11,7 @@ import {
   CREATE_IMPORTED_GAME_VERSION_TABLE,
   CREATE_NAMESPACE_TABLE,
 } from "./mutations/createTables"
-import { Int, MutationResult, QueryResult } from "../../types/shared"
+import { Int, MutationResult, QueryResult } from "../types/shared"
 import { LIMIT } from "./constants"
 import mkdirp from "mkdirp"
 const sqlite3 = sqlitePkg.verbose()

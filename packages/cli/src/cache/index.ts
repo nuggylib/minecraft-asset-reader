@@ -2,13 +2,13 @@ import NodeCache from "node-cache"
 import {
   CONTEXT_PATTERN_QUALITY,
   MinecraftBlockRenderer,
-} from "../../minecraft/minecraftBlockRenderer"
+} from "../minecraft/minecraftBlockRenderer"
 import fs from "fs"
 import mkdirp from "mkdirp"
 import { loadImage } from "canvas"
-import { ConfiguredBlock, ContentMap, RawAssetData } from "../../../types/cache"
-import { Int, MutationResult } from "../../../types/shared"
-import { BlockModelData } from "../../../types/minecraft"
+import { ConfiguredBlock, ContentMap, RawAssetData } from "../types/cache"
+import { Int, MutationResult } from "../types/shared"
+import { BlockModelData } from "../types/minecraft"
 
 const enum KEYS {
   CONTENT_MAP = `content_map`,

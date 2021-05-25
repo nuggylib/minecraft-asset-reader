@@ -1,9 +1,9 @@
 import { Canvas, createCanvas, Image, loadImage } from "canvas"
 import { readFileSync } from "fs"
-import { CACHE } from "../../main"
+import { CACHE } from "../main"
 // import mkdirp from "mkdirp"
-import { BlockIconData } from "../../types/cache"
-import { Int } from "../../types/shared"
+import { BlockIconData } from "../types/cache"
+import { Int } from "../types/shared"
 
 // TODO: Test the impact of the different values
 /**

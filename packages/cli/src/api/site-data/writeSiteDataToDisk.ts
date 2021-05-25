@@ -1,5 +1,5 @@
 import express from "express"
-import { Exporter } from "../../services/core/exporter"
+import { Exporter } from "../../core/exporter"
 
 export async function writeSiteDataToDisk(
   req: express.Request,

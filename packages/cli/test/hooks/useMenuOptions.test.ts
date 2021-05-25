@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react-hooks"
 import {
   useMenuOptions,
   OPTION_VALUE,
-} from "../../src/services/core/components/hooks/useMenuOptions"
+} from "../../src/core/components/hooks/useMenuOptions"
 import { RawAssetData } from "../../src/types/cache"
 
 describe(`useMenuOptions Hook tests`, () => {
