@@ -2,8 +2,8 @@ import React from "react"
 import { useState } from "react"
 import { Box, Text } from "ink"
 import TextInput from "ink-text-input"
-import { MinecraftUtility } from "../../minecraft/minecraftUtility"
-import { Dao } from "../../db"
+import { MinecraftUtility } from "../minecraft/minecraftUtility"
+import { Dao } from "../db"
 
 /**
  * A simple input form to get the base assets path

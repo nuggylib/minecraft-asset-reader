@@ -2,7 +2,7 @@ import { render } from "ink"
 import React from "react"
 import AppCache from "./cache"
 import { CLIApp } from "./CLIApp"
-import { initServer } from "./core/server/server"
+import { initServer } from "./server/server"
 import { Dao } from "./db"
 
 export const CACHE = new AppCache()
