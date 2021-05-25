@@ -30,7 +30,6 @@ export const CLIApp = () => {
     rawData,
   })
 
-  const jarExists = checkForJar()
   const clearSelectedOptionHandler = () =>
     setSelectedOption((null as unknown) as string)
   const renderSelectedOptionMenu = () => {

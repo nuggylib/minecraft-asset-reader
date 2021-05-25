@@ -49,20 +49,21 @@ export const SetMinecraftVersion = (props: {
       .then(() => {
         setMinecraftVersions(minecraftVersionsArray)
       })
-
-    checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
-      (path) => {
-        if (path) {
-          minecraftAssetReader.readInRawData({
-            path,
-          })
-          CACHE.setRootAssetsPath(path)
-          props.setRawAssetsPathHandler(path)
-        } else {
-          console.error(`path did not exist when passed to readInRawData`)
-        }
-      }
-    )
+      .then(() => {
+        checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
+          (path) => {
+            if (path) {
+              minecraftAssetReader.readInRawData({
+                path,
+              })
+              CACHE.setRootAssetsPath(path)
+              props.setRawAssetsPathHandler(path)
+            } else {
+              console.error(`path did not exist when passed to readInRawData`)
+            }
+          }
+        )
+      })
   }, [selectedVersion, minecraftVersions])
 
   return (
