@@ -31,18 +31,32 @@ export class MinecraftUtility {
       }
     })
     let rawData = {} as RawAssetData
+
     namespaces.forEach((namespace) => {
-      const rawNamespaceData = {
-        [namespace]: {
-          model: this.readModels({
-            namespace: namespace,
-            path: args.path,
-          }),
-        },
-      }
-      rawData = {
-        ...rawData,
-        ...rawNamespaceData,
+      try {
+        if (
+          fs.existsSync(args.path + `/` + namespace + `/models`) &&
+          fs.existsSync(args.path + `/` + namespace + `/textures`)
+        ) {
+          const rawNamespaceData = {
+            [namespace]: {
+              model: this.readModels({
+                namespace: namespace,
+                path: args.path,
+              }),
+            },
+          }
+          rawData = {
+            ...rawData,
+            ...rawNamespaceData,
+          }
+        } else {
+          console.log(
+            `Skipping namespace ${namespace} because it does not have the expected file structure.`
+          )
+        }
+      } catch (e) {
+        console.log(`Error with ${namespace}`, e)
       }
     })
     const parts = args.path.split(`/`)
@@ -144,20 +158,33 @@ export class MinecraftUtility {
       const content = fs.readFileSync(blockModelsPath + filename, `utf-8`)
       const blockModelName = filename.split(`.`)[0]
       const rawBlock = JSON.parse(content) as BlockModelData
+
       let convertedBlock = {
         textures: {},
       } as BlockModelData
       if (!!rawBlock.textures) {
         Object.keys(rawBlock.textures).forEach((textureKey) => {
           if (!rawBlock.textures![textureKey]!.includes(`#`)) {
+            let texturePathFragment:
+              | string
+              | string[]
+              | undefined = rawBlock.textures![textureKey]
+            if (texturePathFragment?.includes(`:`)) {
+              let colonIndex = texturePathFragment.indexOf(`:`)
+              console.log(`colonIndex --> `, colonIndex)
+              let texturePathFragmentArray = Array.from(texturePathFragment)
+              texturePathFragmentArray.splice(0, colonIndex + 1)
+
+              texturePathFragment = texturePathFragmentArray.join(``)
+            }
             const base64 = fs
-              .readFileSync(
-                `${texturesPathRoot}/${rawBlock.textures![textureKey]}.png`
-              )
+
+              .readFileSync(`${texturesPathRoot}/${texturePathFragment}.png`)
               .toString(`base64`)
-            // Here, we replace the "old" key (which is really generic) with the texture name - the value is the base64 for the image
+            // Here, we replace the "old" key (which is really generic)
+            // with the texture name - the value is the base64 for the image
             convertedBlock.textures![
-              rawBlock.textures![textureKey]!
+              texturePathFragment!
             ] = `data:image/png;base64,${base64}`
           }
         })
