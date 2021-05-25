@@ -5,12 +5,12 @@ import {
   useMenuOptions,
   useRawAssetsPath,
   useRawData,
-} from "./services/core/components/hooks"
-import { Layout } from "./services/core/components/Layout"
+} from "./core/components/hooks"
+import { Layout } from "./core/components/Layout"
 import { Box } from "ink"
 import { Text } from "ink"
-import { SetAssetsPathForm } from "./services/core/components/SetAssetsPathForm"
-import { Menu } from "./services/core/components/shared/Menu"
+import { SetAssetsPathForm } from "./core/components/SetAssetsPathForm"
+import { Menu } from "./core/components/shared/Menu"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(

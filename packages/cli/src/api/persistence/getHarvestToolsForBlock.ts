@@ -1,5 +1,5 @@
 import express from "express"
-import { Dao } from "../../services/db"
+import { Dao } from "../../db"
 import { Int } from "../../types/shared"
 
 export function getHarvestToolsForBlock(

@@ -1,5 +1,5 @@
 import renderer from "react-test-renderer"
-import { Tab } from "../../src/services/core/components/shared/Tab"
+import { Tab } from "../../src/core/components/shared/Tab"
 
 it(`renders correctly`, () => {
   const component = renderer

@@ -1,9 +1,9 @@
 import fs from "fs"
 import { lstatSync } from "fs"
 import { join } from "path"
-import { CACHE } from "../../main"
-import { RawAssetData } from "../../types/cache"
-import { BlockModelData, ItemModelData } from "../../types/minecraft"
+import { CACHE } from "../main"
+import { RawAssetData } from "../types/cache"
+import { BlockModelData, ItemModelData } from "../types/minecraft"
 
 /**
  * Helper to determine if the source is a directory or not

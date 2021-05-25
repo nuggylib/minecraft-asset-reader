@@ -1,5 +1,5 @@
 import express from "express"
-import { Dao } from "../../services/db"
+import { Dao } from "../../db"
 
 export function getBlocks(req: express.Request, res: express.Response) {
   const { gameVersion, q } = req.query

@@ -2,27 +2,27 @@ import express from "express"
 // import ngrok from "ngrok"
 import paginate from "express-paginate"
 import cors from "cors"
-import { getBlocksForNamespace, getNamespaces } from "../../../api/raw-data"
+import { getBlocksForNamespace, getNamespaces } from "../../api/raw-data"
 import {
   getBlockFromContentMap,
   getContentMap,
   setContentMapNamespaceBlocks,
   writeContentMapToDisk,
-} from "../../../api/content-map"
-import { writeSiteDataToDisk, exportToSanity } from "../../../api/site-data"
+} from "../../api/content-map"
+import { writeSiteDataToDisk, exportToSanity } from "../../api/site-data"
 import path from "path"
-import { addOrUpdateBlock } from "../../../api/persistence/addOrUpdateBlock"
-import { getBlocks } from "../../../api/persistence/getBlocks"
-import { getHarvestTools } from "../../../api/persistence/getHarvestTools"
-import { getHarvestToolQualities } from "../../../api/persistence/getHarvestToolQualities"
-import { deleteBlock } from "../../../api/persistence/deleteBlock"
-import { getImportedGameVersions } from "../../../api/persistence/getImportedGameVersions"
+import { addOrUpdateBlock } from "../../api/persistence/addOrUpdateBlock"
+import { getBlocks } from "../../api/persistence/getBlocks"
+import { getHarvestTools } from "../../api/persistence/getHarvestTools"
+import { getHarvestToolQualities } from "../../api/persistence/getHarvestToolQualities"
+import { deleteBlock } from "../../api/persistence/deleteBlock"
+import { getImportedGameVersions } from "../../api/persistence/getImportedGameVersions"
 import { Dao } from "../../db"
-import { getCachedGameVersion } from "../../../api/session/getCachedGameVersion"
-import { addNamespace } from "../../../api/persistence/addNamespace"
-import { getNamespacesFromDb } from "../../../api/persistence/getNamespaces"
-import { getHarvestToolsForBlock } from "../../../api/persistence/getHarvestToolsForBlock"
-import { getHarvestToolQualitiesForBlock } from "../../../api/persistence/getHarvestToolQualitiesForBlock"
+import { getCachedGameVersion } from "../../api/session/getCachedGameVersion"
+import { addNamespace } from "../../api/persistence/addNamespace"
+import { getNamespacesFromDb } from "../../api/persistence/getNamespaces"
+import { getHarvestToolsForBlock } from "../../api/persistence/getHarvestToolsForBlock"
+import { getHarvestToolQualitiesForBlock } from "../../api/persistence/getHarvestToolQualitiesForBlock"
 
 var app = express()
 

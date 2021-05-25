@@ -1,9 +1,6 @@
 import express from "express"
-import { Dao } from "../../services/db"
-import {
-  LIGHT_DIRECTION,
-  MinecraftBlockRenderer,
-} from "../../services/minecraft"
+import { Dao } from "../../db"
+import { LIGHT_DIRECTION, MinecraftBlockRenderer } from "../../minecraft"
 
 export async function addOrUpdateBlock(
   req: express.Request,
