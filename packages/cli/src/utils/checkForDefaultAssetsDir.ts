@@ -23,12 +23,7 @@ const currentOs = os.type()
 // TODO: Add logic to handle if the Jar file doesn't exist
 // TODO: If it falls through or fails, return to the main menu.
 
-export async function checkForAssets(
-  selectedVersion: any,
-  props: {
-    clearSelectedOptionHandler: () => void
-  }
-) {
+export async function checkForAssets(selectedVersion: any) {
   const fallbackDefaultDir = `/home/${systemUser}/.minecraft/versions/1.12.2/assets`
   const linuxJar = `/home/${systemUser}/.minecraft/versions/${selectedVersion.value}/${selectedVersion.value}.jar`
   const darwinJar = `~/Library/Application Support/minecraft/versions/${selectedVersion.value}/${selectedVersion.value}.jar`
@@ -46,7 +41,6 @@ export async function checkForAssets(
       try {
         if (fs.existsSync(linuxAssets)) {
           defaultDir = linuxAssets
-          console.log(`Assets directory exists: `, linuxAssets)
         } else {
           console.log(`Assets directory does not exist. \nExtracting jar...`)
           await extractJar(linuxJar, linuxExportDir)
@@ -61,7 +55,6 @@ export async function checkForAssets(
     case `Darwin`:
       try {
         if (fs.existsSync(darwinAssets)) {
-          console.log(`Assets directory exists: `, darwinAssets)
           defaultDir = darwinAssets
           return defaultDir
         } else {
@@ -79,7 +72,6 @@ export async function checkForAssets(
     case `Windows_NT`:
       try {
         if (fs.existsSync(winAssets)) {
-          console.log(`Assets directory exists: `, winAssets)
           defaultDir = winAssets
           return defaultDir
         } else {
@@ -94,18 +86,14 @@ export async function checkForAssets(
         )
       }
       break
-    default:
-      console.log(`Fell through to default case`)
+    default: {
+      break
+    }
   }
   if (selectedVersion) {
     return defaultDir
   } else {
     //  TODO: Instead of using a fallback directory, redirect the user to the main prompt.
-
-    console.log(
-      `selectedVersion is empty, using fallbackDefaultDir: `,
-      fallbackDefaultDir
-    )
     return fallbackDefaultDir
   }
 }

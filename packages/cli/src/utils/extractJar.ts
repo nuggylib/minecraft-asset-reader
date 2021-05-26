@@ -1,5 +1,5 @@
 import unzipper from "unzipper"
-import { createReadStream, existsSync } from "fs"
+import { existsSync } from "fs"
 
 /**
  * extractJar(path, exportPath) accepts a file path to a .jar file
@@ -20,8 +20,6 @@ export async function extractJar(path: any, exportPath: any) {
       return unzipper.Open.file(path).then((d) =>
         d.extract({ path: exportPath })
       )
-    } else {
-      console.log(`The Jar file doesn't exist.`)
     }
   } catch (e) {
     console.log(`An error occurred while checking for the Jar file.`)
