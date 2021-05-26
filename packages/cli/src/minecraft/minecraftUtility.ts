@@ -171,7 +171,6 @@ export class MinecraftUtility {
               | undefined = rawBlock.textures![textureKey]
             if (texturePathFragment?.includes(`:`)) {
               let colonIndex = texturePathFragment.indexOf(`:`)
-              console.log(`colonIndex --> `, colonIndex)
               let texturePathFragmentArray = Array.from(texturePathFragment)
               texturePathFragmentArray.splice(0, colonIndex + 1)
 

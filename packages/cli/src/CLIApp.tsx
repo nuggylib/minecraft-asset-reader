@@ -1,20 +1,12 @@
 import React from "react"
 import { useState } from "react"
-import {
-  OPTION_VALUE,
-  useMenuOptions,
-  useRawAssetsPath,
-  useRawData,
-} from "./components/hooks"
+import { OPTION_VALUE, useMenuOptions, useRawData } from "./components/hooks"
 import { Layout } from "./components/Layout"
 import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
 import { Menu } from "./components/shared/Menu"
-import { MinecraftUtility } from "../src/minecraft"
 import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
-import { checkForJar } from "./utils/checkForJar"
-const minecraftAssetReader = new MinecraftUtility()
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(

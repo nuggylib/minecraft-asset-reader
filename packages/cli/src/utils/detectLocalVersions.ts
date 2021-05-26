@@ -43,10 +43,7 @@ export async function detectVersions() {
           } catch (e) {
             console.error(e)
           }
-          console.log(`Found Minecraft installations: `, linuxVersions)
         } else {
-          console.log(`Minecraft installations directory does not exist.`)
-
           versionsDir = linuxVersions
         }
       } catch (e) {
@@ -78,7 +75,6 @@ export async function detectVersions() {
           } catch (e) {
             console.error(e)
           }
-          console.log(`Found Minecraft installations: `, darwinVersions)
         } else {
           console.log(`Minecraft installations directory does not exist.`)
 
@@ -113,10 +109,7 @@ export async function detectVersions() {
           } catch (e) {
             console.error(e)
           }
-          console.log(`Found Minecraft installations: `, winVersions)
         } else {
-          console.log(`Minecraft installations directory does not exist.`)
-
           versionsDir = winVersions
         }
       } catch (e) {
@@ -126,8 +119,9 @@ export async function detectVersions() {
         )
       }
       break
-    default:
-      console.log(`Fell through to default`)
+    default: {
+      break
+    }
   }
   return versionsArray
 }

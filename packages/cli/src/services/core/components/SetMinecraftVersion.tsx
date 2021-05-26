@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import SelectInput, { Item, ItemProps } from "ink-select-input"
+import SelectInput, { Item } from "ink-select-input"
 import { useState } from "react"
 import { checkForAssets, detectVersions } from "../../../utils"
 import { Box, Text } from "ink"
@@ -7,13 +7,6 @@ import { CACHE } from "../../../main"
 import { MinecraftUtility } from "../../../minecraft"
 
 const minecraftAssetReader = new MinecraftUtility()
-
-type ChoiceValue = any
-interface ChoiceOption {
-  key?: string
-  label: string
-  value: ChoiceValue
-}
 export interface Item<V> {
   key?: string
   label: string
@@ -24,11 +17,6 @@ export const SetMinecraftVersion = (props: {
   clearSelectedOptionHandler: () => void
   setRawAssetsPathHandler: (v: string) => void
 }) => {
-  const [selectedOption, setSelectedOption] = useState(
-    (null as unknown) as string
-  )
-  const clearSelectedOptionHandler = () =>
-    setSelectedOption((null as unknown) as string)
   const [minecraftVersions, setMinecraftVersions] = useState()
   const [selectedVersion, setSelectedVersion] = useState(``)
 
@@ -39,31 +27,38 @@ export const SetMinecraftVersion = (props: {
     }
   }
 
-  // TODO: Find out why there's a memory leak in this component. It's probably in useEffect().
   useEffect(() => {
-    let isMounted = true
-    let minecraftVersionsArray: any
+    /**
+     * @see https://stackoverflow.com/questions/53332321/react-hook-warnings-for-async-function-in-useeffect-useeffect-function-must-ret
+     */
+    async function setData() {
+      let minecraftVersionsArray: any
 
-    detectVersions()
-      .then((v) => (minecraftVersionsArray = v))
-      .then(() => {
-        setMinecraftVersions(minecraftVersionsArray)
-      })
-      .then(() => {
-        checkForAssets(selectedVersion, { clearSelectedOptionHandler }).then(
-          (path) => {
+      detectVersions()
+        .then((v) => (minecraftVersionsArray = v))
+        .then(() => {
+          setMinecraftVersions(minecraftVersionsArray)
+        })
+        .then(() => {
+          checkForAssets(selectedVersion).then((path) => {
             if (path) {
-              minecraftAssetReader.readInRawData({
-                path,
-              })
-              CACHE.setRootAssetsPath(path)
-              props.setRawAssetsPathHandler(path)
+              try {
+                minecraftAssetReader.readInRawData({
+                  path,
+                })
+                CACHE.setRootAssetsPath(path)
+                props.setRawAssetsPathHandler(path)
+              } catch (e) {
+                console.log(`Unable to read in raw data: `, e.message)
+              }
             } else {
               console.error(`path did not exist when passed to readInRawData`)
             }
-          }
-        )
-      })
+          })
+        })
+    }
+
+    setData()
   }, [selectedVersion, minecraftVersions])
 
   return (
