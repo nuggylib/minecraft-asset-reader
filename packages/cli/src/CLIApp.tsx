@@ -6,7 +6,7 @@ import { Box } from "ink"
 import { Text } from "ink"
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
 import { Menu } from "./components/shared/Menu"
-import { SetMinecraftVersion } from "./services/core/components/SetMinecraftVersion"
+import { SetMinecraftVersion } from "./components/SetMinecraftVersion"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
