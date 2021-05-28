@@ -1,12 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
-import { ConfigContentMap } from "./components/ConfigureContentMap"
+import { App } from "./components/App"
 require(`dotenv`).config()
 
 ReactDOM.render(
   <React.StrictMode>
-    <ConfigContentMap />
+    <App />
   </React.StrictMode>,
   document.getElementById(`root`)
 )

@@ -3,12 +3,6 @@ import express from "express"
 import paginate from "express-paginate"
 import cors from "cors"
 import { getBlocksForNamespace, getNamespaces } from "../api/raw-data"
-import {
-  getBlockFromContentMap,
-  getContentMap,
-  setContentMapNamespaceBlocks,
-  writeContentMapToDisk,
-} from "../api/content-map"
 import { writeSiteDataToDisk, exportToSanity } from "../api/site-data"
 import path from "path"
 import { addOrUpdateBlock } from "../api/persistence/addOrUpdateBlock"
@@ -97,14 +91,6 @@ app.use(paginate.middleware(10, 50))
  *******************************************/
 app.get(`/raw-data/namespaces`, getNamespaces)
 app.get(`/raw-data/blocks`, getBlocksForNamespace)
-
-/*******************************************
- * Content map routes
- *******************************************/
-app.get(`/content-map`, getContentMap)
-app.get(`/content-map/block`, getBlockFromContentMap)
-app.post(`/content-map/blocks`, setContentMapNamespaceBlocks)
-app.post(`/content-map/export`, writeContentMapToDisk)
 
 /*******************************************
  * Core API routes

@@ -4,7 +4,7 @@ import { BlockDataConfig } from "./BlockDataConfig"
 import { Sidebar } from "./Sidebar"
 import { ExportConfirmationModal } from "./ExportConfirmationModal"
 
-export const ConfigContentMap = () => {
+export const App = () => {
   const namespaces = useNamespaces()
   const [selectedNamespace, setSelectedNamespace] = useState(
     (null as unknown) as string
