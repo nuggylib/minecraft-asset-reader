@@ -237,6 +237,7 @@ export const BlockModal = (props: {
             harvest_tools,
             harvest_tool_qualities,
           } = res.data[0].data
+          console.log(`GOT BLOCK: `, title)
           if (title) {
             dispatch({
               type: BLOCK_MODAL_ACTION.LOAD_CACHED,
