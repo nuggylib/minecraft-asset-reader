@@ -3,11 +3,10 @@ import {
   CONTEXT_PATTERN_QUALITY,
   MinecraftBlockRenderer,
 } from "../minecraft/minecraftBlockRenderer"
-import fs from "fs"
 import mkdirp from "mkdirp"
 import { loadImage } from "canvas"
-import { ConfiguredBlock, ContentMap, RawAssetData } from "../types/cache"
-import { Int, MutationResult } from "../types/shared"
+import { RawAssetData } from "../types/cache"
+import { Int } from "../types/shared"
 import { BlockModelData } from "../types/minecraft"
 
 const enum KEYS {
@@ -135,70 +134,6 @@ export default class AppCache {
       data: rawBlockData,
       scaledTextures: await this.getScaledBlockTextures(args),
     }
-  }
-
-  contentMap(): ContentMap {
-    const contentMap = this.cache.get(KEYS.CONTENT_MAP)
-    if (contentMap) {
-      return contentMap as ContentMap
-    }
-    return (null as unknown) as ContentMap
-  }
-
-  async writeContentMapToDisk(args: {
-    path?: string
-  }): Promise<MutationResult> {
-    try {
-      let baseWritePath = `./generated/export`
-      if (args.path) {
-        baseWritePath = args.path
-      }
-      const cachedContentMap = this.contentMap()
-      await mkdirp(baseWritePath) // creates the path if it doesn't exist already
-      fs.writeFileSync(
-        `${baseWritePath}/content_map.json`,
-        JSON.stringify(cachedContentMap)
-      )
-      return {
-        success: true,
-        message: `Content map saved successfully`,
-      }
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
-      }
-    }
-  }
-
-  // TODO: Make this use the database instead of the cache content map
-  updateContentMapBlocksForNamespace(args: {
-    namespace: string
-    blocks: {
-      [block: string]: ConfiguredBlock
-    }
-  }) {
-    let cachedContentMap = this.contentMap()
-    if (!cachedContentMap) {
-      cachedContentMap = {}
-    }
-    if (!cachedContentMap[args.namespace]) {
-      cachedContentMap[args.namespace] = {
-        blocks: {},
-      }
-    }
-    let newBlocks = cachedContentMap[args.namespace].blocks
-    Object.keys(args.blocks).forEach((blockKey) => {
-      newBlocks[blockKey] = args.blocks[blockKey]
-    })
-    const newCachedContentMap = {
-      ...cachedContentMap,
-      [args.namespace]: {
-        blocks: newBlocks,
-      },
-    } as ContentMap
-
-    this.cache.set(KEYS.CONTENT_MAP, newCachedContentMap)
   }
 
   setCachedRawData(updatedRawDataObject: RawAssetData) {
