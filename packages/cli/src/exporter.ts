@@ -80,8 +80,6 @@ export class Exporter {
     const gameVersion = CACHE.getCachedGameVersion()
     const namespaceQueryResults = await (await Dao(gameVersion)).getNamespaces()
 
-    console.log(`Using dataset: `, dataset)
-
     // Re-init client with the dataset after it's been created
     const projectClient = new sanity({
       projectId,
@@ -100,54 +98,89 @@ export class Exporter {
           blocksForNamespace.map(async (blockQueryResult) => {
             const {
               key,
-              // title,
+              title,
               icon,
-              // description,
-              // flammability_encouragement,
-              // flammability,
-              // light_level,
-              // min_spawn,
-              // max_spawn,
+              flammability_encouragement,
+              flammability,
+              light_level,
+              min_spawn,
+              max_spawn,
+              // TODO: Update the Sanity minecraft block schema to support namespace
               // namespace_id
             } = blockQueryResult.data
 
             const iconBuffer = Buffer.from(icon, `base64`)
-            await this.exportNamespaceImagesToSanity({
+            const imageDocument = await this.exportImageToSanity({
               iconImage: iconBuffer,
               blockKey: key,
-              scales: args.blockIconScaleSizes,
+              scale: args.blockIconScaleSizes[0],
               projectClient,
             })
+
+            // TODO: Remove the description field from the BlockModal - it makes more sense to handle that in Sanity (since this is where the "article content" would be)
+            // TODO: Update the schema in the sanity starter template to set the slug by the title (https://www.sanity.io/docs/slug-type)
+            const minecraftBlockDocument = {
+              _id: key,
+              _type: `minecraftBlock`,
+              name: title,
+              flammabilityEncouragementValue: flammability_encouragement,
+              flammabilityValue: flammability,
+              lightLevel: light_level,
+              minSpawnLevel: min_spawn,
+              maxSpawnLevel: max_spawn,
+            }
+
+            try {
+              const createBlockResponse = await projectClient.createOrReplace(
+                minecraftBlockDocument
+              )
+              const _linkImageResponse = await projectClient
+                .patch(createBlockResponse._id)
+                .set({
+                  image: {
+                    _type: `image`,
+                    asset: {
+                      _type: `reference`,
+                      _ref: imageDocument._id,
+                    },
+                  },
+                })
+                .commit()
+            } catch (e) {
+              console.log(
+                `Unable to create block '${key}' - Error: `,
+                e.message
+              )
+            }
           })
         )
       })
     )
   }
 
-  // TODO: Remove the content map and replace with database operations
-  private async exportNamespaceImagesToSanity(args: {
+  private async exportImageToSanity(args: {
     iconImage: Buffer
     blockKey: string
-    scales: Int[]
+    scale: Int
     projectClient: SanityClient
   }) {
     // Generate and upload images
-    await Promise.all(
-      args.scales.map(async (scale) => {
-        const scaledIconImage = this.renderer.scale({
-          sourceImage: await loadImage(args.iconImage, scale),
-          scale,
-          patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
-        })
-        // TODO: Handle errors (e.g., when the user specifies an image scale that's too large, like 50 - that will error out)
-        const _res = await args.projectClient.assets.upload(
-          `image`,
-          scaledIconImage.toBuffer(),
-          {
-            filename: `${args.blockKey}_${scale}`,
-          }
-        )
-      })
+    // TODO: Update the UI to only accept one scale size (this is not ideal, but will make linking easier - we can improve this later)
+    const { scale } = args
+    const scaledIconImage = this.renderer.scale({
+      sourceImage: await loadImage(args.iconImage, scale),
+      scale,
+      patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
+    })
+    // TODO: Handle errors (e.g., when the user specifies an image scale that's too large, like 50 - that will error out)
+    const imageDocument = await args.projectClient.assets.upload(
+      `image`,
+      scaledIconImage.toBuffer(),
+      {
+        filename: `${args.blockKey}_${scale}`,
+      }
     )
+
+    return imageDocument
   }
 }
