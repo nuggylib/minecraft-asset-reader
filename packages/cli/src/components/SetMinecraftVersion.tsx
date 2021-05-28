@@ -3,8 +3,8 @@ import SelectInput, { Item } from "ink-select-input"
 import { useState } from "react"
 import { checkForAssets, detectVersions } from "../utils"
 import { Box, Text } from "ink"
-import { CACHE } from "../main"
 import { MinecraftUtility } from "../minecraft"
+import { Dao } from "../db"
 
 const minecraftAssetReader = new MinecraftUtility()
 export interface Item<V> {
@@ -18,12 +18,31 @@ export const SetMinecraftVersion = (props: {
   setRawAssetsPathHandler: (v: string) => void
 }) => {
   const [minecraftVersions, setMinecraftVersions] = useState()
-  const [selectedVersion, setSelectedVersion] = useState(``)
 
-  const selectHandler = (value: any) => {
-    setSelectedVersion(value)
+  const selectHandler = (value: { label: string; value: string }) => {
     if (value) {
-      props.clearSelectedOptionHandler()
+      checkForAssets(value)
+        .then((path) => {
+          if (path) {
+            try {
+              minecraftAssetReader.readInRawData({
+                path,
+              })
+              props.setRawAssetsPathHandler(path)
+            } catch (e) {
+              console.log(`Unable to read in raw data: `, e.message)
+            }
+          } else {
+            console.error(`path did not exist when passed to readInRawData`)
+          }
+        })
+        .then(() => Dao(value.value))
+        .then((db) => db.initGameVersionDatabase())
+        .then((_initDbResult) => Dao())
+        .then((db) => db.addImportedGameVersion(value.value))
+        .then(() => {
+          props.clearSelectedOptionHandler()
+        })
     }
   }
 
@@ -38,29 +57,12 @@ export const SetMinecraftVersion = (props: {
           setMinecraftVersions(minecraftVersionsArray)
         }
       })
-      .then(() =>
-        checkForAssets(selectedVersion).then((path) => {
-          if (path) {
-            try {
-              minecraftAssetReader.readInRawData({
-                path,
-              })
-              CACHE.setRootAssetsPath(path)
-              props.setRawAssetsPathHandler(path)
-            } catch (e) {
-              console.log(`Unable to read in raw data: `, e.message)
-            }
-          } else {
-            console.error(`path did not exist when passed to readInRawData`)
-          }
-        })
-      )
 
     // Used to prevent attempting to set state when component is unmounted
     return () => {
       isCancelled = true
     }
-  }, [selectedVersion, minecraftVersions])
+  }, [minecraftVersions])
 
   return (
     <>
@@ -70,7 +72,9 @@ export const SetMinecraftVersion = (props: {
       {!!minecraftVersions ? (
         <SelectInput
           items={minecraftVersions}
-          onSelect={(item) => selectHandler(item)}
+          onSelect={(item) =>
+            selectHandler(item as { label: string; value: string })
+          }
         />
       ) : (
         <Text>...</Text>
