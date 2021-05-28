@@ -11,7 +11,8 @@ export const ExportConfirmationModal = (props: {
     EXPORT_LOCATION.FILE_SYSTEM
   )
   const [writePath, setWritePath] = useState(``)
-  const [projectName, setProjectName] = useState(``)
+  const [projectId, setProjectId] = useState(``)
+  const [dataset, setDataset] = useState(``)
   const [authToken, setAuthToken] = useState(``)
   const [scaleInput, setScaleInput] = useState(``)
   const [loading, setLoading] = useState(false)
@@ -39,7 +40,8 @@ export const ExportConfirmationModal = (props: {
         axios
           .post(`http://localhost:3000/site-data/export/sanity`, {
             blockIconScaleSizes: blockScaleSizes,
-            projectName,
+            dataset,
+            projectId,
             authToken,
           })
           .then(() => {
@@ -148,12 +150,21 @@ export const ExportConfirmationModal = (props: {
             {exportLocation === EXPORT_LOCATION.SANITY ? (
               <div className="flex flex-col">
                 <label>
-                  Project Name:
+                  Project ID:
                   <input
                     className="export-modal-input"
                     type="input"
                     placeholder="..."
-                    onChange={(e) => setProjectName(e.target.value)}
+                    onChange={(e) => setProjectId(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Dataset:
+                  <input
+                    className="export-modal-input"
+                    type="input"
+                    placeholder="..."
+                    onChange={(e) => setDataset(e.target.value)}
                   />
                 </label>
                 <label>

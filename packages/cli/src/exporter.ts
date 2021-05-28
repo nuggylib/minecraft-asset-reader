@@ -4,7 +4,6 @@ import sanity, { SanityClient } from "@sanity/client"
 import { CACHE } from "./main"
 import { CONTEXT_PATTERN_QUALITY, MinecraftBlockRenderer } from "./minecraft"
 import { Int } from "./types/shared"
-import { SanityRESTClient } from "./cms/sanityRestClient"
 import { Dao } from "./db"
 import { loadImage } from "canvas"
 
@@ -70,37 +69,24 @@ export class Exporter {
   //   )
   // }
 
-  // TODO: Create the Sanity project BEFORE we get to this logic (so we have the schema in place for data import)
   async exportSiteDataToSanity(args: {
     blockIconScaleSizes: Int[]
-    projectName: string
+    dataset: string
     authToken: string
+    projectId: string
   }) {
-    const sanityAccountClient = new SanityRESTClient(args.authToken)
-    const createProjectResult = await sanityAccountClient.createProject({
-      displayName: args.projectName,
-    })
-    if (!createProjectResult.success) {
-      return // TODO: Error handling
-    }
+    const { projectId, authToken, dataset } = args
 
     const gameVersion = CACHE.getCachedGameVersion()
     const namespaceQueryResults = await (await Dao(gameVersion)).getNamespaces()
 
-    const projectId = createProjectResult.id
-
-    let projectClient = new sanity({
-      projectId,
-      token: args.authToken,
-      apiVersion: `2021-03-25`,
-    })
-    await projectClient.datasets.create(`production`)
+    console.log(`Using dataset: `, dataset)
 
     // Re-init client with the dataset after it's been created
-    projectClient = new sanity({
+    const projectClient = new sanity({
       projectId,
-      token: args.authToken,
-      dataset: `production`,
+      token: authToken,
+      dataset,
       apiVersion: `2021-03-25`,
     })
 
