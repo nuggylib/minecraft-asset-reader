@@ -237,7 +237,7 @@ export const BlockModal = (props: {
             harvest_tools,
             harvest_tool_qualities,
           } = res.data[0].data
-          console.log(`GOT BLOCK: `, title)
+          console.log(`GOT BLOCK: `, harvest_tools)
           if (title) {
             dispatch({
               type: BLOCK_MODAL_ACTION.LOAD_CACHED,
@@ -252,7 +252,8 @@ export const BlockModal = (props: {
                 lightLevel: light_level,
                 minSpawn: min_spawn,
                 maxSpawn: max_spawn,
-                harvestTool: harvest_tools[0].data,
+                harvestTool:
+                  harvest_tools.length > 0 ? harvest_tools[0].data : null,
                 harvestToolQualities: harvest_tool_qualities.map(
                   (qObj: { id: string; data: string }) => qObj.data
                 ),

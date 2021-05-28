@@ -5,26 +5,35 @@ export async function exportToSanity(
   req: express.Request,
   res: express.Response
 ) {
-  const { projectName, authToken, blockIconScaleSizes } = req.body
+  const { projectId, authToken, dataset, blockIconScaleSizes } = req.body
 
-  const exporter = new Exporter()
+  if (!projectId || !authToken || !dataset) {
+    res
+      .status(422)
+      .send(
+        `'projectId', 'dataset' and 'authToken' are all required parameters`
+      )
+  } else {
+    const exporter = new Exporter()
 
-  try {
-    await exporter.exportSiteDataToSanity({
-      blockIconScaleSizes,
-      projectName,
-      authToken,
-    })
-    console.log(`Exported data to sanity!`)
-    res.send({
-      sucess: true,
-      message: `Export completed successfully`,
-    })
-  } catch (e) {
-    console.error(e)
-    res.send({
-      success: false,
-      message: e.message,
-    })
+    try {
+      await exporter.exportSiteDataToSanity({
+        blockIconScaleSizes,
+        dataset,
+        authToken,
+        projectId,
+      })
+      console.log(`Exported data to sanity!`)
+      res.send({
+        sucess: true,
+        message: `Export completed successfully`,
+      })
+    } catch (e) {
+      console.error(e)
+      res.send({
+        success: false,
+        message: e.message,
+      })
+    }
   }
 }
