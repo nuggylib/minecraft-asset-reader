@@ -10,6 +10,7 @@ export const enum OPTION_VALUE {
   EXPORT_PARSED_DATA = `export_parsed_data`,
   GENERATE_SITE_DATA = `generate_site_data`,
   USE_DEFAULT_ASSETS_DIRECTORY = `use_default_assets_directory`,
+  OPEN_WEBAPP = `open_webapp`,
 }
 
 export const useMenuOptions = (props: {
@@ -37,6 +38,13 @@ export const useMenuOptions = (props: {
       array.push({
         label: `Use default assets directory`,
         value: OPTION_VALUE.USE_DEFAULT_ASSETS_DIRECTORY,
+      })
+    }
+
+    if (!process.env.LOCAL) {
+      array.push({
+        label: `Open webapp`,
+        value: OPTION_VALUE.OPEN_WEBAPP,
       })
     }
     setOptions(array)
