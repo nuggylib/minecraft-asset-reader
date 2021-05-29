@@ -1,5 +1,5 @@
 import renderer from "react-test-renderer"
-import { Menu } from "../../src/core/components/shared/Menu"
+import { Menu } from "../../src/components/shared/Menu"
 
 it(`renders correctly`, () => {
   const component = renderer

@@ -15,6 +15,4 @@ export function cli(_args: any) {
     .catch((e) => console.error(e))
 }
 
-if (process.env.LOCAL) {
-  cli({})
-}
+cli({})

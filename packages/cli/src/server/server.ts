@@ -21,8 +21,9 @@ import { getHarvestToolQualitiesForBlock } from "../api/persistence/getHarvestTo
 var app = express()
 
 // Needed for React app
-app.use(express.static(path.join(__dirname, `../../../..`, `build`)))
-app.use(express.static(`public`))
+if (!process.env.LOCAL) {
+  app.use(express.static(path.join(__dirname, `../../..`, `build`)))
+}
 
 // Remaining stuff
 app.use(express.urlencoded({ extended: true }))
