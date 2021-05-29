@@ -33,7 +33,6 @@ export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
     icon_side_top                   TEXT,
     icon_side_left                  TEXT,
     icon_side_right                 TEXT,
-    description                     TEXT,
     flammability_encouragement      INTEGER DEFAULT 0,
     flammability                    INTEGER DEFAULT 0,
     light_level                     INTEGER DEFAULT 0,

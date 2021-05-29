@@ -14,7 +14,6 @@ export async function addOrUpdateBlock(
     icon,
     // When iconData is provided, the icon will be set/updated using the given texture info
     iconData,
-    description,
     flammabilityEncouragementValue,
     flammability,
     lightLevel,
@@ -46,7 +45,6 @@ export async function addOrUpdateBlock(
           namespace,
           title,
           icon,
-          description,
           flammabilityEncouragementValue,
           flammability,
           lightLevel,

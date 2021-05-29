@@ -280,7 +280,6 @@ export async function Dao(gameVersion?: string) {
      * @param key
      * @param title
      * @param icon
-     * @param description
      * @param flammabilityEncouragementValue
      * @param flammability
      * @param lightLevel
@@ -295,7 +294,6 @@ export async function Dao(gameVersion?: string) {
       iconSideTop?: string
       iconSideLeft?: string
       iconSideRight?: string
-      description?: string
       flammabilityEncouragementValue?: Int
       flammability?: Int
       lightLevel?: Int
@@ -309,7 +307,6 @@ export async function Dao(gameVersion?: string) {
         namespace,
         title,
         icon,
-        description,
         flammabilityEncouragementValue,
         flammability,
         lightLevel,
@@ -392,7 +389,6 @@ export async function Dao(gameVersion?: string) {
             namespace_id,
             title, 
             icon, 
-            description, 
             flammability_encouragement, 
             flammability, 
             light_level, 
@@ -401,13 +397,12 @@ export async function Dao(gameVersion?: string) {
             icon_side_top,
             icon_side_left,
             icon_side_right
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
               ON CONFLICT(key) DO UPDATE SET
                 key=excluded.key,
                 namespace_id=excluded.namespace_id,
                 title=excluded.title, 
                 icon=excluded.icon, 
-                description=excluded.description, 
                 flammability_encouragement=excluded.flammability_encouragement, 
                 flammability=excluded.flammability, 
                 light_level=excluded.light_level, 
@@ -421,7 +416,6 @@ export async function Dao(gameVersion?: string) {
             namespaceId,
             title,
             icon,
-            description,
             flammabilityEncouragementValue,
             flammability,
             lightLevel,

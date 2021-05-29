@@ -85,12 +85,6 @@ const reducer = (prevState: any, action: any) => {
         right: action.payload.right,
       }
     }
-    case BLOCK_MODAL_ACTION.SET_DESCRIPTION: {
-      return {
-        ...prevState,
-        description: action.payload.description,
-      }
-    }
     case BLOCK_MODAL_ACTION.SET_FLAMMABILITY: {
       return {
         ...prevState,
@@ -150,7 +144,6 @@ const reducer = (prevState: any, action: any) => {
         top: action.payload.top,
         left: action.payload.left,
         right: action.payload.right,
-        description: action.payload.description,
         flammabilityEncouragement: action.payload.flammabilityEncouragement,
         flammability: action.payload.flammability,
         lightLevel: action.payload.lightLevel,
@@ -190,7 +183,6 @@ export const BlockModal = (props: {
     top: NONE,
     left: NONE,
     right: NONE,
-    description: ``,
     flammabilityEncouragement: 0,
     flammability: 0,
     lightLevel: 0,
@@ -228,7 +220,6 @@ export const BlockModal = (props: {
             icon_side_top,
             icon_side_left,
             icon_side_right,
-            description,
             flammability_encouragement,
             flammability,
             light_level,
@@ -246,7 +237,6 @@ export const BlockModal = (props: {
                 top: icon_side_top,
                 left: icon_side_left,
                 right: icon_side_right,
-                description,
                 flammabilityEncouragement: flammability_encouragement,
                 flammability,
                 lightLevel: light_level,
@@ -284,7 +274,6 @@ export const BlockModal = (props: {
           sideL: `${modalState.left}`,
           sideR: `${modalState.right}`,
         },
-        description: modalState.description,
         flammabilityEncouragementValue: modalState.flammabilityEncouragement,
         flammability: modalState.flammability,
         lightLevel: modalState.lightLevel,
@@ -445,21 +434,6 @@ export const BlockModal = (props: {
         <br />
         <div className="mx-2">
           <h2 className="text-xl font-bold">Block data</h2>
-          <div className="text-center">
-            <textarea
-              className="modal-input w-4/5 h-24 align-top"
-              placeholder="Block description"
-              value={modalState.description}
-              onChange={(e) =>
-                dispatch({
-                  type: BLOCK_MODAL_ACTION.SET_DESCRIPTION,
-                  payload: {
-                    description: e.target.value,
-                  },
-                })
-              }
-            />
-          </div>
           <BlockModalNumberInput
             label="Light Level"
             value={modalState.lightLevel}
