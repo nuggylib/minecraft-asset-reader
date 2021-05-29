@@ -1,4 +1,4 @@
 export * from "./checkForDefaultAssetsDir"
-export * from "./checkForJar"
+export * from "./checkForMinecraft"
 export * from "./detectLocalVersions"
 export * from "./extractJar"
