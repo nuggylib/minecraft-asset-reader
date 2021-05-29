@@ -1,39 +1,49 @@
 # Readme
 
-Monorepo for the `minecraft-asset-reader` CLI tool. This repository contains both the CLI code and the webapp code.
+Minecraft asset reader is a tool to assist Minecraft mod developers and modpack maintainers export their game content, configured for use in a production-ready demonstration site.
 
-The main use case for this tool is to **make it easy to configure demo/portfolio site content using custom-generated assets and template content _based on your mod/modpack's code_.** In other words, _this makes it easy to create site content for your mod/modpack by_:
+## Why would I need this?
 
-1. Bulk-generation of scaled and rendered images (no need to manually-rescale/redraw the 16x16 images - we do it for you!)
-   - You can even specify a wide range of scale sizes for supported content types (there are some limitations)
-2. Generation of template schemas based on your mod/modpack content
-3. Data export to local file system
-4. Data export to Sanity.io
+### Bulk image-scaling
 
-## General usage
+By default, Minecraft assets are very small (with block textures typically being 16x16 pixels). These low-resolution images are what gives Minecraft its iconic "retro" look, but without some extra steps, they are blurry when scaled up.
 
-1. Start the CLI tool first - `yarn start:cli`
-2. Start the webapp - `yarn start:client`
-3. In the CLI tool, provide a path to a valid assets directory
-4. Navigate to `localhost:3000` to use the webapp
+While you could use some tools to manually scale up each image, it's tedious to do this when you have a lot of images to scale up. The Minecraft Asset Reader tool automatically-handles scaling up all textures to the desired base size. We recommend using a scale around 20 for the base image sizes; larger sizes tend to be over the limit for Sanity asset upload sizes.
 
-## Example views
+#### But what if I want more than one scale size?
 
-### CLI example
+Use Sanity! We chose Sanity as the CMS to export to for its versatility. Once an image asset has been uploaded to Sanity, you can specify dimensions when querying for the data to resize it.
 
-![CLI_example](https://user-images.githubusercontent.com/14364659/117087411-f9fd2480-ad14-11eb-8b13-d842e4b5b1d7.png)
+In short, once you have the image in Sanity, you can resize it however you see fit! See https://www.sanity.io/docs/image-urls
 
-### Webapp example (main view)
+### Emulated isometric block icons
 
-![example_webapp_view](https://user-images.githubusercontent.com/14364659/117087431-0b463100-ad15-11eb-9142-7a6f4204bbfe.png)
+Minecraft block textures are separated by their sides; _there is no "isometric view" image for a block in the game files_. The Minecraft game code is responsible for parsing the model definitions and rendering the textures where they are needed in-game.
 
-### Webapp - block config
+To get around this, the Minecraft Asset Reader block configuration modal allows the user to specify which textures to use for the top, left and right sides of the block in order to render an emulated isometric view of the block. All the user needs to do is specify the sides to use, and Minecraft Asset Reader handles the rest!
 
-![image](https://user-images.githubusercontent.com/14364659/117509893-a70fb100-af50-11eb-9645-d1d3d89a95a1.png)
+## Complete workflow
 
-### Example generated Block in Sanity.io Studio
+> You will need your own [Netlify](https://www.netlify.com/) account to complete the steps in this section.
 
-![sanity_block_config](https://user-images.githubusercontent.com/14364659/117087533-60824280-ad15-11eb-8b51-9d9b83edfb0e.png)
+1. Navigate to the [One-Click Minecraft Blog Starter](https://www.sanity.io/create?template=nuggylib/sanity-template-minecraft-blog) page
+2. Give your project a title
+3. Connect your GitHub account > set a repository name
+4. Connect your Netlify account
+5. Click "Create Project" > wait for the Studio deployment to complete
+6. Once available, click the button to navigate to your Sanity Studio; **this is where you will moderate your content, later**
+   - If you closed the tab with your Sanity deploy information, you can also get to your Studio by logging into Netlify and navigating to the deployment
+7. Start the Minecraft Asset Reader tool
+8. Set your root assets directory
+9. Using the web app, configure the content you want to export to the Sanity studio
+10. Once ready, open the side bar and click "Export"
+11. Toggle to "Sanity" (_note: "fs" is an option, but it does nothing - we are removing this option soon_) and provide the following:
+    1. Project ID
+    2. Dataset
+    3. Auth Token (use `sanity debug --secrets` to get this)
+12. **Make sure there is only one scale when exporting (becuase we only use the first one, now)** (_note: we are removing the ability to specify an array of scales in the near-future_)
+    - TIP: A good size to use is `20` - yields a nice-quality image, without going over Sanity's upload size limits
+13. Click "Submit" and wait for the export to complete
 
 ## Basic commands
 
