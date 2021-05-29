@@ -50,6 +50,23 @@ To get around this, the Minecraft Asset Reader block configuration modal allows 
 1. Running the CLI locally: `yarn start:cli` (start this first when testing locally so you can use React's port-conflict resolution logic)
 2. Running the client locally: `yarn start:client`
 
+## Building and running the app
+
+To build the standalone application:
+
+```bash
+yarn build-app
+```
+
+To run the built application code:
+
+```bash
+yarn run-app
+```
+
+- When running the built application code, there is an additional menu option, "Open webapp"
+  - Use this menu option anytime you need to use the webapp
+
 ## Known and related issues
 
 1. Lerna doesn't install all dependencies when running `bootstrap`
