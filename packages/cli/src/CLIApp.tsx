@@ -6,6 +6,7 @@ import { Box, Text } from "ink"
 import { SetAssetsPathForm } from "./components/SetAssetsPathForm"
 import { Menu } from "./components/shared/Menu"
 import { SetMinecraftVersion } from "./components/SetMinecraftVersion"
+import open from "open"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
@@ -39,6 +40,10 @@ export const CLIApp = () => {
             setRawAssetsPathHandler={(v) => setRawAssetsPath(v)}
           />
         )
+      }
+      // This option is only visible when LOCAL is false (e.g., when running the built app, instead of running the CLI and webapp separately)
+      case OPTION_VALUE.OPEN_WEBAPP: {
+        open(`http://localhost:3000`).then(() => clearSelectedOptionHandler())
       }
       default: {
         return <></>
