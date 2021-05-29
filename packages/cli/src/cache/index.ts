@@ -3,7 +3,6 @@ import {
   CONTEXT_PATTERN_QUALITY,
   MinecraftBlockRenderer,
 } from "../minecraft/minecraftBlockRenderer"
-import mkdirp from "mkdirp"
 import { loadImage } from "canvas"
 import { RawAssetData } from "../types/cache"
 import { Int } from "../types/shared"
@@ -94,8 +93,6 @@ export default class AppCache {
     const scaledTextures = {} as {
       [key: string]: string
     }
-
-    await mkdirp(`./generated/scaled_images`)
 
     await Promise.all(
       Object.keys(rawBlockData.textures!).map(async (textureKey) => {

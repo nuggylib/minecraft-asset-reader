@@ -6,7 +6,7 @@
     "minecraft-asset-reader": "bin/script.sh"
   },
   "scripts": {
-    "clean": "rm -rf out/ generated/ dist/",
+    "clean": "rm -rf out/ dist/",
     "reset": "yarn clean && npm run build",
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*,packages/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
     "prepare": "husky install",
