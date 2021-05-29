@@ -71,15 +71,10 @@ export class MinecraftBlockRenderer {
     // The texture names (not the actual textures, yet)
     const { top, sideL, sideR } = args.blockIconData
     const { scale, namespace } = args
-    let { writePath } = args
 
     let scaleValue = 16
     if (!!scale) {
       scaleValue = scale
-    }
-
-    if (!writePath) {
-      writePath = `./generated/export`
     }
 
     const rawAssetsPath = await CACHE.getRootAssetsPath()
