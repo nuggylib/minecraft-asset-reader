@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { RawAssetData } from "../../types/cache"
-import { checkForJar } from "../../utils"
+import { checkForMinecraft } from "../../utils"
 
 export const enum OPTION_VALUE {
   SET_ASSETS_DIRECTORY = `set_assets_directory`,
@@ -19,7 +19,7 @@ export const useMenuOptions = (props: {
   const [options, setOptions] = useState(
     [] as { label: string; value: OPTION_VALUE }[]
   )
-  const jarExists = checkForJar()
+  const jarExists = checkForMinecraft()
   useEffect(() => {
     const array = []
     /**
