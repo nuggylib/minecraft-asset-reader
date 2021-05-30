@@ -6,6 +6,13 @@
   "bin": {
     "minecraft-asset-reader": "bin/script.sh"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cli",
+    "minecraft-asset-reader"
+  ],
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf out/ dist/",

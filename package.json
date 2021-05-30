@@ -2,9 +2,17 @@
   "name": "minecraft-asset-reader",
   "version": "0.1.0-alpha",
   "description": "Read in textures from a minecraft texture pack",
+  "main": "packages/cli/src/main.tsx",
   "bin": {
     "minecraft-asset-reader": "bin/script.sh"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cli",
+    "minecraft-asset-reader"
+  ],
   "scripts": {
     "clean": "rm -rf out/ dist/",
     "reset": "yarn clean && npm run build",
@@ -72,6 +80,7 @@
   },
   "dependencies": {
     "dotenv": "^9.0.2",
+    "esm": "^3.2.25",
     "minecraft-asset-reader": "file:packages/cli",
     "minecraft-asset-reader-webapp": "file:packages/client"
   },
