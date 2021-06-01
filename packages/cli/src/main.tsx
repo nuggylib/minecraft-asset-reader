@@ -21,6 +21,6 @@ export function cli(_args: any) {
  * We accomplish this by detecting whether the `process.env.LOCAL` variable exists.
  * If it does, we run `cli` directly.
  */
-if (process.env.LOCAL) {
+if (process.env.LOCAL || process.env.LOCAL_BUILD) {
   cli({})
 }

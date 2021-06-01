@@ -41,7 +41,7 @@ export const useMenuOptions = (props: {
       })
     }
 
-    if (!process.env.LOCAL) {
+    if (!process.env.LOCAL || !!process.env.LOCAL_BUILD === true) {
       array.push({
         label: `Open webapp`,
         value: OPTION_VALUE.OPEN_WEBAPP,

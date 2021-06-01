@@ -1,6 +1,5 @@
 const fs = require(`fs`)
 const os = require(`os`)
-const { join } = require(`path`)
 const systemUser = os.userInfo().username
 
 let minecraftDir = ``
@@ -16,16 +15,13 @@ export interface Item<V> {
 }
 
 const currentOs = os.type()
-console.log(`Current OS detected: `, currentOs)
-const minecraftVersion = ``
 
 const linuxDir = `/home/${systemUser}/.minecraft/`
 const darwinDir = `~/Library/Application Support/minecraft/`
 const winDir = `%appdata%\\.minecraft\\`
 
 export function checkForMinecraft() {
-  let os: any = currentOs
-  switch (os) {
+  switch (currentOs) {
     case `Linux`:
       try {
         if (fs.existsSync(linuxDir)) {
