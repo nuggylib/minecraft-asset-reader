@@ -7,7 +7,7 @@ import { ExportConfirmationModal } from "./ExportConfirmationModal"
 export const App = () => {
   const namespaces = useNamespaces()
   const [selectedNamespace, setSelectedNamespace] = useState(
-    (null as unknown) as string
+    null as unknown as string
   )
   const [showExportModal, setShowExportModal] = useState(false)
   const [sideBarIsOpen, setSidebarIsOpen] = useState(false)

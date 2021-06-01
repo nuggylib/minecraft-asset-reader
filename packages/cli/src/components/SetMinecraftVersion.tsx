@@ -1,10 +1,11 @@
 import React, { useEffect } from "react"
 import SelectInput, { Item } from "ink-select-input"
 import { useState } from "react"
-import { checkForAssets, detectVersions } from "../utils"
+import { checkForAssets, detectVersions, extractJar } from "../utils"
 import { Box, Text } from "ink"
 import { MinecraftUtility } from "../minecraft"
 import { Dao } from "../db"
+import { LoadingIndicator } from "./shared/LoadingIndicator"
 
 const minecraftAssetReader = new MinecraftUtility()
 export interface Item<V> {
@@ -18,13 +19,24 @@ export const SetMinecraftVersion = (props: {
   setRawAssetsPathHandler: (v: string) => void
 }) => {
   const [minecraftVersions, setMinecraftVersions] = useState()
+  const [loadingText, setLoadingText] = useState(``)
 
   const selectHandler = (value: { label: string; value: string }) => {
     if (value) {
+      setLoadingText(`Checking for assets directory...`)
       checkForAssets(value)
+        .then((assetsPath) => {
+          if (!!assetsPath) {
+            return assetsPath
+          } else {
+            setLoadingText(`Extracting jar contents...`)
+            return extractJar(value.value)
+          }
+        })
         .then((path) => {
           if (path) {
             try {
+              setLoadingText(`Reading in raw data...`)
               minecraftAssetReader.readInRawData({
                 path,
               })
@@ -36,7 +48,10 @@ export const SetMinecraftVersion = (props: {
             console.error(`path did not exist when passed to readInRawData`)
           }
         })
-        .then(() => Dao(value.value))
+        .then(() => {
+          setLoadingText(`Loading game version data...`)
+          return Dao(value.value)
+        })
         .then((db) => db.initGameVersionDatabase())
         .then((_initDbResult) => Dao())
         .then((db) => db.addImportedGameVersion(value.value))
@@ -79,6 +94,9 @@ export const SetMinecraftVersion = (props: {
       ) : (
         <Text>...</Text>
       )}
+      {loadingText.length > 0 ? (
+        <LoadingIndicator loadingText={loadingText} />
+      ) : null}
     </>
   )
 }
