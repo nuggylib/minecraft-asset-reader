@@ -92,3 +92,8 @@ This section contains information about specific cases where there is "a reason"
 1. **PostCSS** - `^7` - _this version has a moderate vulnerability and it's recommended we update to `>=8.2.10`_
    - We can't easily fix this as it's a problem with `create-react-app`, which does not work with version 8
    - See: https://github.com/postcss/postcss/wiki/PostCSS-8-for-end-users
+2. **`ws` (indirect-dependency)** - _Any version 7 `ws` lower than `7.4.6` is vulnerable to attack via a specially-crafted `Sec-Websocket-Protocol` header_
+   - No need for us to fix this, as the server for this application is intended only to be hosted locally, while a user is configuring their site content
+     - The only threat would be from the user themselves (meaning they would have to manually host the app, craft the header, then attack themselves for no reason whatsoever)
+     - DO NOT TRIVIALIZE THIS - if, for whatever reason, you do intend to host this app, know that the app will have this vulnerability and you will need to find a fix (yes, we are open to PRs!)
+   - See: https://github.com/advisories/GHSA-6fc8-4gx4-v693
