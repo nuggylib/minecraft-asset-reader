@@ -43,9 +43,23 @@ export const CLIApp = () => {
       }
       // This option is only visible when LOCAL is false (e.g., when running the built app, instead of running the CLI and webapp separately)
       case OPTION_VALUE.OPEN_WEBAPP: {
-        open(`http://localhost:3000`).then(() => clearSelectedOptionHandler())
+        open(`http://localhost:3000`)
       }
       default: {
+        /**
+         * N.B.
+         *
+         * De-selecting menu options that rendered no additional content to the CLIApp
+         *
+         * For example - refer to OPEN_WEBAPP. When this option is selected, we simply open a tab to the locally-hosted webapp. No changes are made to the
+         * rendered CLIApp component - it simply opens a tab. After the tab is opened, we utilize switch fall-through logic so that, for OPEN_WEBAPP (or
+         * any other option we add later that doesn't modify the rendered content of CLIApp), subsequent menu selections are always made from a fresh state,
+         * where the previous selection has been cleared from the state.
+         *
+         * Tl;dr - if adding a menu option that doesn't modify the rendered content of CLIApp, DON'T return in the switch case - simply run the side effect
+         * logic and let it fall through to the default case.
+         */
+        if (selectedOption !== null) clearSelectedOptionHandler()
         return <></>
       }
     }
