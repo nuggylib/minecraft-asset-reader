@@ -7,9 +7,7 @@ export const ExportConfirmationModal = (props: {
   cancelHandler: () => void
 }) => {
   const [blockScaleSizes, setBlockScaleSizes] = useState([1])
-  const [exportLocation, setExportLocation] = useState(
-    EXPORT_LOCATION.FILE_SYSTEM
-  )
+  const [exportLocation, setExportLocation] = useState(EXPORT_LOCATION.SANITY)
   const [writePath, setWritePath] = useState(``)
   const [projectId, setProjectId] = useState(``)
   const [dataset, setDataset] = useState(``)
@@ -24,18 +22,18 @@ export const ExportConfirmationModal = (props: {
     setLoading(true)
     // TODO: Start a loading spinner
     switch (exportLocation) {
-      case EXPORT_LOCATION.FILE_SYSTEM: {
-        axios
-          .post(`http://localhost:3000/site-data/export`, {
-            writePath,
-            blockIconScaleSizes: blockScaleSizes,
-          })
-          .then(() => {
-            setLoading(false) // TODO: May not even need this since we are about to dismiss the modal
-            props.cancelHandler()
-          })
-        break
-      }
+      // case EXPORT_LOCATION.FILE_SYSTEM: {
+      //   axios
+      //     .post(`http://localhost:3000/site-data/export`, {
+      //       writePath,
+      //       blockIconScaleSizes: blockScaleSizes,
+      //     })
+      //     .then(() => {
+      //       setLoading(false) // TODO: May not even need this since we are about to dismiss the modal
+      //       props.cancelHandler()
+      //     })
+      //   break
+      // }
       case EXPORT_LOCATION.SANITY: {
         axios
           .post(`http://localhost:3000/site-data/export/sanity`, {
@@ -136,17 +134,6 @@ export const ExportConfirmationModal = (props: {
                 </li>
               ))}
             </ul>
-            {exportLocation === EXPORT_LOCATION.FILE_SYSTEM ? (
-              <label>
-                Export path:
-                <input
-                  className="export-modal-input"
-                  type="input"
-                  placeholder="..."
-                  onChange={(e) => setWritePath(e.target.value)}
-                />
-              </label>
-            ) : null}
             {exportLocation === EXPORT_LOCATION.SANITY ? (
               <div className="flex flex-col">
                 <label>
