@@ -37,7 +37,7 @@ To get around this, the Minecraft Asset Reader block configuration modal allows 
 8. Set your root assets directory
 9. Using the web app, configure the content you want to export to the Sanity studio
 10. Once ready, open the side bar and click "Export"
-11. Toggle to "Sanity" (_note: "fs" is an option, but it does nothing - we are removing this option soon_) and provide the following:
+11. We currently only support exporting to sanity.io - you will need to provide the following before you can export:
     1. Project ID
     2. Dataset
     3. Auth Token (use `sanity debug --secrets` to get this)
