@@ -14,8 +14,8 @@
     "minecraft-asset-reader"
   ],
   "scripts": {
-    "clean": "rm -rf out/ dist/",
-    "reset": "yarn clean && npm run build",
+    "clean": "rm -rf out/ dist/ node_modules packages/cli/node_modules packages/client/node_modules",
+    "reset": "yarn clean && yarn && yarn lerna bootstrap && cd packages/cli && yarn && cd ../client && yarn",
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*,packages/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
     "prepare": "husky install",
     "reset-db": "rm -rf /tmp/minecraft-asset-reader",

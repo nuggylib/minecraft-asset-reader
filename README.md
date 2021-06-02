@@ -84,3 +84,11 @@ yarn run-app
      - _Create a custom "minecraft asset reader" Sanity studio and use it during the bootstrap process_
      - With this flow, you won't need to download or generate any schema files - simply give the starter the requisite types
      - Admittedly, this isn't as easy as simply setting up a project with content types (e.g., as Contentful, Flotiq, and many others allow)
+
+## Dependency notes
+
+This section contains information about specific cases where there is "a reason" behind why we are using a specific dependency (or version of a dependency). \_This is not a comprehensive list of dependencies used in this project, but rather explanations about how we handled various Dependabot alerts (among other things).
+
+1. **PostCSS** - `^7` - _this version has a moderate vulnerability and it's recommended we update to `>=8.2.10`_
+   - We can't easily fix this as it's a problem with `create-react-app`, which does not work with version 8
+   - See: https://github.com/postcss/postcss/wiki/PostCSS-8-for-end-users
