@@ -70,7 +70,6 @@ export class Exporter {
   // }
 
   async exportSiteDataToSanity(args: {
-    blockIconScaleSizes: Int[]
     dataset: string
     authToken: string
     projectId: string
@@ -113,7 +112,8 @@ export class Exporter {
             const imageDocument = await this.exportImageToSanity({
               iconImage: iconBuffer,
               blockKey: key,
-              scale: args.blockIconScaleSizes[0],
+              // TODO: Test various sizes to see what the largest scale we can use it without making the Sanity API gods angry with us
+              scale: 22 as Int,
               projectClient,
             })
 

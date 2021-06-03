@@ -5,7 +5,7 @@ export async function exportToSanity(
   req: express.Request,
   res: express.Response
 ) {
-  const { projectId, authToken, dataset, blockIconScaleSizes } = req.body
+  const { projectId, authToken, dataset } = req.body
 
   if (!projectId || !authToken || !dataset) {
     res
@@ -18,7 +18,6 @@ export async function exportToSanity(
 
     try {
       await exporter.exportSiteDataToSanity({
-        blockIconScaleSizes,
         dataset,
         authToken,
         projectId,
