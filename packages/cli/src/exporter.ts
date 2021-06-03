@@ -96,6 +96,7 @@ export class Exporter {
         await Promise.all(
           blocksForNamespace.map(async (blockQueryResult) => {
             const {
+              id,
               key,
               title,
               icon,
@@ -108,6 +109,13 @@ export class Exporter {
               // namespace_id
             } = blockQueryResult.data
 
+            const harvestTools = await (
+              await Dao(gameVersion)
+            ).getHarvestToolsForBlock(id)
+            const harvestToolQualities = await (
+              await Dao(gameVersion)
+            ).getHarvestToolQualitiesForBlock(id)
+
             const iconBuffer = Buffer.from(icon, `base64`)
             const imageDocument = await this.exportImageToSanity({
               iconImage: iconBuffer,
@@ -117,8 +125,6 @@ export class Exporter {
               projectClient,
             })
 
-            // TODO: Remove the description field from the BlockModal - it makes more sense to handle that in Sanity (since this is where the "article content" would be)
-            // TODO: Update the schema in the sanity starter template to set the slug by the title (https://www.sanity.io/docs/slug-type)
             const minecraftBlockDocument = {
               _id: key,
               _type: `minecraftBlock`,
@@ -128,13 +134,17 @@ export class Exporter {
               lightLevel: light_level,
               minSpawnLevel: min_spawn,
               maxSpawnLevel: max_spawn,
+              harvestTool: harvestTools.map((tool) => tool.data),
+              harvestToolMaterial: harvestToolQualities.map(
+                (material) => material.data
+              ),
             }
 
             try {
               const createBlockResponse = await projectClient.createOrReplace(
                 minecraftBlockDocument
               )
-              const _linkImageResponse = await projectClient
+              await projectClient
                 .patch(createBlockResponse._id)
                 .set({
                   image: {

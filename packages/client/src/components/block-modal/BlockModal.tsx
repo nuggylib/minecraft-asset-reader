@@ -345,7 +345,9 @@ export const BlockModal = (props: {
     modalState.title.length === 0 ||
     modalState.top === NONE ||
     modalState.right === NONE ||
-    modalState.left === NONE
+    modalState.left === NONE ||
+    modalState.harvestTool === `` ||
+    modalState.harvestToolQualities.length === 0
   return (
     <>
       <div className="modal-overlay" />

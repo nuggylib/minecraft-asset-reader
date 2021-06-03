@@ -16,13 +16,13 @@ export const CREATE_IMPORTED_GAME_VERSION_TABLE = `CREATE TABLE IF NOT EXISTS im
 )`
 
 export const CREATE_HARVEST_TOOL_TABLE = `CREATE TABLE IF NOT EXISTS harvest_tool (
-    id  INTEGER    PRIMARY KEY AUTOINCREMENT,
-    key TEXT       NOT NULL UNIQUE
+    id          INTEGER    PRIMARY KEY AUTOINCREMENT,
+    key         TEXT       NOT NULL UNIQUE
 )`
 
 export const CREATE_HARVEST_TOOL_QUALITY_TABLE = `CREATE TABLE IF NOT EXISTS harvest_tool_quality (
-    id  INTEGER    PRIMARY KEY AUTOINCREMENT,
-    key TEXT       NOT NULL UNIQUE
+    id          INTEGER    PRIMARY KEY AUTOINCREMENT,
+    key         TEXT       NOT NULL UNIQUE
 )`
 
 export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
@@ -39,7 +39,7 @@ export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
     min_spawn                       INTEGER DEFAULT 0,
     max_spawn                       INTEGER DEFAULT 0,
     namespace_id                    INTEGER,
-    FOREIGN KEY (namespace_id) REFERENCES namespace (ingredient_for_blocks) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (namespace_id) REFERENCES namespace (namespace_id) ON DELETE CASCADE ON UPDATE CASCADE
 )`
 
 export const CREATE_HARVEST_TOOL_TO_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS harvest_tool_to_block (
