@@ -68,7 +68,10 @@
     "util": "^0.12.3"
   },
   "devDependencies": {
+    "@types/react": ">=16.8.0",
     "@types/sqlite3": "^3.1.7",
-    "@types/unzipper": "^0.10.3"
+    "@types/unzipper": "^0.10.3",
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   }
 }
