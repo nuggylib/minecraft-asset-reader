@@ -198,6 +198,28 @@ export async function Dao(gameVersion?: string) {
       await db.close()
       return namespaces
     },
+    getNamespaceById: async (namespaceId: Int): Promise<QueryResult> => {
+      let result = (null as unknown) as QueryResult
+      try {
+        await db.each(
+          `SELECT * FROM namespace WHERE id = ?`,
+          [namespaceId],
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            result = {
+              id: row.id,
+              data: row,
+            }
+          }
+        )
+      } catch (e) {
+        console.log(
+          `Unable to get namespace by ID '${namespaceId}': `,
+          e.message
+        )
+      }
+      return result
+    },
     /**
      * Get the list of harvest tools that can be used to break blocks (e.g., shovels, axes, etc.)
      *

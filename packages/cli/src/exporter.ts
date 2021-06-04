@@ -77,7 +77,8 @@ export class Exporter {
     const { projectId, authToken, dataset } = args
 
     const gameVersion = CACHE.getCachedGameVersion()
-    const namespaceQueryResults = await (await Dao(gameVersion)).getNamespaces()
+    const dao = await await Dao(gameVersion)
+    const namespaceQueryResults = await dao.getNamespaces()
 
     // Re-init client with the dataset after it's been created
     const projectClient = new sanity({
@@ -89,7 +90,7 @@ export class Exporter {
 
     await Promise.all(
       namespaceQueryResults.map(async (namespaceQueryResult) => {
-        const blocksForNamespace = await (await Dao(gameVersion)).getBlocks({
+        const blocksForNamespace = await dao.getBlocks({
           namespaceId: namespaceQueryResult.id,
         })
 
@@ -106,15 +107,16 @@ export class Exporter {
               min_spawn,
               max_spawn,
               // TODO: Update the Sanity minecraft block schema to support namespace
-              // namespace_id
+              namespace_id,
             } = blockQueryResult.data
 
-            const harvestTools = await (
-              await Dao(gameVersion)
-            ).getHarvestToolsForBlock(id)
-            const harvestToolQualities = await (
-              await Dao(gameVersion)
-            ).getHarvestToolQualitiesForBlock(id)
+            const harvestTools = await dao.getHarvestToolsForBlock(id)
+            const harvestToolQualities = await dao.getHarvestToolQualitiesForBlock(
+              id
+            )
+            const namespaceQueryResult = await dao.getNamespaceById(
+              namespace_id
+            )
 
             const iconBuffer = Buffer.from(icon, `base64`)
             const imageDocument = await this.exportImageToSanity({
@@ -129,6 +131,7 @@ export class Exporter {
               _id: key,
               _type: `minecraftBlock`,
               name: title,
+              namespace: namespaceQueryResult.data.key,
               flammabilityEncouragementValue: flammability_encouragement,
               flammabilityValue: flammability,
               lightLevel: light_level,
