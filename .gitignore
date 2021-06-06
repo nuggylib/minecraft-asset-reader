@@ -7,3 +7,9 @@ build
 # TODO:
 report.**.json
 yarn-error.log
+
+# Build-related files and folders
+bin/minecraft-asset-reader.json
+bin/minecraft-asset-reader.js.LICENSE.txt
+bin/xdg-open
+**/vendor/yarn

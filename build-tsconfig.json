@@ -1,6 +1,4 @@
 {
-  "include": ["packages/**/*"],
-  "exclude": ["node_modules", "out"],
   "compilerOptions": {
     "jsx": "react",
     "target": "es5",

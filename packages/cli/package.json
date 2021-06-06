@@ -2,7 +2,7 @@
   "name": "minecraft-asset-reader",
   "version": "0.1.0-alpha",
   "description": "Read in textures from a minecraft texture pack",
-  "main": "src/main.tsx",
+  "main": "out/cli/src/main.js",
   "bin": {
     "minecraft-asset-reader": "bin/script.sh"
   },
@@ -13,11 +13,13 @@
     "cli",
     "minecraft-asset-reader"
   ],
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf out/ dist/",
     "reset": "yarn clean && npm run build",
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*,packages/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
+    "package-yarn": "node src/scripts/package-yarn.js",
     "test": "jest --verbose=false",
     "coverage": "jest --coverage",
     "start": "LOCAL=true ts-node ./src/main.tsx"
@@ -45,6 +47,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-paginate": "^1.0.2",
+    "fs-extra": "^10.0.0",
     "ink": "^3.0.8",
     "ink-big-text": "^1.2.0",
     "ink-divider": "^3.0.0",
@@ -68,10 +71,13 @@
     "util": "^0.12.3"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.11",
     "@types/react": ">=16.8.0",
     "@types/sqlite3": "^3.1.7",
     "@types/unzipper": "^0.10.3",
     "bufferutil": "^4.0.1",
+    "simple-get": "^4.0.0",
+    "ts-loader": "^9.2.3",
     "utf-8-validate": "^5.0.2"
   }
 }

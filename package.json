@@ -1,10 +1,10 @@
 {
-  "name": "minecraft-asset-reader",
-  "version": "0.1.0-alpha",
-  "description": "Read in textures from a minecraft texture pack",
+  "name": "@nuggylib/minecraft-asset-reader",
+  "version": "0.1.1-alpha",
+  "description": "A tool to configure starter site content for a Minecraft mod or modpack and upload it to Sanity",
   "main": "packages/cli/src/main.tsx",
   "bin": {
-    "minecraft-asset-reader": "bin/script.sh"
+    "minecraft-asset-reader": "bin/minecraft-asset-reader"
   },
   "publishConfig": {
     "access": "public"
@@ -14,14 +14,17 @@
     "minecraft-asset-reader"
   ],
   "scripts": {
-    "clean": "rm -rf out/ dist/ node_modules packages/cli/node_modules packages/client/node_modules",
-    "reset": "yarn clean && yarn && yarn lerna bootstrap && cd packages/cli && yarn && cd ../client && yarn",
+    "clean": "rm -rf out/ dist/",
+    "clean-modules": "rm -rf node_modules packages/cli/node_modules packages/client/node_modules",
+    "reset": "yarn clean && yarn clean-modules && yarn && yarn lerna bootstrap && cd packages/cli && yarn && cd ../client && yarn",
     "clear-db": "rm -rf /tmp/minecraft-asset-reader",
     "lint:commit": "prettier-eslint \"{src/**/*,test/**/*,packages/**/*}.{ts,tsx}\" --eslint-config-path=.eslintrc.yml --write",
     "prepare": "husky install",
     "reset-db": "rm -rf /tmp/minecraft-asset-reader",
     "run-app": "LOCAL_BUILD=true node out/cli/src/main.js",
     "build-app": "yarn build:cli && yarn build:client",
+    "build-package": "node scripts/pack.js",
+    "build": "yarn build-app && lerna exec --scope 'minecraft-asset-reader' yarn package-yarn && yarn build-package",
     "start:cli": "lerna exec --scope 'minecraft-asset-reader' yarn start",
     "build:cli": "lerna exec --scope 'minecraft-asset-reader' yarn build && cd out/ && rm -rf client/ && cd .. && cp packages/cli/package.json out/cli && cd out/cli && npm install",
     "start:client": "lerna exec --scope 'minecraft-asset-reader-webapp' yarn start",
@@ -38,7 +41,6 @@
   },
   "homepage": "https://github.com/nuggylib/minecraft-asset-reader#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.13.15",
     "@babel/preset-react": "^7.13.13",
     "@emotion/eslint-plugin": "^11.2.0",
     "@testing-library/react-hooks": "^5.1.1",
@@ -69,15 +71,18 @@
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^6.0.0",
+    "klaw-sync": "^6.0.0",
     "lerna": "^4.0.0",
     "lint-staged": ">=10",
     "prettier": "^2.2.1",
     "prettier-eslint-cli": "^5.0.1",
     "react-test-renderer": "^16.8.2",
     "ts-jest": "^26.5.4",
+    "ts-loader": "^9.2.3",
     "ts-node": "^9.1.1",
     "typedoc": "^0.20.30",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "webpack": "^5.38.1"
   },
   "dependencies": {
     "dotenv": "^9.0.2",
