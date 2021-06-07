@@ -1,8 +1,7 @@
 import React from "react"
 
-export const MinecraftAssetReaderContext = /*#__PURE__*/ React.createContext(
-  null
-)
+export const MinecraftAssetReaderContext =
+  /*#__PURE__*/ React.createContext(null)
 
 if (process.env.LOCAL) {
   MinecraftAssetReaderContext.displayName = `minecraftAssetReader`

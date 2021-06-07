@@ -12,7 +12,7 @@ export async function checkForAssets(selectedVersion: {
   const darwinAssets = `~/Library/Application Support/minecraft/versions/${selectedVersion.value}/assets`
   const winAssets = `%appdata%\\.minecraft\\versions\\${selectedVersion.value}\\assets`
 
-  let assetsPath = (null as unknown) as string
+  let assetsPath = null as unknown as string
 
   switch (currentOs) {
     case `Linux`:

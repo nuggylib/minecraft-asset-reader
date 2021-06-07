@@ -10,7 +10,7 @@ describe(`useMenuOptions Hook tests`, () => {
     const { result } = renderHook(() =>
       useMenuOptions({
         rawAssetsPath: ``,
-        rawData: (null as unknown) as RawAssetData,
+        rawData: null as unknown as RawAssetData,
       })
     )
 
@@ -26,7 +26,7 @@ describe(`useMenuOptions Hook tests`, () => {
     const { result } = renderHook(() =>
       useMenuOptions({
         rawAssetsPath: `/some/path/to/assets`,
-        rawData: (null as unknown) as RawAssetData,
+        rawData: null as unknown as RawAssetData,
       })
     )
 

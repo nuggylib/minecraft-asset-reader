@@ -199,7 +199,7 @@ export async function Dao(gameVersion?: string) {
       return namespaces
     },
     getNamespaceById: async (namespaceId: Int): Promise<QueryResult> => {
-      let result = (null as unknown) as QueryResult
+      let result = null as unknown as QueryResult
       try {
         await db.each(
           `SELECT * FROM namespace WHERE id = ?`,
@@ -393,9 +393,9 @@ export async function Dao(gameVersion?: string) {
       }
 
       let namespaceId = -1
-      const getNamespaceResult = await (await Dao(gameVersion)).getNamespaces(
-        namespace
-      )
+      const getNamespaceResult = await (
+        await Dao(gameVersion)
+      ).getNamespaces(namespace)
       if (getNamespaceResult.length === 0) {
         namespaceId = await (
           await (await Dao(gameVersion)).addNamespace(namespace)
@@ -449,7 +449,9 @@ export async function Dao(gameVersion?: string) {
           ]
         )
 
-        const blocks = await (await Dao(gameVersion)).getBlocks({
+        const blocks = await (
+          await Dao(gameVersion)
+        ).getBlocks({
           search: key,
         })
 
@@ -458,9 +460,9 @@ export async function Dao(gameVersion?: string) {
             await Dao(gameVersion)
           ).getHarvestTools(harvestTool)
 
-          await (await Dao(gameVersion)).resetHarvestToolsForBlock(
-            blocks[0].id as Int
-          )
+          await (
+            await Dao(gameVersion)
+          ).resetHarvestToolsForBlock(blocks[0].id as Int)
           /**
            * Since this method may be called a number of times, we only want to insert the corresponding value for this
            * once.
@@ -475,9 +477,9 @@ export async function Dao(gameVersion?: string) {
         }
 
         if (!!harvestToolQualities) {
-          await (await Dao(gameVersion)).resetHarvestToolQualitiesForBlock(
-            blocks[0].id as Int
-          )
+          await (
+            await Dao(gameVersion)
+          ).resetHarvestToolQualitiesForBlock(blocks[0].id as Int)
           await Promise.all(
             harvestToolQualities!.map(async (quality) => {
               const matchingHarvestToolQuality = await (
