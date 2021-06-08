@@ -9,6 +9,7 @@ import {
   CREATE_HARVEST_TOOL_TABLE,
   CREATE_HARVEST_TOOL_TO_BLOCK_TABLE,
   CREATE_IMPORTED_GAME_VERSION_TABLE,
+  CREATE_ITEM_TABLE,
   CREATE_NAMESPACE_TABLE,
 } from "./mutations/createTables"
 import { Int, MutationResult, QueryResult } from "../types/shared"
@@ -106,6 +107,7 @@ export async function Dao(gameVersion?: string) {
           db.run(CREATE_HARVEST_TOOL_QUALITY_TO_BLOCK_TABLE),
           db.run(CREATE_HARVEST_TOOL_TO_BLOCK_TABLE),
           db.run(CREATE_BLOCK_TO_BLOCK_TABLE),
+          db.run(CREATE_ITEM_TABLE),
         ])
         // Populate the harvest_tool table
         var popHarvestToolsResult = await db.run(
@@ -511,6 +513,214 @@ export async function Dao(gameVersion?: string) {
         }
       }
     },
+
+    /**
+     * Add a new item, if it doesn't exist, or update the existing one if it does
+     *
+     * Item uniqueness is determined by the key for the block; e.g., there cannot be two blocks in the table
+     * with the same key value
+     *
+     * @param key
+     * @param title
+     * @param icon
+     * @param max_stack_count
+     * @param edible
+     * @param plantable
+     */
+    addOrUpdateItem: async (args: {
+      key: string
+      namespace: string
+      title?: string
+      icon?: string
+      max_stack_count?: Int
+      edible?: Int
+      plantable?: Int
+    }): Promise<MutationResult> => {
+      const {
+        key,
+        namespace,
+        title,
+        icon,
+        max_stack_count,
+        edible,
+        plantable,
+      } = args
+
+      let namespaceId = -1
+      const getNamespaceResult = await (
+        await Dao(gameVersion)
+      ).getNamespaces(namespace)
+      if (getNamespaceResult.length === 0) {
+        namespaceId = await (
+          await (await Dao(gameVersion)).addNamespace(namespace)
+        ).id!
+      } else {
+        namespaceId = getNamespaceResult[0].id
+      }
+
+      try {
+        await db.run(
+          `INSERT INTO block (
+            key,
+            namespace_id,
+            title, 
+            icon, 
+            max_stack_count,
+            edible,
+            plantable
+            ) VALUES (?, ?, ?, ?, ?, ?, ?,)
+              ON CONFLICT(key) DO UPDATE SET
+                key=excluded.key,
+                namespace_id=excluded.namespace_id,
+                title=excluded.title, 
+                icon=excluded.icon, 
+                max_stack_count=excluded.max_stack_count,
+                edible=excluded.edible,
+                plantable=excluded.plantable;`,
+          [key, namespaceId, title, icon, max_stack_count, edible, plantable]
+        )
+
+        const items = await (
+          await Dao(gameVersion)
+        ).getItems({
+          search: key,
+        })
+
+        await db.close()
+        return {
+          success: true,
+          message: `Created/updated block record for '${key}' with ID: ${items[0].id}`,
+        }
+      } catch (e) {
+        console.log(`Unable to insert record: `, e.message)
+        await db.close()
+        return {
+          success: false,
+          message: e.message,
+        }
+      }
+    },
+
+    /**
+     * Get items
+     *
+     * If `search` is defined, but `namespaceId` is not, this will return query all items in all namespaces that match
+     * the given `search` parameter (either partial or exact)
+     *
+     * If `search` is defined and `namespaceId` are both defined, this will return all items in the target namespace
+     * that match the given `search` parameter (either partial or exact)
+     *
+     * If `search` and `namespaceId` are both undefined, all items from all namespaces (within the cached game version)
+     * will be returned.
+     *
+     * SPECIAL NOTE:
+     * When the result set only includes one result, the `harvest_tools` and `harvest_tool_qualities` fields are added to the
+     * returned `data` object (within the `QueryResult`)
+     *
+     * @param args
+     * @returns
+     */
+    getItems: async (args: {
+      search?: string
+      namespaceId?: Int
+    }): Promise<QueryResult[]> => {
+      const { search, namespaceId } = args
+      const items = [] as QueryResult[]
+      // Get all items by key AND namespace ID
+      if (!!search && !!namespaceId) {
+        await db.each(
+          `SELECT * FROM item WHERE key LIKE ? AND namespace_id=?`,
+          [`${search}%`, namespaceId],
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            items.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+        // Get all items just by key (capable of getting matching items from multiple namespaces in the same game version)
+      } else if (!!search && !namespaceId) {
+        await db.each(
+          `SELECT * FROM item WHERE key LIKE ?`,
+          `${search}%`,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            items.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+      } else if (!search && !!namespaceId) {
+        await db.each(
+          `SELECT * FROM item WHERE namespace_id=?`,
+          namespaceId,
+          (err, row) => {
+            if (err) console.log(`ERROR: `, err.message)
+            items.push({
+              id: row.id,
+              data: row,
+            })
+          }
+        )
+      }
+      // Just gets all items for the current game version
+      else {
+        await db.each(`SELECT * FROM item`, (err, row) => {
+          if (err) console.log(`ERROR: `, err.message)
+          items.push({
+            id: row.id,
+            data: row,
+          })
+        })
+      }
+
+      // If there is only one item in the search result, return some more information (mostly used for ItemModal)
+      if (items.length === 1) {
+        const itemId = items[0].id
+
+        const swap = {
+          id: itemId,
+          data: {
+            ...items[0].data,
+          },
+        }
+
+        items[0] = swap
+      }
+
+      await db.close()
+      return items
+    },
+
+    deleteItem: async (args: { key: string }): Promise<MutationResult> => {
+      try {
+        const deleteResult = await db.run(
+          `DELETE FROM item WHERE key = ?`,
+          args.key
+        )
+        await db.close()
+        if (!!deleteResult.changes && deleteResult.changes >= 1) {
+          return {
+            success: true,
+            message: `Deleted item '${args.key}' successfully`,
+          }
+        } else {
+          return {
+            success: false,
+            message: `No items with key '${args.key}' - no action taken`,
+          }
+        }
+      } catch (e) {
+        await db.close()
+        return {
+          success: false,
+          message: `Error: ${e.message}`,
+        }
+      }
+    },
+
     /**
      * Get blocks
      *

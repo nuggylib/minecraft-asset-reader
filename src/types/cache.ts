@@ -34,3 +34,7 @@ export type BlockIconData = {
   sideL: string
   sideR: string
 }
+
+export type ItemIconData = {
+  main: string
+}
