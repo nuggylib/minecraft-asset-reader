@@ -1,6 +1,6 @@
 {
   "name": "minecraft-asset-reader",
-  "version": "0.1.14-alpha",
+  "version": "0.1.15-alpha",
   "description": "Read in textures from a minecraft texture pack",
   "main": "out/main.tsx",
   "publishConfig": {
