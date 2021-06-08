@@ -17,6 +17,10 @@ import { addNamespace } from "../api/persistence/addNamespace"
 import { getNamespacesFromDb } from "../api/persistence/getNamespaces"
 import { getHarvestToolsForBlock } from "../api/persistence/getHarvestToolsForBlock"
 import { getHarvestToolQualitiesForBlock } from "../api/persistence/getHarvestToolQualitiesForBlock"
+import { getItemsForNamespace } from "../api/raw-data/getItemsForNamespace"
+import { addOrUpdateItem } from "../api/persistence/addOrUpdateItem"
+import { getItems } from "../api/persistence/getItems"
+import { deleteItem } from "../api/persistence/deleteItem"
 
 var app = express()
 
@@ -92,6 +96,7 @@ app.use(paginate.middleware(10, 50))
  *******************************************/
 app.get(`/raw-data/namespaces`, getNamespaces)
 app.get(`/raw-data/blocks`, getBlocksForNamespace)
+app.get(`/raw-data/items`, getItemsForNamespace)
 
 /*******************************************
  * Core API routes
@@ -115,6 +120,12 @@ app.get(
 )
 app.post(`/persistence/block`, addOrUpdateBlock)
 app.delete(`/persistence/block`, deleteBlock)
+
+// Items
+app.get(`/persistence/item`, getItems)
+app.post(`/persistence/item`, addOrUpdateItem)
+app.delete(`/persistence/item`, deleteItem)
+
 // Namespaces
 app.get(`/persistence/namespace`, getNamespacesFromDb)
 app.post(`/persistence/namespace`, addNamespace)

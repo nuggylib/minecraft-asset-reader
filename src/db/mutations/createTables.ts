@@ -42,6 +42,18 @@ export const CREATE_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS block (
     FOREIGN KEY (namespace_id) REFERENCES namespace (namespace_id) ON DELETE CASCADE ON UPDATE CASCADE
 )`
 
+export const CREATE_ITEM_TABLE = `CREATE TABLE IF NOT EXISTS item (
+    id                              INTEGER PRIMARY KEY AUTOINCREMENT,
+    key                             TEXT    NOT NULL UNIQUE,
+    title                           TEXT    UNIQUE,
+    icon                            TEXT,
+    max_stack_count                 INTEGER,
+    edible                          INTEGER,
+    plantable                       INTEGER,
+    namespace_id                    INTEGER,
+    FOREIGN KEY (namespace_id) REFERENCES namespace (namespace_id) ON DELETE CASCADE ON UPDATE CASCADE
+)`
+
 export const CREATE_HARVEST_TOOL_TO_BLOCK_TABLE = `CREATE TABLE IF NOT EXISTS harvest_tool_to_block (
     block_id                    INTEGER     NOT NULL,
     harvest_tool_id             INTEGER     NOT NULL,
