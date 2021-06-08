@@ -30,7 +30,7 @@ export default class AppCache {
     if (rawData) {
       return rawData as RawAssetData
     }
-    return (null as unknown) as RawAssetData
+    return null as unknown as RawAssetData
   }
 
   getPaginatedRawBlocksForNamespace = (args: {
@@ -60,13 +60,13 @@ export default class AppCache {
       blockNames.reverse()
     }
     const pageCount = Math.ceil(
-      blockNames.length / ((limit as unknown) as number)
+      blockNames.length / (limit as unknown as number)
     )
     let pageNum = 1
     if (!!page) {
-      pageNum = parseInt((page as unknown) as string)
+      pageNum = parseInt(page as unknown as string)
     }
-    const limitNum = parseInt((limit as unknown) as string)
+    const limitNum = parseInt(limit as unknown as string)
     const paginatedBlockNames = blockNames.slice(
       pageNum * limitNum - limitNum,
       pageNum * limitNum
@@ -110,9 +110,9 @@ export default class AppCache {
             scale: args.scaleAmount,
             patternQuality: CONTEXT_PATTERN_QUALITY.FAST,
           })
-          scaledTextures[
-            textureKey
-          ] = `data:image/png;base64,${canvas.toBuffer().toString(`base64`)}`
+          scaledTextures[textureKey] = `data:image/png;base64,${canvas
+            .toBuffer()
+            .toString(`base64`)}`
         }
       })
     )

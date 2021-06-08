@@ -165,10 +165,8 @@ export class MinecraftUtility {
       if (!!rawBlock.textures) {
         Object.keys(rawBlock.textures).forEach((textureKey) => {
           if (!rawBlock.textures![textureKey]!.includes(`#`)) {
-            let texturePathFragment:
-              | string
-              | string[]
-              | undefined = rawBlock.textures![textureKey]
+            let texturePathFragment: string | string[] | undefined =
+              rawBlock.textures![textureKey]
             if (texturePathFragment?.includes(`:`)) {
               let colonIndex = texturePathFragment.indexOf(`:`)
               let texturePathFragmentArray = Array.from(texturePathFragment)

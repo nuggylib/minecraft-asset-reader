@@ -111,9 +111,8 @@ export class Exporter {
             } = blockQueryResult.data
 
             const harvestTools = await dao.getHarvestToolsForBlock(id)
-            const harvestToolQualities = await dao.getHarvestToolQualitiesForBlock(
-              id
-            )
+            const harvestToolQualities =
+              await dao.getHarvestToolQualitiesForBlock(id)
             const namespaceQueryResult = await dao.getNamespaceById(
               namespace_id
             )

@@ -15,14 +15,11 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "autoprefixer": "^9",
     "axios": "^0.21.1",
     "framer-motion": "^4",
-    "postcss": "^7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -54,6 +51,7 @@
     "@emotion/eslint-plugin": "^11.2.0",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
+    "autoprefixer": "^9.8.6",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-react-app": "^6.0.0",
@@ -64,8 +62,10 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": ">=6",
     "lint-staged": ">=10",
+    "postcss": "^7.0.35",
     "prettier": "^2.2.1",
     "prettier-eslint-cli": "^5.0.1",
-    "stylelint-config-recommended": "^4.0.0"
+    "stylelint-config-recommended": "^4.0.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4"
   }
 }

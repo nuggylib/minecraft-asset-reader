@@ -1,3 +1,15 @@
+Installation:
+
+```
+npm i -g minecraft-asset-reader
+```
+
+Then, run it with:
+
+```
+minecraft-asset-reader
+```
+
 # Readme
 
 Minecraft asset reader is a tool to assist Minecraft mod developers and modpack maintainers export their game content, configured for use in a production-ready demonstration site.

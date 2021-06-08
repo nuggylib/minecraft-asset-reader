@@ -22,7 +22,7 @@ var app = express()
 
 // Needed for React app
 if (!process.env.LOCAL) {
-  app.use(express.static(path.join(__dirname, `../../..`, `build`)))
+  app.use(express.static(path.join(__dirname, `..`, `build`)))
 }
 
 // Remaining stuff

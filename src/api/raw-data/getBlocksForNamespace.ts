@@ -33,19 +33,19 @@ export function getBlocksForNamespace(
   if (!block) {
     const paginatedResponse = CACHE.getPaginatedRawBlocksForNamespace({
       namespace: namespace as string,
-      limit: !!limit ? ((limit as unknown) as Int) : undefined,
-      page: !!page ? ((page as unknown) as Int) : undefined,
+      limit: !!limit ? (limit as unknown as Int) : undefined,
+      page: !!page ? (page as unknown as Int) : undefined,
       order: !!order ? (order as `ascending` | `descending`) : undefined,
       q: !!q ? (q as string) : undefined,
     })
     const response = {
-      limit: (limit as unknown) as number,
+      limit: limit as unknown as number,
       items: paginatedResponse.records,
       // Returns previous, current, and next page info (links to each endpoint, use this for "next"/"prev" buttons)
       pages: paginate.getArrayPages(req)(
         3,
         paginatedResponse.pageCount,
-        (page as unknown) as number
+        page as unknown as number
       ),
       total_pages: paginatedResponse.pageCount,
       has_more: paginate.hasNextPages(req)(paginatedResponse.pageCount),
@@ -54,10 +54,10 @@ export function getBlocksForNamespace(
   } else {
     // In this case, block was defined; return data about the block
     CACHE.getBlockDataWithScaledImages({
-      namespace: (namespace as unknown) as string,
-      block: (block as unknown) as string,
+      namespace: namespace as unknown as string,
+      block: block as unknown as string,
       // Note that, when 1 is used, it will result in a larger image as a side effect of arbitrarily-redrawing the image with canvas
-      scaleAmount: !!scaleImage ? ((scaleImage as unknown) as Int) : 1,
+      scaleAmount: !!scaleImage ? (scaleImage as unknown as Int) : 1,
     }).then((blockData) => {
       res.send(blockData)
     })

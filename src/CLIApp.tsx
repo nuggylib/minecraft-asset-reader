@@ -10,7 +10,7 @@ import open from "open"
 
 export const CLIApp = () => {
   const [selectedOption, setSelectedOption] = useState(
-    (null as unknown) as string
+    null as unknown as string
   )
   const [rawAssetsPath, setRawAssetsPath] = useState(``)
   let rawData = useRawData({
@@ -23,7 +23,7 @@ export const CLIApp = () => {
   })
 
   const clearSelectedOptionHandler = () =>
-    setSelectedOption((null as unknown) as string)
+    setSelectedOption(null as unknown as string)
   const renderSelectedOptionMenu = () => {
     switch (selectedOption) {
       case OPTION_VALUE.SET_ASSETS_DIRECTORY: {
